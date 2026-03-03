@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX Spectrum | Partner Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-cyan: #06B6D4; --primary-purple: #A855F7; --midnight-blue: #1E293B; --off-white: #F8FAFC; --color-tg: #26A5E4; --color-yt: #FF0000; --color-fb: #1877F2; --color-x: #000000; --color-ig: #E4405F; --color-wechat: #07C160; --color-whatsapp: #25D366; --color-linkedin: #0A66C2; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--off-white); color: var(--midnight-blue); overflow-x: hidden; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .ticker-wrap { width: 100%; overflow: hidden; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); white-space: nowrap; }
+        .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        .ticker-item { display: inline-block; padding: 0 2rem; font-size: 0.85rem; font-weight: 500; }
+        .lang-btn.active { color: var(--primary-cyan); font-weight: 700; }
+        .logo-container img { max-height: 100%; width: auto; display: block; }
+        .social-icon { width: 3.2rem; height: 3.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 2px solid #fff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .social-icon:hover { transform: scale(1.15) translateY(-8px); box-shadow: 0 20px 35px -10px rgba(0,0,0,0.25); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div class="ticker-wrap fixed top-0 z-50 py-2">
+        <div id="top-ticker" class="ticker"></div>
+    </div>
+
+    <nav class="mt-10 px-8 py-6 flex justify-between items-center max-w-7xl mx-auto w-full z-40">
+        <div class="flex items-center space-x-2">
+            <a href="index.html" class="logo-container">
+                <img src="img/logo.jpg" alt="FX Spectrum Logo" class="h-10 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="text-2xl font-bold tracking-tighter text-slate-800 hidden"><span class="text-cyan-500">FX</span> SPECTRUM</div>
+            </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-500 uppercase tracking-widest">
+            <a href="insights.html" data-i18n="nav_insights" class="nav-item-link relative pb-1 hover:text-cyan-500 transition-colors">Insights</a>
+            <a href="academy.html" data-i18n="nav_academy" class="nav-item-link relative pb-1 hover:text-cyan-500 transition-colors">Academy</a>
+            <a href="partners.html" data-i18n="nav_affiliate" class="nav-item-link relative pb-1 text-cyan-500 border-b-2 border-cyan-500">Partners</a>
+            <a href="about.html" data-i18n="nav_about" class="nav-item-link relative pb-1 hover:text-cyan-500 transition-colors">About Us</a>
+            <div class="flex items-center space-x-3 border-l pl-8 border-slate-200 text-[10px] font-bold">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <div class="flex items-center space-x-3">
+                    <button onclick="changeLanguage('en')" id="lang-en" class="lang-btn hover:text-cyan-500 transition-colors">EN</button>
+                    <span class="text-slate-200">|</span>
+                    <button onclick="changeLanguage('zh-TW')" id="lang-zh-TW" class="lang-btn hover:text-cyan-500 transition-colors">繁</button>
+                    <span class="text-slate-200">|</span>
+                    <button onclick="changeLanguage('zh-CN')" id="lang-zh-CN" class="lang-btn hover:text-cyan-500 transition-colors">簡</button>
+                </div>
+            </div>
+        </div>
+        <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</button>
+    </nav>
+
+    <main class="flex-grow px-8 max-w-7xl mx-auto w-full pt-12 pb-24">
+        <!-- Hero -->
+        <div class="text-center mb-20">
+            <div data-i18n="partner_badge" class="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold tracking-widest uppercase">Affiliate & Partnership</div>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tighter text-slate-900 mb-6">
+                <span data-i18n="partner_title_1">Grow </span>
+                <span data-i18n="partner_title_2" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-500">Together</span>
+            </h1>
+            <p data-i18n="partner_desc" class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">Join FX Spectrum's partner ecosystem. Earn competitive commissions by referring traders to our platform and tools.</p>
+        </div>
+
+        <!-- 合作優勢 -->
+        <section class="mb-20">
+            <h2 data-i18n="partner_why_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Why Partner With Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-50 text-cyan-500 flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 data-i18n="why_commission_title" class="text-xl font-bold text-slate-800 mb-3">Competitive Commission</h3>
+                    <p data-i18n="why_commission_desc" class="text-sm text-slate-500 leading-relaxed">Earn up to 40% revenue share with transparent, real-time commission tracking and weekly payouts.</p>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3 data-i18n="why_support_title" class="text-xl font-bold text-slate-800 mb-3">Dedicated Support</h3>
+                    <p data-i18n="why_support_desc" class="text-sm text-slate-500 leading-relaxed">Personal account manager, marketing materials, custom landing pages, and priority technical assistance.</p>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 data-i18n="why_dashboard_title" class="text-xl font-bold text-slate-800 mb-3">Analytics Dashboard</h3>
+                    <p data-i18n="why_dashboard_desc" class="text-sm text-slate-500 leading-relaxed">Real-time dashboard to track referrals, conversions, commissions, and performance metrics at a glance.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 合作流程 -->
+        <section class="mb-20">
+            <h2 data-i18n="partner_how_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">1</div>
+                    <h4 data-i18n="step1_title" class="font-bold text-slate-800 mb-2">Apply</h4>
+                    <p data-i18n="step1_desc" class="text-sm text-slate-500">Fill out the partner application form with your details.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">2</div>
+                    <h4 data-i18n="step2_title" class="font-bold text-slate-800 mb-2">Get Approved</h4>
+                    <p data-i18n="step2_desc" class="text-sm text-slate-500">Our team reviews and activates your partner account within 24 hours.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">3</div>
+                    <h4 data-i18n="step3_title" class="font-bold text-slate-800 mb-2">Share & Promote</h4>
+                    <p data-i18n="step3_desc" class="text-sm text-slate-500">Use your unique referral link and materials to attract traders.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">4</div>
+                    <h4 data-i18n="step4_title" class="font-bold text-slate-800 mb-2">Earn Rewards</h4>
+                    <p data-i18n="step4_desc" class="text-sm text-slate-500">Receive weekly commissions directly to your preferred payment method.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 佣金方案 -->
+        <section class="mb-20">
+            <h2 data-i18n="partner_plans_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Commission Tiers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Silver</span>
+                    <div class="text-5xl font-bold text-slate-800 mt-4 mb-2">20%</div>
+                    <p data-i18n="tier_silver_label" class="text-sm text-slate-500 mb-6">Revenue Share</p>
+                    <ul class="text-sm text-slate-500 space-y-3 text-left">
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_s1">1-10 active referrals</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_s2">Weekly payouts</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_s3">Basic marketing kit</span></li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-cyan-50 to-cyan-100/30 rounded-3xl border-2 border-cyan-300 p-8 text-center relative hover:shadow-lg transition-all">
+                    <span data-i18n="tier_popular" class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded-full uppercase tracking-widest">Most Popular</span>
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-widest">Gold</span>
+                    <div class="text-5xl font-bold text-slate-800 mt-4 mb-2">30%</div>
+                    <p data-i18n="tier_gold_label" class="text-sm text-slate-500 mb-6">Revenue Share</p>
+                    <ul class="text-sm text-slate-500 space-y-3 text-left">
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_g1">11-50 active referrals</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_g2">Custom landing page</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_g3">Priority support</span></li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <span class="text-[10px] font-bold text-purple-500 uppercase tracking-widest">Platinum</span>
+                    <div class="text-5xl font-bold text-slate-800 mt-4 mb-2">40%</div>
+                    <p data-i18n="tier_plat_label" class="text-sm text-slate-500 mb-6">Revenue Share</p>
+                    <ul class="text-sm text-slate-500 space-y-3 text-left">
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_p1">50+ active referrals</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_p2">Co-branded materials</span></li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-i18n="tier_p3">Dedicated account manager</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="text-center bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-3xl p-16">
+            <h2 data-i18n="partner_cta_title" class="text-3xl font-bold text-white mb-4">Ready to Start Earning?</h2>
+            <p data-i18n="partner_cta_desc" class="text-white/80 mb-8 max-w-lg mx-auto">Contact us on Telegram to begin your partnership journey today.</p>
+            <a href="https://t.me/+T1s2b4A7O6g3OTBl" target="_blank" data-i18n="partner_cta_btn" class="inline-block px-8 py-3 bg-white text-cyan-600 font-bold rounded-full hover:shadow-lg transition-all">Join via Telegram</a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 py-16 px-8 border-t border-slate-100 bg-white/40 backdrop-blur-lg pb-24 text-left">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6 gap-8">
+            <div class="col-span-1 md:col-span-3">
+                <div class="mb-8"><a href="index.html" class="logo-container inline-block"><img src="img/logo.jpg" alt="FX Spectrum Logo" class="h-10 w-auto" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'text-2xl font-bold tracking-tighter text-slate-800\'><span class=\'text-cyan-500\'>FX</span> SPECTRUM</div>';"></a></div>
+                <p data-i18n="footer_desc" class="text-slate-500 text-sm leading-relaxed max-w-sm mb-12">Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.</p>
+                <div class="flex flex-col items-start space-y-10">
+                    <div class="flex flex-row flex-wrap gap-4 items-center">
+                        <a href="https://t.me/+T1s2b4A7O6g3OTBl" target="_blank" class="social-icon" style="color: var(--color-tg);" title="Telegram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.665 3.717l-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701-.33 4.955c.488 0 .705-.223.977-.488l2.345-2.279 4.877 3.6c.898.495 1.543.24 1.767-.83l3.195-15.04c.328-1.312-.503-1.91-1.36-.516z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-yt);" title="YouTube"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-fb);" title="Facebook"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-x);" title="Twitter / X"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-ig);" title="Instagram"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-wechat);" title="WeChat"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M15.847 3c-4.966 0-9 3.284-9 7.333 0 2.148 1.134 4.077 2.946 5.438l-.754 2.261 2.661-1.33c.961.272 1.989.414 3.064.414 4.965 0 8.999-3.283 8.999-7.332C23.763 5.73 19.728 3 14.763 3zm-4.5 5.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm6.5 0c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zM7.5 11.5C3.358 11.5 0 14.239 0 17.611c0 1.79 1.011 3.398 2.627 4.532l-.671 2.011 2.373-1.186c.857.227 1.773.344 2.729.344.484 0 .954-.03 1.408-.088-.135-.515-.205-1.047-.205-1.59 0-3.328 3.21-6.034 7.229-6.034.184 0 .367.007.548.019-.387-2.333-3.242-4.108-6.538-4.108zm-3.5 4.5c-.414 0-.75-.336-.75-.75s.336-.75.75-.75.75.336.75.75-.336.75-.75.75zm4.5 0c-.414 0-.75-.336-.75-.75s.336-.75.75-.75.75.336.75.75-.336.75-.75.75z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-whatsapp);" title="WhatsApp"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.414 0 .018 5.394 0 12.03c0 2.12.553 4.189 1.601 6.006L0 24l6.117-1.605A11.803 11.803 0 0 0 12.05 24c6.638 0 12.032-5.395 12.035-12.032a11.761 11.761 0 0 0-3.528-8.498z"/></svg></a>
+                        <a href="#" target="_blank" class="social-icon" style="color: var(--color-linkedin);" title="LinkedIn"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.37 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                    </div>
+                    <div data-i18n="footer_follow_us" class="text-4xl font-black tracking-[0.55em] uppercase text-slate-800 mt-4 select-none whitespace-nowrap">Follow Us</div>
+                </div>
+            </div>
+            <div class="hidden md:block"></div>
+            <div class="md:pt-32 md:col-start-5">
+                <h4 data-i18n="footer_links_title" class="font-bold text-slate-800 mb-8 uppercase tracking-widest text-sm">Quick Links</h4>
+                <ul class="space-y-6 text-sm text-slate-500 font-medium">
+                    <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
+                    <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
+                </ul>
+            </div>
+            <div class="md:pt-32 md:col-start-6">
+                <h4 data-i18n="footer_support_title" class="font-bold text-slate-800 mb-8 uppercase tracking-widest text-sm">Support</h4>
+                <ul class="space-y-6 text-sm text-slate-500 font-medium">
+                    <li><a href="privacy.html" data-i18n="footer_privacy" class="hover:text-cyan-500 transition-colors">Privacy Policy</a></li>
+                    <li><a href="risk-warning.html" data-i18n="footer_warning" class="hover:text-cyan-500 transition-colors">Risk Warning</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
+            <span>© 2026 FX Spectrum Infotech Co., Ltd. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <div class="ticker-wrap fixed bottom-0 z-50 py-1.5 bg-slate-900 border-t-0">
+        <div id="bottom-ticker" class="ticker text-white opacity-60"></div>
+    </div>
+
+    <script>
+        const marketData = [
+            { pair: 'EUR/USD', price: 1.0850, change: 0.12 }, { pair: 'GBP/USD', price: 1.2510, change: 0.18 },
+            { pair: 'USD/JPY', price: 149.30, change: -0.05 }, { pair: 'XAU/USD', price: 2024.15, change: -0.32 },
+            { pair: 'BTC/USDT', price: 62450, change: 1.45 }
+        ];
+
+        function initTickers() {
+            const topTicker = document.getElementById('top-ticker');
+            const bottomTicker = document.getElementById('bottom-ticker');
+            if (!topTicker || !bottomTicker) return;
+            const renderData = (data) => data.map(item => `<span class="ticker-item font-mono">${item.pair} <span>${item.price.toFixed(4)}</span> <span class="${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">${item.change >= 0 ? '+' : ''}${item.change.toFixed(2)}%</span></span>`).join('');
+            topTicker.innerHTML = renderData(marketData) + renderData(marketData);
+            bottomTicker.innerHTML = renderData([...marketData].reverse()) + renderData(marketData);
+        }
+
+        const translations = {
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_about': 'About Us', 'nav_login': 'Log In', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'partner_badge': 'Affiliate & Partnership', 'partner_title_1': 'Grow ', 'partner_title_2': 'Together', 'partner_desc': 'Join FX Spectrum\'s partner ecosystem. Earn competitive commissions by referring traders to our platform and tools.', 'partner_why_title': 'Why Partner With Us', 'why_commission_title': 'Competitive Commission', 'why_commission_desc': 'Earn up to 40% revenue share with transparent, real-time commission tracking and weekly payouts.', 'why_support_title': 'Dedicated Support', 'why_support_desc': 'Personal account manager, marketing materials, custom landing pages, and priority technical assistance.', 'why_dashboard_title': 'Analytics Dashboard', 'why_dashboard_desc': 'Real-time dashboard to track referrals, conversions, commissions, and performance metrics at a glance.', 'partner_how_title': 'How It Works', 'step1_title': 'Apply', 'step1_desc': 'Fill out the partner application form with your details.', 'step2_title': 'Get Approved', 'step2_desc': 'Our team reviews and activates your partner account within 24 hours.', 'step3_title': 'Share & Promote', 'step3_desc': 'Use your unique referral link and materials to attract traders.', 'step4_title': 'Earn Rewards', 'step4_desc': 'Receive weekly commissions directly to your preferred payment method.', 'partner_plans_title': 'Commission Tiers', 'tier_silver_label': 'Revenue Share', 'tier_gold_label': 'Revenue Share', 'tier_plat_label': 'Revenue Share', 'tier_popular': 'Most Popular', 'tier_s1': '1-10 active referrals', 'tier_s2': 'Weekly payouts', 'tier_s3': 'Basic marketing kit', 'tier_g1': '11-50 active referrals', 'tier_g2': 'Custom landing page', 'tier_g3': 'Priority support', 'tier_p1': '50+ active referrals', 'tier_p2': 'Co-branded materials', 'tier_p3': 'Dedicated account manager', 'partner_cta_title': 'Ready to Start Earning?', 'partner_cta_desc': 'Contact us on Telegram to begin your partnership journey today.', 'partner_cta_btn': 'Join via Telegram' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_about': '關於我們', 'nav_login': '登入系統', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'partner_badge': '聯盟夥伴計畫', 'partner_title_1': '攜手', 'partner_title_2': '共同成長', 'partner_desc': '加入 FX Spectrum 合作生態系統。透過推薦交易者至我們的平台和工具，賺取豐厚佣金。', 'partner_why_title': '為何與我們合作', 'why_commission_title': '優渥佣金', 'why_commission_desc': '最高 40% 收益分潤，透明即時的佣金追蹤系統與每週出金。', 'why_support_title': '專屬支援', 'why_support_desc': '個人客戶經理、行銷素材、客製化登陸頁面及優先技術支援。', 'why_dashboard_title': '數據儀表板', 'why_dashboard_desc': '即時儀表板追蹤推薦、轉化、佣金與績效指標，一目瞭然。', 'partner_how_title': '合作流程', 'step1_title': '提交申請', 'step1_desc': '填寫合作夥伴申請表與您的詳細資料。', 'step2_title': '審核通過', 'step2_desc': '我們的團隊在 24 小時內審核並啟用您的合作帳號。', 'step3_title': '分享推廣', 'step3_desc': '使用您專屬的推薦連結與素材吸引交易者。', 'step4_title': '獲取獎勵', 'step4_desc': '每週直接將佣金匯入您偏好的付款方式。', 'partner_plans_title': '佣金等級', 'tier_silver_label': '收益分潤', 'tier_gold_label': '收益分潤', 'tier_plat_label': '收益分潤', 'tier_popular': '最受歡迎', 'tier_s1': '1-10 位活躍推薦', 'tier_s2': '每週出金', 'tier_s3': '基礎行銷套件', 'tier_g1': '11-50 位活躍推薦', 'tier_g2': '客製化登陸頁面', 'tier_g3': '優先支援', 'tier_p1': '50+ 位活躍推薦', 'tier_p2': '聯合品牌素材', 'tier_p3': '專屬客戶經理', 'partner_cta_title': '準備好開始賺取佣金了嗎？', 'partner_cta_desc': '透過 Telegram 聯繫我們，立即開啟您的合作夥伴旅程。', 'partner_cta_btn': '透過 Telegram 加入' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_about': '关于我们', 'nav_login': '登入系统', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'partner_badge': '联盟伙伴计划', 'partner_title_1': '携手', 'partner_title_2': '共同成长', 'partner_desc': '加入 FX Spectrum 合作生态系统。通过推荐交易者至我们的平台和工具，赚取丰厚佣金。', 'partner_why_title': '为何与我们合作', 'why_commission_title': '优渥佣金', 'why_commission_desc': '最高 40% 收益分润，透明实时的佣金追踪系统与每周出金。', 'why_support_title': '专属支持', 'why_support_desc': '个人客户经理、营销素材、定制化落地页面及优先技术支持。', 'why_dashboard_title': '数据仪表板', 'why_dashboard_desc': '实时仪表板追踪推荐、转化、佣金与绩效指标，一目了然。', 'partner_how_title': '合作流程', 'step1_title': '提交申请', 'step1_desc': '填写合作伙伴申请表与您的详细资料。', 'step2_title': '审核通过', 'step2_desc': '我们的团队在 24 小时内审核并启用您的合作账号。', 'step3_title': '分享推广', 'step3_desc': '使用您专属的推荐链接与素材吸引交易者。', 'step4_title': '获取奖励', 'step4_desc': '每周直接将佣金汇入您偏好的付款方式。', 'partner_plans_title': '佣金等级', 'tier_silver_label': '收益分润', 'tier_gold_label': '收益分润', 'tier_plat_label': '收益分润', 'tier_popular': '最受欢迎', 'tier_s1': '1-10 位活跃推荐', 'tier_s2': '每周出金', 'tier_s3': '基础营销套件', 'tier_g1': '11-50 位活跃推荐', 'tier_g2': '定制化落地页面', 'tier_g3': '优先支持', 'tier_p1': '50+ 位活跃推荐', 'tier_p2': '联合品牌素材', 'tier_p3': '专属客户经理', 'partner_cta_title': '准备好开始赚取佣金了吗？', 'partner_cta_desc': '通过 Telegram 联系我们，立即开启您的合作伙伴旅程。', 'partner_cta_btn': '通过 Telegram 加入' }
+        };
+
+        function changeLanguage(lang) {
+            localStorage.setItem('fx_spectrum_lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`)?.classList.add('active');
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang]?.[key]) el.innerText = translations[lang][key];
+            });
+            document.documentElement.lang = lang;
+        }
+
+        window.onload = () => {
+            initTickers();
+            changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
+        };
+    </script>
+</body>
+</html>
