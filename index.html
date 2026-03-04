@@ -34,18 +34,28 @@
             100% { transform: translateX(-50%); }
         }
 
+        @keyframes ticker-reverse {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
         .ticker-wrap {
             width: 100%;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.95);
+            background: #0f172a;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: none;
             white-space: nowrap;
         }
 
         .ticker {
             display: inline-block;
             animation: ticker 40s linear infinite;
+        }
+
+        .ticker-reverse {
+            display: inline-block;
+            animation: ticker-reverse 40s linear infinite;
         }
 
         .ticker-item {
@@ -87,6 +97,15 @@
             height: 1.25rem;
             stroke: url(#home-gradient);
         }
+
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: #fff; z-index: 100; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.1); overflow-y: auto; }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { display: block; padding: 1rem 1.5rem; font-size: 0.95rem; font-weight: 600; color: #334155; border-bottom: 1px solid #f1f5f9; transition: all 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
+        .hamburger-btn { display: none; }
+        @media (max-width: 767px) { .hamburger-btn { display: flex; } }
 
         .nav-item-link::after {
             content: '';
@@ -193,8 +212,40 @@
                 </div>
             </div>
         </div>
-        <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</button>
+        <div class="flex items-center gap-3">
+            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
+                <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
     </nav>
+
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="flex items-center justify-between p-4 border-b border-slate-100">
+            <a href="index.html" class="logo-container"><img src="img/logo.jpg" alt="FX Spectrum" class="h-8 w-auto" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'text-lg font-bold tracking-tighter text-slate-800\'><span class=\'text-cyan-500\'>FX</span> SPECTRUM</div>';"></a>
+            <button onclick="toggleMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <nav class="py-2">
+            <a href="index.html" data-i18n="mobile_home">Home</a>
+            <a href="insights.html" data-i18n="nav_insights">Insights</a>
+            <a href="academy.html" data-i18n="nav_academy">Academy</a>
+            <a href="partners.html" data-i18n="nav_affiliate">Partners</a>
+            <a href="pricing.html" data-i18n="nav_pricing">Pricing</a>
+            <a href="about.html" data-i18n="nav_about">About Us</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-100">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <button onclick="changeLanguage('en');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">EN</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-TW');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">繁</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
+            </div>
+            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+        </div>
+    </div>
 
     <!-- 主要內容區 -->
     <main class="flex-grow flex flex-col lg:flex-row items-center relative px-8 max-w-7xl mx-auto w-full pt-12 pb-24 gap-12">
@@ -286,6 +337,7 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
                     <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
+                    <li><a href="pricing.html" data-i18n="nav_pricing" class="hover:text-cyan-500 transition-colors">Pricing</a></li>
                 </ul>
             </div>
 
@@ -294,18 +346,20 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="privacy.html" data-i18n="footer_privacy" class="hover:text-cyan-500 transition-colors">Privacy Policy</a></li>
                     <li><a href="risk-warning.html" data-i18n="footer_warning" class="hover:text-cyan-500 transition-colors">Risk Warning</a></li>
+                    <li><a href="platforms.html" data-i18n="footer_partners" class="hover:text-cyan-500 transition-colors">Partner Platforms</a></li>
+                    <li><a href="sponsors.html" data-i18n="footer_sponsors" class="hover:text-cyan-500 transition-colors">Sponsors</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex justify-center items-center text-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
             <span>© 2026 FX Spectrum Infotech Co., Ltd. All rights reserved.</span>
         </div>
     </footer>
 
     <!-- 底部數據跑馬燈 -->
     <div class="ticker-wrap fixed bottom-0 z-50 py-1.5 bg-slate-900 border-t-0">
-        <div id="bottom-ticker" class="ticker text-white opacity-60"></div>
+        <div id="bottom-ticker" class="ticker-reverse text-white"></div>
     </div>
 
     <script>
@@ -379,31 +433,6 @@
             }, 300);
         }
 
-        const marketData = [
-            { pair: 'USD/JPY', price: 149.30, change: -0.05 },
-            { pair: 'GBP/USD', price: 1.2510, change: 0.18 },
-            { pair: 'EUR/USD', price: 1.0850, change: 0.12 },
-            { pair: 'XAU/USD', price: 2024.15, change: -0.32 },
-            { pair: 'BTC/USDT', price: 62450, change: 1.45 }
-        ];
-
-        function initTickers() {
-            const topTicker = document.getElementById('top-ticker');
-            const bottomTicker = document.getElementById('bottom-ticker');
-            if (!topTicker || !bottomTicker) return;
-
-            const renderData = (data) => data.map(item => `
-                <span class="ticker-item font-mono">
-                    ${item.pair} <span class="price-val">${item.price.toFixed(4)}</span> 
-                    <span class="${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">
-                        ${item.change >= 0 ? '+' : ''}${item.change.toFixed(2)}%
-                    </span>
-                </span>
-            `).join('');
-            topTicker.innerHTML = renderData(marketData) + renderData(marketData);
-            bottomTicker.innerHTML = renderData([...marketData].reverse()) + renderData(marketData);
-        }
-
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         function initSlider() {
@@ -426,9 +455,9 @@
         }
 
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'hero_badge': '2026 Intelligent Trading Dimension', 'hero_title_1': 'Redefining Trading', 'hero_title_2': 'With Advanced AI', 'hero_desc': 'Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.', 'btn_tools': 'Explore Tools', 'tool_card_desc': 'EA & AI Analytics', 'btn_academy': 'Enter Academy', 'academy_card_desc': 'Master the Market', 'card_perf_title': 'Live Performance', 'status_syncing': 'Scanning Market...', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'hero_badge': '2026 智能交易新維度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外匯交易', 'hero_desc': '您的全方位專業門戶：結合 AI 驅動的市場洞察、頂尖 EA 自動化工具與深度教育體系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 與 AI 數據分析', 'btn_academy': '進入教育學院', 'academy_card_desc': '掌握市場獲利邏輯', 'card_perf_title': '即時獲利表現', 'status_syncing': '市場掃描中...', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'hero_badge': '2026 智能交易新维度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外汇交易', 'hero_desc': '您的全方位专业门户：结合 AI 驱动的市场洞察、頂尖 EA 自动化工具与深度教育体系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 与 AI 数据分析', 'btn_academy': '進入教育学院', 'academy_card_desc': '掌握市场获利逻辑', 'card_perf_title': '即时获利表现', 'status_syncing': '市场扫描中...', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'hero_badge': '2026 Intelligent Trading Dimension', 'hero_title_1': 'Redefining Trading', 'hero_title_2': 'With Advanced AI', 'hero_desc': 'Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.', 'btn_tools': 'Explore Tools', 'tool_card_desc': 'EA & AI Analytics', 'btn_academy': 'Enter Academy', 'academy_card_desc': 'Master the Market', 'card_perf_title': 'Live Performance', 'status_syncing': 'Scanning Market...', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'hero_badge': '2026 智能交易新維度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外匯交易', 'hero_desc': '您的全方位專業門戶：結合 AI 驅動的市場洞察、頂尖 EA 自動化工具與深度教育體系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 與 AI 數據分析', 'btn_academy': '進入教育學院', 'academy_card_desc': '掌握市場獲利邏輯', 'card_perf_title': '即時獲利表現', 'status_syncing': '市場掃描中...', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'hero_badge': '2026 智能交易新维度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外汇交易', 'hero_desc': '您的全方位专业门户：结合 AI 驱动的市场洞察、頂尖 EA 自动化工具与深度教育体系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 与 AI 数据分析', 'btn_academy': '進入教育学院', 'academy_card_desc': '掌握市场获利逻辑', 'card_perf_title': '即时获利表现', 'status_syncing': '市场扫描中...', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商' }
         };
 
         function changeLanguage(lang) {
@@ -444,8 +473,13 @@
             rotateClientProfits();
         }
 
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.getElementById('mobile-menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
         window.onload = () => {
-            initTickers();
             initSlider();
             rotateExpertPredictions();
             rotateClientProfits();
@@ -454,5 +488,6 @@
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
         };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

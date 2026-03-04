@@ -10,8 +10,10 @@
         :root { --primary-cyan: #06B6D4; --primary-purple: #A855F7; --midnight-blue: #1E293B; --off-white: #F8FAFC; --color-tg: #26A5E4; --color-yt: #FF0000; --color-fb: #1877F2; --color-x: #000000; --color-ig: #E4405F; --color-wechat: #07C160; --color-whatsapp: #25D366; --color-linkedin: #0A66C2; }
         body { font-family: 'Inter', sans-serif; background-color: var(--off-white); color: var(--midnight-blue); overflow-x: hidden; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .ticker-wrap { width: 100%; overflow: hidden; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); white-space: nowrap; }
+        .ticker-wrap { width: 100%; overflow: hidden; background: #0f172a; backdrop-filter: blur(10px); border-bottom: none; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        @keyframes ticker-reverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        .ticker-reverse { display: inline-block; animation: ticker-reverse 40s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 0.85rem; font-weight: 500; }
         .lang-btn.active { color: var(--primary-cyan); font-weight: 700; }
         .logo-container img { max-height: 100%; width: auto; display: block; }
@@ -19,6 +21,14 @@
         .social-icon:hover { transform: scale(1.15) translateY(-8px); box-shadow: 0 20px 35px -10px rgba(0,0,0,0.25); }
         .course-card { border-radius: 24px; overflow: hidden; transition: all 0.3s ease; }
         .course-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: #fff; z-index: 100; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.1); overflow-y: auto; }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { display: block; padding: 1rem 1.5rem; font-size: 0.95rem; font-weight: 600; color: #334155; border-bottom: 1px solid #f1f5f9; transition: all 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
+        .hamburger-btn { display: none; }
+        @media (max-width: 767px) { .hamburger-btn { display: flex; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -58,8 +68,40 @@
                 </div>
             </div>
         </div>
-        <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</button>
+        <div class="flex items-center gap-3">
+            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
     </nav>
+
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="flex items-center justify-between p-4 border-b border-slate-100">
+            <a href="index.html" class="logo-container"><img src="img/logo.jpg" alt="FX Spectrum" class="h-8 w-auto" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'text-lg font-bold tracking-tighter text-slate-800\'><span class=\'text-cyan-500\'>FX</span> SPECTRUM</div>';"></a>
+            <button onclick="toggleMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <nav class="py-2">
+            <a href="index.html" data-i18n="mobile_home">Home</a>
+            <a href="insights.html" data-i18n="nav_insights">Insights</a>
+            <a href="academy.html" data-i18n="nav_academy">Academy</a>
+            <a href="partners.html" data-i18n="nav_affiliate">Partners</a>
+            <a href="pricing.html" data-i18n="nav_pricing">Pricing</a>
+            <a href="about.html" data-i18n="nav_about">About Us</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-100">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <button onclick="changeLanguage('en');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">EN</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-TW');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">繁</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
+            </div>
+            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+        </div>
+    </div>
 
     <main class="flex-grow px-8 max-w-7xl mx-auto w-full pt-12 pb-24">
         <!-- Hero -->
@@ -177,6 +219,30 @@
                     </summary>
                     <p data-i18n="faq3_a" class="mt-4 text-sm text-slate-500 leading-relaxed">After completing the Intermediate Strategy path, you will gain access to our curated EA library. Our team provides full setup guidance and ongoing optimization support.</p>
                 </details>
+                <details class="group bg-white rounded-2xl border border-slate-100 p-6">
+                    <summary class="flex items-center justify-between cursor-pointer">
+                        <span data-i18n="faq4_q" class="font-bold text-slate-800">Why was my withdrawal delayed or temporarily rejected?</span>
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div data-i18n-html="faq4_a" class="mt-4 text-sm text-slate-500 leading-relaxed"></div>
+                </details>
+                <details class="group bg-white rounded-2xl border border-slate-100 p-6">
+                    <summary class="flex items-center justify-between cursor-pointer">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.57 0 2.55-1.7 1.77-3.06L13.77 4.44a2 2 0 00-3.54 0L3.3 15.94C2.52 17.3 3.5 19 5.07 19z"/></svg>
+                            <span data-i18n="faq5_q" class="font-bold text-slate-800">How to identify fraudulent withdrawal refusals?</span>
+                        </span>
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div data-i18n-html="faq5_a" class="mt-4 text-sm text-slate-500 leading-relaxed"></div>
+                </details>
+                <details class="group bg-white rounded-2xl border border-slate-100 p-6">
+                    <summary class="flex items-center justify-between cursor-pointer">
+                        <span data-i18n="faq6_q" class="font-bold text-slate-800">Do I need to pay for the EA (Expert Advisor)?</span>
+                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div data-i18n-html="faq6_a" class="mt-4 text-sm text-slate-500 leading-relaxed"></div>
+                </details>
             </div>
         </section>
     </main>
@@ -207,6 +273,7 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
                     <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
+                    <li><a href="pricing.html" data-i18n="nav_pricing" class="hover:text-cyan-500 transition-colors">Pricing</a></li>
                 </ul>
             </div>
             <div class="md:pt-32 md:col-start-6">
@@ -214,38 +281,43 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="privacy.html" data-i18n="footer_privacy" class="hover:text-cyan-500 transition-colors">Privacy Policy</a></li>
                     <li><a href="risk-warning.html" data-i18n="footer_warning" class="hover:text-cyan-500 transition-colors">Risk Warning</a></li>
+                    <li><a href="platforms.html" data-i18n="footer_partners" class="hover:text-cyan-500 transition-colors">Partner Platforms</a></li>
+                    <li><a href="sponsors.html" data-i18n="footer_sponsors" class="hover:text-cyan-500 transition-colors">Sponsors</a></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex justify-center items-center text-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
             <span>© 2026 FX Spectrum Infotech Co., Ltd. All rights reserved.</span>
         </div>
     </footer>
 
     <div class="ticker-wrap fixed bottom-0 z-50 py-1.5 bg-slate-900 border-t-0">
-        <div id="bottom-ticker" class="ticker text-white opacity-60"></div>
+        <div id="bottom-ticker" class="ticker-reverse text-white"></div>
     </div>
 
     <script>
-        const marketData = [
-            { pair: 'EUR/USD', price: 1.0850, change: 0.12 }, { pair: 'GBP/USD', price: 1.2510, change: 0.18 },
-            { pair: 'USD/JPY', price: 149.30, change: -0.05 }, { pair: 'XAU/USD', price: 2024.15, change: -0.32 },
-            { pair: 'BTC/USDT', price: 62450, change: 1.45 }
-        ];
-
-        function initTickers() {
-            const topTicker = document.getElementById('top-ticker');
-            const bottomTicker = document.getElementById('bottom-ticker');
-            if (!topTicker || !bottomTicker) return;
-            const renderData = (data) => data.map(item => `<span class="ticker-item font-mono">${item.pair} <span>${item.price.toFixed(4)}</span> <span class="${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">${item.change >= 0 ? '+' : ''}${item.change.toFixed(2)}%</span></span>`).join('');
-            topTicker.innerHTML = renderData(marketData) + renderData(marketData);
-            bottomTicker.innerHTML = renderData([...marketData].reverse()) + renderData(marketData);
-        }
-
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'academy_badge': 'Structured Learning Path', 'academy_title_1': 'Trading ', 'academy_title_2': 'Academy', 'academy_desc': 'From beginner to expert — master forex trading through structured courses, live sessions, and hands-on practice with our professional educators.', 'academy_path_title': 'Learning Paths', 'path_beginner_title': 'Beginner Foundation', 'path_beginner_desc': 'Learn the basics of forex markets, currency pairs, pips, lots, and how to place your first trade with confidence.', 'path_inter_title': 'Intermediate Strategy', 'path_inter_desc': 'Master technical analysis, chart patterns, risk management, and develop your personal trading strategy framework.', 'path_adv_title': 'Advanced Mastery', 'path_adv_desc': 'Algorithmic trading, EA development, advanced risk models, portfolio management, and institutional-grade techniques.', 'academy_featured_title': 'Featured Courses', 'course1_title': 'Forex Trading Fundamentals', 'course1_desc': 'Everything you need to know to start trading forex — from market structure to executing your first live trade.', 'course2_title': 'EA & Automated Trading', 'course2_desc': 'Learn how to set up, configure, and optimize Expert Advisors for consistent automated trading performance.', 'course3_title': 'Risk & Money Management', 'course3_desc': 'Professional-grade risk management techniques including position sizing, drawdown control, and portfolio allocation.', 'academy_faq_title': 'Frequently Asked Questions', 'faq1_q': 'Do I need prior trading experience?', 'faq1_a': 'Not at all. Our Beginner Foundation path is designed for complete newcomers. We start from the very basics and gradually build up your knowledge and confidence.', 'faq2_q': 'Are the courses free?', 'faq2_a': 'We offer both free introductory courses and premium advanced modules. Join our Telegram community for exclusive access to live sessions and bonus content.', 'faq3_q': 'How can I access the Expert Advisors (EA)?', 'faq3_a': 'After completing the Intermediate Strategy path, you will gain access to our curated EA library. Our team provides full setup guidance and ongoing optimization support.' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'academy_badge': '系統化學習路徑', 'academy_title_1': '交易', 'academy_title_2': '教育學院', 'academy_desc': '從新手到專家——透過系統化課程、即時直播與實操練習，跟隨專業講師掌握外匯交易。', 'academy_path_title': '學習路徑', 'path_beginner_title': '入門基礎', 'path_beginner_desc': '學習外匯市場基礎知識、貨幣對、點數、手數，以及如何自信地執行第一筆交易。', 'path_inter_title': '進階策略', 'path_inter_desc': '掌握技術分析、圖表形態、風險管理，建立個人交易策略框架。', 'path_adv_title': '高階精通', 'path_adv_desc': '算法交易、EA 開發、進階風險模型、投資組合管理與機構級交易技巧。', 'academy_featured_title': '精選課程', 'course1_title': '外匯交易基礎', 'course1_desc': '開始外匯交易所需的一切——從市場結構到執行您的第一筆實盤交易。', 'course2_title': 'EA 與自動化交易', 'course2_desc': '學習如何設定、配置與優化 EA，實現穩定的自動化交易績效。', 'course3_title': '風險與資金管理', 'course3_desc': '專業級風險管理技術，包括倉位控制、回撤管理與投資組合配置。', 'academy_faq_title': '常見問題', 'faq1_q': '我需要有交易經驗嗎？', 'faq1_a': '完全不需要。我們的入門基礎課程專為完全的新手設計。我們從最基礎開始，逐步建立您的知識和信心。', 'faq2_q': '課程是免費的嗎？', 'faq2_a': '我們提供免費的入門課程和付費的進階模組。加入我們的 Telegram 社群以獲取獨家直播課程和額外內容。', 'faq3_q': '如何使用 EA（智能交易系統）？', 'faq3_a': '完成進階策略課程後，您將獲得我們精選 EA 資源庫的存取權限。我們的團隊提供完整的設定指導與持續優化支援。' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'academy_badge': '系统化学习路径', 'academy_title_1': '交易', 'academy_title_2': '教育学院', 'academy_desc': '从新手到专家——通过系统化课程、实时直播与实操练习，跟随专业讲师掌握外汇交易。', 'academy_path_title': '学习路径', 'path_beginner_title': '入门基础', 'path_beginner_desc': '学习外汇市场基础知识、货币对、点数、手数，以及如何自信地执行第一笔交易。', 'path_inter_title': '进阶策略', 'path_inter_desc': '掌握技术分析、图表形态、风险管理，建立个人交易策略框架。', 'path_adv_title': '高阶精通', 'path_adv_desc': '算法交易、EA 开发、进阶风险模型、投资组合管理与机构级交易技巧。', 'academy_featured_title': '精选课程', 'course1_title': '外汇交易基础', 'course1_desc': '开始外汇交易所需的一切——从市场结构到执行您的第一笔实盘交易。', 'course2_title': 'EA 与自动化交易', 'course2_desc': '学习如何设定、配置与优化 EA，实现稳定的自动化交易绩效。', 'course3_title': '风险与资金管理', 'course3_desc': '专业级风险管理技术，包括仓位控制、回撤管理与投资组合配置。', 'academy_faq_title': '常见问题', 'faq1_q': '我需要有交易经验吗？', 'faq1_a': '完全不需要。我们的入门基础课程专为完全的新手设计。我们从最基础开始，逐步建立您的知识和信心。', 'faq2_q': '课程是免费的吗？', 'faq2_a': '我们提供免费的入门课程和付费的进阶模块。加入我们的 Telegram 社群以获取独家直播课程和额外内容。', 'faq3_q': '如何使用 EA（智能交易系统）？', 'faq3_a': '完成进阶策略课程后，您将获得我们精选 EA 资源库的访问权限。我们的团队提供完整的设定指导与持续优化支持。' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'academy_badge': 'Structured Learning Path', 'academy_title_1': 'Trading ', 'academy_title_2': 'Academy', 'academy_desc': 'From beginner to expert — master forex trading through structured courses, live sessions, and hands-on practice with our professional educators.', 'academy_path_title': 'Learning Paths', 'path_beginner_title': 'Beginner Foundation', 'path_beginner_desc': 'Learn the basics of forex markets, currency pairs, pips, lots, and how to place your first trade with confidence.', 'path_inter_title': 'Intermediate Strategy', 'path_inter_desc': 'Master technical analysis, chart patterns, risk management, and develop your personal trading strategy framework.', 'path_adv_title': 'Advanced Mastery', 'path_adv_desc': 'Algorithmic trading, EA development, advanced risk models, portfolio management, and institutional-grade techniques.', 'academy_featured_title': 'Featured Courses', 'course1_title': 'Forex Trading Fundamentals', 'course1_desc': 'Everything you need to know to start trading forex — from market structure to executing your first live trade.', 'course2_title': 'EA & Automated Trading', 'course2_desc': 'Learn how to set up, configure, and optimize Expert Advisors for consistent automated trading performance.', 'course3_title': 'Risk & Money Management', 'course3_desc': 'Professional-grade risk management techniques including position sizing, drawdown control, and portfolio allocation.', 'academy_faq_title': 'Frequently Asked Questions', 'faq1_q': 'Do I need prior trading experience?', 'faq1_a': 'Not at all. Our Beginner Foundation path is designed for complete newcomers. We start from the very basics and gradually build up your knowledge and confidence.', 'faq2_q': 'Are the courses free?', 'faq2_a': 'We offer both free introductory courses and premium advanced modules. Join our Telegram community for exclusive access to live sessions and bonus content.', 'faq3_q': 'How can I access the Expert Advisors (EA)?', 'faq3_a': 'After completing the Intermediate Strategy path, you will gain access to our curated EA library. Our team provides full setup guidance and ongoing optimization support.', 'faq4_q': 'Why was my withdrawal delayed or temporarily rejected?', 'faq5_q': 'How to identify fraudulent withdrawal refusals?', 'faq6_q': 'Do I need to pay for the EA (Expert Advisor)?' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'academy_badge': '系統化學習路徑', 'academy_title_1': '交易', 'academy_title_2': '教育學院', 'academy_desc': '從新手到專家——透過系統化課程、即時直播與實操練習，跟隨專業講師掌握外匯交易。', 'academy_path_title': '學習路徑', 'path_beginner_title': '入門基礎', 'path_beginner_desc': '學習外匯市場基礎知識、貨幣對、點數、手數，以及如何自信地執行第一筆交易。', 'path_inter_title': '進階策略', 'path_inter_desc': '掌握技術分析、圖表形態、風險管理，建立個人交易策略框架。', 'path_adv_title': '高階精通', 'path_adv_desc': '算法交易、EA 開發、進階風險模型、投資組合管理與機構級交易技巧。', 'academy_featured_title': '精選課程', 'course1_title': '外匯交易基礎', 'course1_desc': '開始外匯交易所需的一切——從市場結構到執行您的第一筆實盤交易。', 'course2_title': 'EA 與自動化交易', 'course2_desc': '學習如何設定、配置與優化 EA，實現穩定的自動化交易績效。', 'course3_title': '風險與資金管理', 'course3_desc': '專業級風險管理技術，包括倉位控制、回撤管理與投資組合配置。', 'academy_faq_title': '常見問題', 'faq1_q': '我需要有交易經驗嗎？', 'faq1_a': '完全不需要。我們的入門基礎課程專為完全的新手設計。我們從最基礎開始，逐步建立您的知識和信心。', 'faq2_q': '課程是免費的嗎？', 'faq2_a': '我們提供免費的入門課程和付費的進階模組。加入我們的 Telegram 社群以獲取獨家直播課程和額外內容。', 'faq3_q': '如何使用 EA（智能交易系統）？', 'faq3_a': '完成進階策略課程後，您將獲得我們精選 EA 資源庫的存取權限。我們的團隊提供完整的設定指導與持續優化支援。', 'faq4_q': '為什麼我的出金申請被延後或暫時拒絕？', 'faq5_q': '如何分辨惡意拒絕出金的詐騙行為？', 'faq6_q': '使用 EA（智能交易系統）需要付費嗎？' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'academy_badge': '系统化学习路径', 'academy_title_1': '交易', 'academy_title_2': '教育学院', 'academy_desc': '从新手到专家——通过系统化课程、实时直播与实操练习，跟随专业讲师掌握外汇交易。', 'academy_path_title': '学习路径', 'path_beginner_title': '入门基础', 'path_beginner_desc': '学习外汇市场基础知识、货币对、点数、手数，以及如何自信地执行第一笔交易。', 'path_inter_title': '进阶策略', 'path_inter_desc': '掌握技术分析、图表形态、风险管理，建立个人交易策略框架。', 'path_adv_title': '高阶精通', 'path_adv_desc': '算法交易、EA 开发、进阶风险模型、投资组合管理与机构级交易技巧。', 'academy_featured_title': '精选课程', 'course1_title': '外汇交易基础', 'course1_desc': '开始外汇交易所需的一切——从市场结构到执行您的第一笔实盘交易。', 'course2_title': 'EA 与自动化交易', 'course2_desc': '学习如何设定、配置与优化 EA，实现稳定的自动化交易绩效。', 'course3_title': '风险与资金管理', 'course3_desc': '专业级风险管理技术，包括仓位控制、回撤管理与投资组合配置。', 'academy_faq_title': '常见问题', 'faq1_q': '我需要有交易经验吗？', 'faq1_a': '完全不需要。我们的入门基础课程专为完全的新手设计。我们从最基础开始，逐步建立您的知识和信心。', 'faq2_q': '课程是免费的吗？', 'faq2_a': '我们提供免费的入门课程和付费的进阶模块。加入我们的 Telegram 社群以获取独家直播课程和额外内容。', 'faq3_q': '如何使用 EA（智能交易系统）？', 'faq3_a': '完成进阶策略课程后，您将获得我们精选 EA 资源库的访问权限。我们的团队提供完整的设定指导与持续优化支持。', 'faq4_q': '为什么我的出金申请被延后或暂时拒绝？', 'faq5_q': '如何分辨恶意拒绝出金的诈骗行为？', 'faq6_q': '使用 EA（智能交易系统）需要付费吗？' }
+        };
+
+        const htmlTranslations = {
+            'en': {
+                'faq6_a': `<p class="mb-4">Yes. In addition to basic features, our advanced professional EA system requires a paid subscription. We currently offer two licensing models:</p><div class="space-y-3 mb-4"><div class="flex gap-3 p-4 rounded-xl bg-cyan-50/60 border border-cyan-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">1</span><div><strong class="text-slate-700">Platform-Locked License</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 text-[10px] font-bold">$1,000 / year</span><p class="text-slate-500 mt-1">Ideal for single-broker traders. Includes full T Assistant functionality and Risk Reward add-on tools.</p></div></div><div class="flex gap-3 p-4 rounded-xl bg-purple-50/60 border border-purple-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-500 text-white flex items-center justify-center text-sm font-bold">2</span><div><strong class="text-slate-700">Universal License</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold">$5,000 / year</span><p class="text-slate-500 mt-1">Preferred by professional traders. Unlimited brokers, unlimited accounts — the highest tier of access.</p></div></div></div><p>For full feature details and technical support, visit our <a href="pricing.html" class="font-semibold text-cyan-600 hover:text-cyan-500 underline underline-offset-2 transition-colors">Professional Licensing Plans</a> page.</p>`,
+                'faq4_a': `<p class="mb-3">Legitimate brokers may delay withdrawals for the following regulatory and operational reasons:</p><ul class="list-none space-y-3"><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">1</span><div><strong class="text-slate-700">Incomplete KYC Verification:</strong> ID or proof-of-address documents are expired, blurry, or do not match registration info.</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">2</span><div><strong class="text-slate-700">Withdrawal Path Mismatch (AML):</strong> Under international AML regulations, funds must be returned via the original deposit method. Card deposits require refund to the same card; only profits can be wired separately.</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">3</span><div><strong class="text-slate-700">Margin & Open Position Restrictions:</strong> If open positions reduce available margin, the platform may restrict withdrawals to prevent margin calls.</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">4</span><div><strong class="text-slate-700">Bank-Side Delays:</strong> International wire transfers pass through intermediary banks (typically 3–5 business days), and may be subject to overseas fund reviews.</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">5</span><div><strong class="text-slate-700">Bonus Conditions Not Met:</strong> If you accepted a deposit bonus, a minimum trading volume is usually required before that portion becomes withdrawable.</div></li></ul>`,
+                'faq5_a': `<div class="p-4 rounded-xl bg-red-50 border border-red-100"><p class="flex items-start gap-2 mb-3"><svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.57 0 2.55-1.7 1.77-3.06L13.77 4.44a2 2 0 00-3.54 0L3.3 15.94C2.52 17.3 3.5 19 5.07 19z"/></svg><strong class="text-red-700">Security Warning:</strong></p><p class="text-red-600 font-medium mb-3">If a platform demands you pay additional "taxes", "security deposits", or "data modification fees" <em>before</em> processing your withdrawal, this is a classic scam. Do NOT send any more funds.</p><ul class="space-y-2 text-red-600"><li class="flex items-start gap-2"><span class="text-red-400">•</span>Regulated brokers never charge withdrawal "unlock fees"</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>Legitimate taxes are deducted from your funds, not paid separately</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>Contact your local financial regulator immediately if you suspect fraud</li></ul></div>`
+            },
+            'zh-TW': {
+                'faq6_a': `<p class="mb-4">是的，根據您的交易需求，我們提供不同的授權方案。除了基礎功能外，進階的專業版 EA 系統是需要付費訂閱的。目前主要區分為兩種模式：</p><div class="space-y-3 mb-4"><div class="flex gap-3 p-4 rounded-xl bg-cyan-50/60 border border-cyan-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">1</span><div><strong class="text-slate-700">綁定指定平台方案</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 text-[10px] font-bold">每年 $1,000</span><p class="text-slate-500 mt-1">適合單一券商交易者，包含完整 T Assistant 功能與風險回報（Risk Reward）加值工具。</p></div></div><div class="flex gap-3 p-4 rounded-xl bg-purple-50/60 border border-purple-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-500 text-white flex items-center justify-center text-sm font-bold">2</span><div><strong class="text-slate-700">不綁定指定平台方案</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold">每年 $5,000</span><p class="text-slate-500 mt-1">專業交易員首選，提供不限券商、不限帳號數量的最高使用權限。</p></div></div></div><p>詳細的功能細節與技術支援諮詢，請參考我們的<a href="pricing.html" class="font-semibold text-cyan-600 hover:text-cyan-500 underline underline-offset-2 transition-colors">專業授權方案</a>頁面進行選購。</p>`,
+                'faq4_a': `<p class="mb-3">正規經紀商可能因以下監管與作業原因延遲出金：</p><ul class="list-none space-y-3"><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">1</span><div><strong class="text-slate-700">帳戶身分驗證 (KYC) 未完成：</strong>身分證或地址證明文件過期、模糊，或資訊與註冊時不符。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">2</span><div><strong class="text-slate-700">出金路徑不一致（反洗錢規定）：</strong>遵循國際反洗錢法，資金通常需「原路返回」。例如刷卡入金，本金需退回原卡片，獲利才可電匯。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">3</span><div><strong class="text-slate-700">持倉與保證金限制：</strong>若帳戶有未平倉訂單導致可用保證金不足，為防止爆倉，平台會限制出金。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">4</span><div><strong class="text-slate-700">銀行端延遲：</strong>國際電匯需經中轉行（約 3-5 個工作天），或受銀行海外資金審核影響。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">5</span><div><strong class="text-slate-700">贈金條款未達標：</strong>若領取開戶贈金，通常需達到指定交易手數才可提取該部分資金。</div></li></ul>`,
+                'faq5_a': `<div class="p-4 rounded-xl bg-red-50 border border-red-100"><p class="flex items-start gap-2 mb-3"><svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.57 0 2.55-1.7 1.77-3.06L13.77 4.44a2 2 0 00-3.54 0L3.3 15.94C2.52 17.3 3.5 19 5.07 19z"/></svg><strong class="text-red-700">安全警示：</strong></p><p class="text-red-600 font-medium mb-3">若平台要求您先繳納「稅金」、「保證金」或「資料修改費」才允許出金，即為<em>典型詐騙手法</em>，請勿繼續匯款！</p><ul class="space-y-2 text-red-600"><li class="flex items-start gap-2"><span class="text-red-400">•</span>正規經紀商絕不會收取出金「解鎖費」</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>合法稅金是從資金中扣除，不需額外支付</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>如有疑慮，請立即聯繫當地金融監管機構</li></ul></div>`
+            },
+            'zh-CN': {
+                'faq6_a': `<p class="mb-4">是的，根据您的交易需求，我们提供不同的授权方案。除了基础功能外，进阶的专业版 EA 系统是需要付费订阅的。目前主要区分为两种模式：</p><div class="space-y-3 mb-4"><div class="flex gap-3 p-4 rounded-xl bg-cyan-50/60 border border-cyan-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-sm font-bold">1</span><div><strong class="text-slate-700">绑定指定平台方案</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 text-[10px] font-bold">每年 $1,000</span><p class="text-slate-500 mt-1">适合单一券商交易者，包含完整 T Assistant 功能与风险回报（Risk Reward）增值工具。</p></div></div><div class="flex gap-3 p-4 rounded-xl bg-purple-50/60 border border-purple-100"><span class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-500 text-white flex items-center justify-center text-sm font-bold">2</span><div><strong class="text-slate-700">不绑定指定平台方案</strong><span class="ml-2 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold">每年 $5,000</span><p class="text-slate-500 mt-1">专业交易员首选，提供不限券商、不限账号数量的最高使用权限。</p></div></div></div><p>详细的功能细节与技术支持咨询，请参考我们的<a href="pricing.html" class="font-semibold text-cyan-600 hover:text-cyan-500 underline underline-offset-2 transition-colors">专业授权方案</a>页面进行选购。</p>`,
+                'faq4_a': `<p class="mb-3">正规经纪商可能因以下监管与操作原因延迟出金：</p><ul class="list-none space-y-3"><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">1</span><div><strong class="text-slate-700">账户身份验证 (KYC) 未完成：</strong>身份证或地址证明文件过期、模糊，或信息与注册时不符。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">2</span><div><strong class="text-slate-700">出金路径不一致（反洗钱规定）：</strong>遵循国际反洗钱法，资金通常需「原路返回」。例如刷卡入金，本金需退回原卡片，获利才可电汇。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">3</span><div><strong class="text-slate-700">持仓与保证金限制：</strong>若账户有未平仓订单导致可用保证金不足，为防止爆仓，平台会限制出金。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">4</span><div><strong class="text-slate-700">银行端延迟：</strong>国际电汇需经中转行（约 3-5 个工作天），或受银行海外资金审核影响。</div></li><li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs font-bold">5</span><div><strong class="text-slate-700">赠金条款未达标：</strong>若领取开户赠金，通常需达到指定交易手数才可提取该部分资金。</div></li></ul>`,
+                'faq5_a': `<div class="p-4 rounded-xl bg-red-50 border border-red-100"><p class="flex items-start gap-2 mb-3"><svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.57 0 2.55-1.7 1.77-3.06L13.77 4.44a2 2 0 00-3.54 0L3.3 15.94C2.52 17.3 3.5 19 5.07 19z"/></svg><strong class="text-red-700">安全警示：</strong></p><p class="text-red-600 font-medium mb-3">若平台要求您先缴纳「税金」、「保证金」或「资料修改费」才允许出金，即为<em>典型诈骗手法</em>，请勿继续汇款！</p><ul class="space-y-2 text-red-600"><li class="flex items-start gap-2"><span class="text-red-400">•</span>正规经纪商绝不会收取出金「解锁费」</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>合法税金是从资金中扣除，不需额外支付</li><li class="flex items-start gap-2"><span class="text-red-400">•</span>如有疑虑，请立即联系当地金融监管机构</li></ul></div>`
+            }
         };
 
         function changeLanguage(lang) {
@@ -256,13 +328,23 @@
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang]?.[key]) el.innerText = translations[lang][key];
             });
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (htmlTranslations[lang]?.[key]) el.innerHTML = htmlTranslations[lang][key];
+            });
             document.documentElement.lang = lang;
         }
 
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.getElementById('mobile-menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
         window.onload = () => {
-            initTickers();
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
         };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

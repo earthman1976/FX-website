@@ -10,13 +10,23 @@
         :root { --primary-cyan: #06B6D4; --primary-purple: #A855F7; --midnight-blue: #1E293B; --off-white: #F8FAFC; --color-tg: #26A5E4; --color-yt: #FF0000; --color-fb: #1877F2; --color-x: #000000; --color-ig: #E4405F; --color-wechat: #07C160; --color-whatsapp: #25D366; --color-linkedin: #0A66C2; }
         body { font-family: 'Inter', sans-serif; background-color: var(--off-white); color: var(--midnight-blue); overflow-x: hidden; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .ticker-wrap { width: 100%; overflow: hidden; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); white-space: nowrap; }
+        .ticker-wrap { width: 100%; overflow: hidden; background: #0f172a; backdrop-filter: blur(10px); border-bottom: none; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        @keyframes ticker-reverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        .ticker-reverse { display: inline-block; animation: ticker-reverse 40s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 0.85rem; font-weight: 500; }
         .lang-btn.active { color: var(--primary-cyan); font-weight: 700; }
         .logo-container img { max-height: 100%; width: auto; display: block; }
         .social-icon { width: 3.2rem; height: 3.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 2px solid #fff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
         .social-icon:hover { transform: scale(1.15) translateY(-8px); box-shadow: 0 20px 35px -10px rgba(0,0,0,0.25); }
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: #fff; z-index: 100; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.1); overflow-y: auto; }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { display: block; padding: 1rem 1.5rem; font-size: 0.95rem; font-weight: 600; color: #334155; border-bottom: 1px solid #f1f5f9; transition: all 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
+        .hamburger-btn { display: none; }
+        @media (max-width: 767px) { .hamburger-btn { display: flex; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -56,8 +66,40 @@
                 </div>
             </div>
         </div>
-        <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</button>
+        <div class="flex items-center gap-3">
+            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
     </nav>
+
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="flex items-center justify-between p-4 border-b border-slate-100">
+            <a href="index.html" class="logo-container"><img src="img/logo.jpg" alt="FX Spectrum" class="h-8 w-auto" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'text-lg font-bold tracking-tighter text-slate-800\'><span class=\'text-cyan-500\'>FX</span> SPECTRUM</div>';"></a>
+            <button onclick="toggleMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <nav class="py-2">
+            <a href="index.html" data-i18n="mobile_home">Home</a>
+            <a href="insights.html" data-i18n="nav_insights">Insights</a>
+            <a href="academy.html" data-i18n="nav_academy">Academy</a>
+            <a href="partners.html" data-i18n="nav_affiliate">Partners</a>
+            <a href="pricing.html" data-i18n="nav_pricing">Pricing</a>
+            <a href="about.html" data-i18n="nav_about">About Us</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-100">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <button onclick="changeLanguage('en');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">EN</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-TW');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">繁</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
+            </div>
+            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+        </div>
+    </div>
 
     <main class="flex-grow px-8 max-w-7xl mx-auto w-full pt-12 pb-24">
         <!-- Hero -->
@@ -159,6 +201,24 @@
                     <p data-i18n="team3_role" class="text-sm text-emerald-500 font-semibold mb-3">CMO & Co-Founder</p>
                     <p data-i18n="team3_desc" class="text-sm text-slate-500 leading-relaxed">Certified financial educator with 10+ years of teaching experience and a passion for trader development.</p>
                 </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold">B</div>
+                    <h4 class="font-bold text-slate-800 text-lg">Bella Weng</h4>
+                    <p data-i18n="team4_role" class="text-sm text-rose-500 font-semibold mb-3">PR Manager</p>
+                    <p data-i18n="team4_desc" class="text-sm text-slate-500 leading-relaxed">Experienced public relations strategist with a strong background in brand communications and media outreach.</p>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold">V</div>
+                    <h4 class="font-bold text-slate-800 text-lg">Vivian Chen</h4>
+                    <p data-i18n="team5_role" class="text-sm text-amber-500 font-semibold mb-3">CFO</p>
+                    <p data-i18n="team5_desc" class="text-sm text-slate-500 leading-relaxed">Seasoned finance executive with expertise in corporate financial planning, risk management, and regulatory compliance.</p>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-100 p-8 text-center hover:shadow-lg transition-all">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold">C</div>
+                    <h4 class="font-bold text-slate-800 text-lg">Candy Chang</h4>
+                    <p data-i18n="team6_role" class="text-sm text-sky-500 font-semibold mb-3">Senior HR Associate Director</p>
+                    <p data-i18n="team6_desc" class="text-sm text-slate-500 leading-relaxed">Dedicated HR leader specializing in talent acquisition, organizational development, and employee engagement strategies.</p>
+                </div>
             </div>
         </section>
 
@@ -196,6 +256,7 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
                     <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
+                    <li><a href="pricing.html" data-i18n="nav_pricing" class="hover:text-cyan-500 transition-colors">Pricing</a></li>
                 </ul>
             </div>
             <div class="md:pt-32 md:col-start-6">
@@ -203,38 +264,25 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="privacy.html" data-i18n="footer_privacy" class="hover:text-cyan-500 transition-colors">Privacy Policy</a></li>
                     <li><a href="risk-warning.html" data-i18n="footer_warning" class="hover:text-cyan-500 transition-colors">Risk Warning</a></li>
+                    <li><a href="platforms.html" data-i18n="footer_partners" class="hover:text-cyan-500 transition-colors">Partner Platforms</a></li>
+                    <li><a href="sponsors.html" data-i18n="footer_sponsors" class="hover:text-cyan-500 transition-colors">Sponsors</a></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex justify-center items-center text-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
             <span>© 2026 FX Spectrum Infotech Co., Ltd. All rights reserved.</span>
         </div>
     </footer>
 
     <div class="ticker-wrap fixed bottom-0 z-50 py-1.5 bg-slate-900 border-t-0">
-        <div id="bottom-ticker" class="ticker text-white opacity-60"></div>
+        <div id="bottom-ticker" class="ticker-reverse text-white"></div>
     </div>
 
     <script>
-        const marketData = [
-            { pair: 'EUR/USD', price: 1.0850, change: 0.12 }, { pair: 'GBP/USD', price: 1.2510, change: 0.18 },
-            { pair: 'USD/JPY', price: 149.30, change: -0.05 }, { pair: 'XAU/USD', price: 2024.15, change: -0.32 },
-            { pair: 'BTC/USDT', price: 62450, change: 1.45 }
-        ];
-
-        function initTickers() {
-            const topTicker = document.getElementById('top-ticker');
-            const bottomTicker = document.getElementById('bottom-ticker');
-            if (!topTicker || !bottomTicker) return;
-            const renderData = (data) => data.map(item => `<span class="ticker-item font-mono">${item.pair} <span>${item.price.toFixed(4)}</span> <span class="${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">${item.change >= 0 ? '+' : ''}${item.change.toFixed(2)}%</span></span>`).join('');
-            topTicker.innerHTML = renderData(marketData) + renderData(marketData);
-            bottomTicker.innerHTML = renderData([...marketData].reverse()) + renderData(marketData);
-        }
-
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'about_badge': 'Our Story', 'about_title_1': 'About ', 'about_title_2': 'FX Spectrum', 'about_desc': 'We are a team of trading professionals, AI engineers, and educators united by a single mission: making intelligent trading accessible to everyone.', 'about_vision_title': 'Our Vision', 'about_vision_desc': 'To become the world\'s most trusted AI-powered trading intelligence platform, bridging the gap between institutional-grade analysis and individual traders.', 'about_mission_title': 'Our Mission', 'about_mission_desc': 'Empower every trader with cutting-edge AI tools, reliable EA automation, and world-class education — regardless of experience level or capital size.', 'about_values_title': 'Core Values', 'value1_title': 'Innovation', 'value1_desc': 'Continuously pushing the boundaries of AI and trading technology.', 'value2_title': 'Transparency', 'value2_desc': 'Open and honest communication with our community at all times.', 'value3_title': 'Education', 'value3_desc': 'Empowering traders with knowledge is the foundation of success.', 'value4_title': 'Reliability', 'value4_desc': 'Delivering stable, tested tools and analysis traders can depend on.', 'stat_traders': 'Active Traders', 'stat_countries': 'Countries', 'stat_eas': 'Expert Advisors', 'stat_support': 'Support', 'about_team_title': 'Leadership Team', 'team1_role': 'Founder', 'team1_desc': '15+ years in forex trading and fintech. Former quantitative analyst at a top-tier investment bank.', 'team2_role': 'Sales Director & Co-Founder', 'team2_desc': 'AI/ML expert with a PhD in computational finance. Architect of our proprietary trading algorithms.', 'team3_role': 'CMO & Co-Founder', 'team3_desc': 'Certified financial educator with 10+ years of teaching experience and a passion for trader development.', 'about_contact_title': 'Get In Touch', 'about_contact_desc': 'Have questions or want to learn more? Reach out to our team via Telegram.', 'about_contact_btn': 'Contact Us' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'about_badge': '我們的故事', 'about_title_1': '關於 ', 'about_title_2': 'FX Spectrum', 'about_desc': '我們是一支由交易專家、AI 工程師與教育者組成的團隊，秉持同一使命：讓智能交易觸手可及。', 'about_vision_title': '我們的願景', 'about_vision_desc': '成為全球最受信賴的 AI 交易情報平台，消弭機構級分析與個人交易者之間的鴻溝。', 'about_mission_title': '我們的使命', 'about_mission_desc': '以尖端 AI 工具、可靠的 EA 自動化與世界級教育賦能每位交易者——不論經驗水平或資金規模。', 'about_values_title': '核心價值', 'value1_title': '創新', 'value1_desc': '持續突破 AI 與交易技術的極限。', 'value2_title': '透明', 'value2_desc': '始終與社群保持開放且誠實的溝通。', 'value3_title': '教育', 'value3_desc': '以知識賦能交易者是成功的基石。', 'value4_title': '可靠', 'value4_desc': '提供穩定、經過驗證的工具與分析，值得交易者信賴。', 'stat_traders': '活躍交易者', 'stat_countries': '國家地區', 'stat_eas': '智能交易系統', 'stat_support': '全天候支援', 'about_team_title': '領導團隊', 'team1_role': '創辦人', 'team1_desc': '超過 15 年外匯交易與金融科技經驗。曾任頂級投資銀行量化分析師。', 'team2_role': '業務總監暨共同創辦人', 'team2_desc': 'AI/ML 專家，計算金融學博士。我們專有交易演算法的架構師。', 'team3_role': '行銷執行長暨共同創辦人', 'team3_desc': '認證金融教育者，擁有 10 年以上教學經驗，致力於交易者成長發展。', 'about_contact_title': '聯繫我們', 'about_contact_desc': '有任何問題或想了解更多？透過 Telegram 聯繫我們的團隊。', 'about_contact_btn': '聯繫我們' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'about_badge': '我们的故事', 'about_title_1': '关于 ', 'about_title_2': 'FX Spectrum', 'about_desc': '我们是一支由交易专家、AI 工程师与教育者组成的团队，秉持同一使命：让智能交易触手可及。', 'about_vision_title': '我们的愿景', 'about_vision_desc': '成为全球最受信赖的 AI 交易情报平台，消弭机构级分析与个人交易者之间的鸿沟。', 'about_mission_title': '我们的使命', 'about_mission_desc': '以尖端 AI 工具、可靠的 EA 自动化与世界级教育赋能每位交易者——不论经验水平或资金规模。', 'about_values_title': '核心价值', 'value1_title': '创新', 'value1_desc': '持续突破 AI 与交易技术的极限。', 'value2_title': '透明', 'value2_desc': '始终与社群保持开放且诚实的沟通。', 'value3_title': '教育', 'value3_desc': '以知识赋能交易者是成功的基石。', 'value4_title': '可靠', 'value4_desc': '提供稳定、经过验证的工具与分析，值得交易者信赖。', 'stat_traders': '活跃交易者', 'stat_countries': '国家地区', 'stat_eas': '智能交易系统', 'stat_support': '全天候支持', 'about_team_title': '领导团队', 'team1_role': '创办人', 'team1_desc': '超过 15 年外汇交易与金融科技经验。曾任顶级投资银行量化分析师。', 'team2_role': '业务总监暨共同创办人', 'team2_desc': 'AI/ML 专家，计算金融学博士。我们专有交易算法的架构师。', 'team3_role': '行销执行长暨共同创办人', 'team3_desc': '认证金融教育者，拥有 10 年以上教学经验，致力于交易者成长发展。', 'about_contact_title': '联系我们', 'about_contact_desc': '有任何问题或想了解更多？通过 Telegram 联系我们的团队。', 'about_contact_btn': '联系我们' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'about_badge': 'Our Story', 'about_title_1': 'About ', 'about_title_2': 'FX Spectrum', 'about_desc': 'We are a team of trading professionals, AI engineers, and educators united by a single mission: making intelligent trading accessible to everyone.', 'about_vision_title': 'Our Vision', 'about_vision_desc': 'To become the world\'s most trusted AI-powered trading intelligence platform, bridging the gap between institutional-grade analysis and individual traders.', 'about_mission_title': 'Our Mission', 'about_mission_desc': 'Empower every trader with cutting-edge AI tools, reliable EA automation, and world-class education — regardless of experience level or capital size.', 'about_values_title': 'Core Values', 'value1_title': 'Innovation', 'value1_desc': 'Continuously pushing the boundaries of AI and trading technology.', 'value2_title': 'Transparency', 'value2_desc': 'Open and honest communication with our community at all times.', 'value3_title': 'Education', 'value3_desc': 'Empowering traders with knowledge is the foundation of success.', 'value4_title': 'Reliability', 'value4_desc': 'Delivering stable, tested tools and analysis traders can depend on.', 'stat_traders': 'Active Traders', 'stat_countries': 'Countries', 'stat_eas': 'Expert Advisors', 'stat_support': 'Support', 'about_team_title': 'Leadership Team', 'team1_role': 'Founder', 'team1_desc': '15+ years in forex trading and fintech. Former quantitative analyst at a top-tier investment bank.', 'team2_role': 'Sales Director & Co-Founder', 'team2_desc': 'AI/ML expert with a PhD in computational finance. Architect of our proprietary trading algorithms.', 'team3_role': 'CMO & Co-Founder', 'team3_desc': 'Certified financial educator with 10+ years of teaching experience and a passion for trader development.', 'team4_role': 'PR Manager', 'team4_desc': 'Experienced public relations strategist with a strong background in brand communications and media outreach.', 'team5_role': 'CFO', 'team5_desc': 'Seasoned finance executive with expertise in corporate financial planning, risk management, and regulatory compliance.', 'team6_role': 'Senior HR Associate Director', 'team6_desc': 'Dedicated HR leader specializing in talent acquisition, organizational development, and employee engagement strategies.', 'about_contact_title': 'Get In Touch', 'about_contact_desc': 'Have questions or want to learn more? Reach out to our team via Telegram.', 'about_contact_btn': 'Contact Us' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'about_badge': '我們的故事', 'about_title_1': '關於 ', 'about_title_2': 'FX Spectrum', 'about_desc': '我們是一支由交易專家、AI 工程師與教育者組成的團隊，秉持同一使命：讓智能交易觸手可及。', 'about_vision_title': '我們的願景', 'about_vision_desc': '成為全球最受信賴的 AI 交易情報平台，消弭機構級分析與個人交易者之間的鴻溝。', 'about_mission_title': '我們的使命', 'about_mission_desc': '以尖端 AI 工具、可靠的 EA 自動化與世界級教育賦能每位交易者——不論經驗水平或資金規模。', 'about_values_title': '核心價值', 'value1_title': '創新', 'value1_desc': '持續突破 AI 與交易技術的極限。', 'value2_title': '透明', 'value2_desc': '始終與社群保持開放且誠實的溝通。', 'value3_title': '教育', 'value3_desc': '以知識賦能交易者是成功的基石。', 'value4_title': '可靠', 'value4_desc': '提供穩定、經過驗證的工具與分析，值得交易者信賴。', 'stat_traders': '活躍交易者', 'stat_countries': '國家地區', 'stat_eas': '智能交易系統', 'stat_support': '全天候支援', 'about_team_title': '領導團隊', 'team1_role': '創辦人', 'team1_desc': '超過 15 年外匯交易與金融科技經驗。曾任頂級投資銀行量化分析師。', 'team2_role': '業務總監暨共同創辦人', 'team2_desc': 'AI/ML 專家，計算金融學博士。我們專有交易演算法的架構師。', 'team3_role': '行銷執行長暨共同創辦人', 'team3_desc': '認證金融教育者，擁有 10 年以上教學經驗，致力於交易者成長發展。', 'team4_role': '公關經理', 'team4_desc': '資深公關策略專家，擅長品牌傳播與媒體關係經營。', 'team5_role': '財務長', 'team5_desc': '資深財務主管，專精企業財務規劃、風險管理與法規合規。', 'team6_role': '資深人資協理', 'team6_desc': '專注人才招募、組織發展與員工關係經營的資深人資協理。', 'about_contact_title': '聯繫我們', 'about_contact_desc': '有任何問題或想了解更多？透過 Telegram 聯繫我們的團隊。', 'about_contact_btn': '聯繫我們' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'about_badge': '我们的故事', 'about_title_1': '关于 ', 'about_title_2': 'FX Spectrum', 'about_desc': '我们是一支由交易专家、AI 工程师与教育者组成的团队，秉持同一使命：让智能交易触手可及。', 'about_vision_title': '我们的愿景', 'about_vision_desc': '成为全球最受信赖的 AI 交易情报平台，消弭机构级分析与个人交易者之间的鸿沟。', 'about_mission_title': '我们的使命', 'about_mission_desc': '以尖端 AI 工具、可靠的 EA 自动化与世界级教育赋能每位交易者——不论经验水平或资金规模。', 'about_values_title': '核心价值', 'value1_title': '创新', 'value1_desc': '持续突破 AI 与交易技术的极限。', 'value2_title': '透明', 'value2_desc': '始终与社群保持开放且诚实的沟通。', 'value3_title': '教育', 'value3_desc': '以知识赋能交易者是成功的基石。', 'value4_title': '可靠', 'value4_desc': '提供稳定、经过验证的工具与分析，值得交易者信赖。', 'stat_traders': '活跃交易者', 'stat_countries': '国家地区', 'stat_eas': '智能交易系统', 'stat_support': '全天候支持', 'about_team_title': '领导团队', 'team1_role': '创办人', 'team1_desc': '超过 15 年外汇交易与金融科技经验。曾任顶级投资银行量化分析师。', 'team2_role': '业务总监暨共同创办人', 'team2_desc': 'AI/ML 专家，计算金融学博士。我们专有交易算法的架构师。', 'team3_role': '行销执行长暨共同创办人', 'team3_desc': '认证金融教育者，拥有 10 年以上教学经验，致力于交易者成长发展。', 'team4_role': '公关经理', 'team4_desc': '资深公关策略专家，擅长品牌传播与媒体关系经营。', 'team5_role': '财务长', 'team5_desc': '资深财务主管，专精企业财务规划、风险管理与法规合规。', 'team6_role': '资深人资协理', 'team6_desc': '专注人才招募、组织发展与员工关系经营的资深人资协理。', 'about_contact_title': '联系我们', 'about_contact_desc': '有任何问题或想了解更多？通过 Telegram 联系我们的团队。', 'about_contact_btn': '联系我们' }
         };
 
         function changeLanguage(lang) {
@@ -248,10 +296,16 @@
             document.documentElement.lang = lang;
         }
 
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.getElementById('mobile-menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
         window.onload = () => {
-            initTickers();
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
         };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

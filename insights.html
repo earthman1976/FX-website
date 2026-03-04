@@ -10,15 +10,96 @@
         :root { --primary-cyan: #06B6D4; --primary-purple: #A855F7; --midnight-blue: #1E293B; --off-white: #F8FAFC; --color-tg: #26A5E4; --color-yt: #FF0000; --color-fb: #1877F2; --color-x: #000000; --color-ig: #E4405F; --color-wechat: #07C160; --color-whatsapp: #25D366; --color-linkedin: #0A66C2; }
         body { font-family: 'Inter', sans-serif; background-color: var(--off-white); color: var(--midnight-blue); overflow-x: hidden; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .ticker-wrap { width: 100%; overflow: hidden; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); white-space: nowrap; }
+        .ticker-wrap { width: 100%; overflow: hidden; background: #0f172a; backdrop-filter: blur(10px); border-bottom: none; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        @keyframes ticker-reverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        .ticker-reverse { display: inline-block; animation: ticker-reverse 40s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 0.85rem; font-weight: 500; }
         .lang-btn.active { color: var(--primary-cyan); font-weight: 700; }
         .logo-container img { max-height: 100%; width: auto; display: block; }
         .social-icon { width: 3.2rem; height: 3.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 2px solid #fff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
         .social-icon:hover { transform: scale(1.15) translateY(-8px); box-shadow: 0 20px 35px -10px rgba(0,0,0,0.25); }
+        .market-tab { padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid #e2e8f0; background: #fff; color: #64748b; transition: all 0.25s ease; letter-spacing: 0.03em; }
+        .market-tab:hover { border-color: #06B6D4; color: #06B6D4; }
+        .market-tab.active { background: linear-gradient(135deg, #06B6D4, #A855F7); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(6,182,212,0.25); }
+        .market-section { margin-bottom: 1.5rem; }
+        .market-section-title { font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px; }
         .insight-card { border-radius: 24px; padding: 2rem; transition: all 0.3s ease; }
         .insight-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+
+        @keyframes cardPulse {
+            0% { box-shadow: 0 0 0 0 rgba(6,182,212,0.35); }
+            50% { box-shadow: 0 0 18px 4px rgba(6,182,212,0.15); }
+            100% { box-shadow: 0 0 0 0 rgba(6,182,212,0); }
+        }
+        @keyframes priceFlash {
+            0% { color: inherit; }
+            30% { color: #06B6D4; }
+            100% { color: inherit; }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .market-card { position: relative; transition: all 0.3s ease; }
+        .market-card.card-updating { animation: cardPulse 0.8s ease-out; }
+        .market-card .price-flash { animation: priceFlash 0.8s ease-out; }
+        .market-card.card-loading .market-card-price {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .market-card .sync-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+        .sync-dot.live { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+        .sync-dot.cached { background: #f59e0b; }
+        .sync-dot.offline { background: #94a3b8; }
+
+        .analysis-card { transition: all 0.4s ease; opacity: 0; transform: translateY(12px); }
+        .analysis-card.visible { opacity: 1; transform: translateY(0); }
+
+        .fa-carousel-wrap { position: relative; overflow: hidden; min-height: 180px; }
+        .fa-card { position: absolute; top: 0; width: calc(50% - 1rem); opacity: 0; transform: translateX(60px); transition: opacity 0.5s ease, transform 0.5s ease; pointer-events: none; }
+        .fa-card.slot-left  { left: 0; }
+        .fa-card.slot-right { left: calc(50% + 1rem); }
+        .fa-card.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .fa-card.exit-left { opacity: 0; transform: translateX(-60px); }
+        @media (max-width: 767px) {
+            .fa-carousel-wrap { min-height: 360px; }
+            .fa-card { width: 100%; }
+            .fa-card.slot-left  { left: 0; top: 0; }
+            .fa-card.slot-right { left: 0; top: 190px; }
+        }
+        .fa-tag { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; }
+        .fa-impact { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; font-size: 10px; font-weight: 600; }
+        .fa-impact-dot { width: 5px; height: 5px; border-radius: 50%; }
+        .fa-sync-bar { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+        .fa-progress { flex: 1; height: 2px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+        .fa-progress-fill { height: 100%; background: linear-gradient(90deg, #06B6D4, #A855F7); border-radius: 2px; transition: width 0.3s linear; }
+        @keyframes calCountdown { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes calImpactPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { transform: scale(1.3); box-shadow: 0 0 6px 2px rgba(239,68,68,0.2); } }
+        @keyframes calRowFlash { 0% { background: rgba(239,68,68,0.08); } 100% { background: transparent; } }
+        .cal-row { transition: background 0.3s ease; }
+        .cal-row:hover { background: rgba(6,182,212,0.04); }
+        .cal-row.imminent { background: rgba(239,68,68,0.04); }
+        .cal-row.released { background: rgba(34,197,94,0.04); }
+        .cal-row.flash-release { animation: calRowFlash 1.5s ease-out; }
+        .cal-countdown { font-variant-numeric: tabular-nums; animation: calCountdown 2s ease-in-out infinite; }
+        .cal-dot-pulse { animation: calImpactPulse 1.2s ease-in-out infinite; }
+        .cal-asset-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; margin: 1px; }
+        .cal-actual-badge { display: inline-block; padding: 1px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700; }
+        .ticker-alert { animation-duration: 18s !important; }
+        .ticker-alert-color .ticker-item { color: #fbbf24 !important; }
+        @keyframes analysisPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .analysis-loading { animation: analysisPulse 1.5s ease-in-out infinite; }
+        .mobile-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: #fff; z-index: 100; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.1); overflow-y: auto; }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { display: block; padding: 1rem 1.5rem; font-size: 0.95rem; font-weight: 600; color: #334155; border-bottom: 1px solid #f1f5f9; transition: all 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
+        .hamburger-btn { display: none; }
+        @media (max-width: 767px) { .hamburger-btn { display: flex; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -58,8 +139,40 @@
                 </div>
             </div>
         </div>
-        <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</button>
+        <div class="flex items-center gap-3">
+            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
     </nav>
+
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="flex items-center justify-between p-4 border-b border-slate-100">
+            <a href="index.html" class="logo-container"><img src="img/logo.jpg" alt="FX Spectrum" class="h-8 w-auto" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'text-lg font-bold tracking-tighter text-slate-800\'><span class=\'text-cyan-500\'>FX</span> SPECTRUM</div>';"></a>
+            <button onclick="toggleMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <nav class="py-2">
+            <a href="index.html" data-i18n="mobile_home">Home</a>
+            <a href="insights.html" data-i18n="nav_insights">Insights</a>
+            <a href="academy.html" data-i18n="nav_academy">Academy</a>
+            <a href="partners.html" data-i18n="nav_affiliate">Partners</a>
+            <a href="pricing.html" data-i18n="nav_pricing">Pricing</a>
+            <a href="about.html" data-i18n="nav_about">About Us</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-100">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                <button onclick="changeLanguage('en');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">EN</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-TW');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">繁</button>
+                <span class="text-slate-300">|</span>
+                <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
+            </div>
+            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+        </div>
+    </div>
 
     <main class="flex-grow px-8 max-w-7xl mx-auto w-full pt-12 pb-24">
         <!-- Hero -->
@@ -74,114 +187,60 @@
 
         <!-- 即時行情卡片 -->
         <section class="mb-20">
-            <h2 data-i18n="insights_live_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Live Market Overview</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="market-cards"></div>
+            <h2 data-i18n="insights_live_title" class="text-2xl font-bold text-slate-800 mb-6 tracking-tight">Live Market Overview</h2>
+            <div class="flex flex-wrap gap-2 mb-6" id="market-tabs"></div>
+            <div id="market-cards"></div>
         </section>
 
-        <!-- 技術分析 -->
+        <!-- 技術分析（AI 自動分析） -->
         <section class="mb-20">
-            <h2 data-i18n="insights_ta_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Technical Analysis</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="insight-card bg-white border border-slate-100">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">EUR/USD</span>
-                    </div>
-                    <h3 data-i18n="ta_eurusd_title" class="text-lg font-bold text-slate-800 mb-2">Bullish Channel Intact</h3>
-                    <p data-i18n="ta_eurusd_desc" class="text-sm text-slate-500 leading-relaxed">Price holding above the 1.0820 support zone with RSI divergence suggesting continuation to the upside. Key resistance at 1.0920.</p>
-                    <div class="mt-4 flex items-center space-x-2">
-                        <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase">Bullish</span>
-                        <span class="text-[10px] text-slate-400">2026-03-03</span>
-                    </div>
+            <div class="flex items-center justify-between mb-8">
+                <h2 data-i18n="insights_ta_title" class="text-2xl font-bold text-slate-800 tracking-tight">Technical Analysis</h2>
+                <div id="analysis-sync-status" class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100">
+                    <span class="relative flex h-2 w-2"><span class="analysis-sync-ping animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="analysis-sync-dot relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>
+                    <span id="analysis-sync-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AI Syncing...</span>
                 </div>
-                <div class="insight-card bg-white border border-slate-100">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-yellow-50 text-yellow-500 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg></div>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">XAU/USD</span>
-                    </div>
-                    <h3 data-i18n="ta_gold_title" class="text-lg font-bold text-slate-800 mb-2">Consolidation Near Highs</h3>
-                    <p data-i18n="ta_gold_desc" class="text-sm text-slate-500 leading-relaxed">Gold trades in a tight range between $2,010 and $2,040. MACD histogram flattening, awaiting NFP catalyst for breakout direction.</p>
-                    <div class="mt-4 flex items-center space-x-2">
-                        <span class="px-3 py-1 rounded-full bg-yellow-50 text-yellow-600 text-[10px] font-bold uppercase">Neutral</span>
-                        <span class="text-[10px] text-slate-400">2026-03-03</span>
-                    </div>
-                </div>
-                <div class="insight-card bg-white border border-slate-100">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg></div>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">BTC/USDT</span>
-                    </div>
-                    <h3 data-i18n="ta_btc_title" class="text-lg font-bold text-slate-800 mb-2">Breakout Above $62K</h3>
-                    <p data-i18n="ta_btc_desc" class="text-sm text-slate-500 leading-relaxed">Bitcoin cleared the descending trendline with strong volume. Next target $65,000 with support now established at $60,500.</p>
-                    <div class="mt-4 flex items-center space-x-2">
-                        <span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase">Bullish</span>
-                        <span class="text-[10px] text-slate-400">2026-03-03</span>
-                    </div>
-                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6" id="analysis-cards">
+                <!-- Populated dynamically by JS -->
             </div>
         </section>
 
         <!-- 基本面分析 -->
         <section class="mb-20">
-            <h2 data-i18n="insights_fa_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Fundamental Analysis</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="insight-card bg-gradient-to-br from-slate-50 to-white border border-slate-100">
-                    <span class="text-[10px] font-bold text-cyan-500 uppercase tracking-widest">FED Watch</span>
-                    <h3 data-i18n="fa_fed_title" class="text-xl font-bold text-slate-800 mt-3 mb-3">Fed Rate Decision Ahead</h3>
-                    <p data-i18n="fa_fed_desc" class="text-sm text-slate-500 leading-relaxed">Markets are pricing in a 72% probability of a rate hold at the upcoming FOMC meeting. Key focus on Chair Powell's forward guidance commentary and updated dot plot projections.</p>
-                    <div class="mt-6 flex items-center space-x-4">
-                        <span class="px-3 py-1 rounded-full bg-cyan-50 text-cyan-600 text-[10px] font-bold">FOMC</span>
-                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">USD Impact</span>
-                    </div>
+            <div class="flex items-center justify-between mb-8">
+                <h2 data-i18n="insights_fa_title" class="text-2xl font-bold text-slate-800 tracking-tight">Fundamental Analysis</h2>
+                <div class="flex items-center gap-2">
+                    <span id="fa-sync-dot" class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="fa-sync-label" class="text-[10px] text-slate-400 font-mono">Loading...</span>
                 </div>
-                <div class="insight-card bg-gradient-to-br from-slate-50 to-white border border-slate-100">
-                    <span class="text-[10px] font-bold text-purple-500 uppercase tracking-widest">Macro</span>
-                    <h3 data-i18n="fa_macro_title" class="text-xl font-bold text-slate-800 mt-3 mb-3">EU PMI Signals Recovery</h3>
-                    <p data-i18n="fa_macro_desc" class="text-sm text-slate-500 leading-relaxed">Eurozone Manufacturing PMI rose to 48.7, signaling a slower pace of contraction. Services sector remains expansionary at 52.3, supporting EUR strength against the dollar.</p>
-                    <div class="mt-6 flex items-center space-x-4">
-                        <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-[10px] font-bold">PMI</span>
-                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">EUR Impact</span>
-                    </div>
-                </div>
+            </div>
+            <div id="fa-carousel" class="fa-carousel-wrap"></div>
+            <div class="fa-sync-bar">
+                <span id="fa-page-label" class="text-[10px] text-slate-400 font-mono whitespace-nowrap">1 / 1</span>
+                <div class="fa-progress"><div id="fa-progress-fill" class="fa-progress-fill" style="width:0%"></div></div>
+                <span id="fa-timer-label" class="text-[10px] text-slate-400 font-mono whitespace-nowrap">15s</span>
             </div>
         </section>
 
         <!-- 經濟日曆 -->
         <section>
-            <h2 data-i18n="insights_calendar_title" class="text-2xl font-bold text-slate-800 mb-8 tracking-tight">Economic Calendar</h2>
+            <div class="flex items-center justify-between mb-8">
+                <h2 data-i18n="insights_calendar_title" class="text-2xl font-bold text-slate-800 tracking-tight">Economic Calendar</h2>
+                <div class="flex items-center gap-2">
+                    <span id="cal-sync-dot" class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="cal-sync-label" class="text-[10px] text-slate-400 font-mono">Loading...</span>
+                </div>
+            </div>
             <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
-                <div class="grid grid-cols-4 gap-4 px-6 py-4 bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <div class="grid grid-cols-6 gap-2 px-6 py-4 bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     <span data-i18n="cal_time">Time</span>
-                    <span data-i18n="cal_event">Event</span>
+                    <span data-i18n="cal_event" class="col-span-2">Event</span>
                     <span data-i18n="cal_currency">Currency</span>
+                    <span data-i18n="cal_vals">Actual / Forecast</span>
                     <span data-i18n="cal_impact">Impact</span>
                 </div>
-                <div class="divide-y divide-slate-50">
-                    <div class="grid grid-cols-4 gap-4 px-6 py-4 text-sm items-center">
-                        <span class="text-slate-500 font-mono">08:30 EST</span>
-                        <span class="text-slate-700 font-medium">Non-Farm Payrolls</span>
-                        <span class="text-slate-500">USD</span>
-                        <div class="flex space-x-1"><span class="w-2 h-2 rounded-full bg-red-500"></span><span class="w-2 h-2 rounded-full bg-red-500"></span><span class="w-2 h-2 rounded-full bg-red-500"></span></div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-4 px-6 py-4 text-sm items-center">
-                        <span class="text-slate-500 font-mono">10:00 EST</span>
-                        <span class="text-slate-700 font-medium">ISM Services PMI</span>
-                        <span class="text-slate-500">USD</span>
-                        <div class="flex space-x-1"><span class="w-2 h-2 rounded-full bg-orange-500"></span><span class="w-2 h-2 rounded-full bg-orange-500"></span><span class="w-2 h-2 rounded-full bg-slate-200"></span></div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-4 px-6 py-4 text-sm items-center">
-                        <span class="text-slate-500 font-mono">14:00 EST</span>
-                        <span class="text-slate-700 font-medium">ECB Rate Decision</span>
-                        <span class="text-slate-500">EUR</span>
-                        <div class="flex space-x-1"><span class="w-2 h-2 rounded-full bg-red-500"></span><span class="w-2 h-2 rounded-full bg-red-500"></span><span class="w-2 h-2 rounded-full bg-red-500"></span></div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-4 px-6 py-4 text-sm items-center">
-                        <span class="text-slate-500 font-mono">19:30 EST</span>
-                        <span class="text-slate-700 font-medium">BOJ Policy Statement</span>
-                        <span class="text-slate-500">JPY</span>
-                        <div class="flex space-x-1"><span class="w-2 h-2 rounded-full bg-orange-500"></span><span class="w-2 h-2 rounded-full bg-orange-500"></span><span class="w-2 h-2 rounded-full bg-slate-200"></span></div>
-                    </div>
-                </div>
+                <div id="cal-events-body" class="divide-y divide-slate-50"></div>
             </div>
         </section>
     </main>
@@ -212,6 +271,7 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
                     <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
+                    <li><a href="pricing.html" data-i18n="nav_pricing" class="hover:text-cyan-500 transition-colors">Pricing</a></li>
                 </ul>
             </div>
             <div class="md:pt-32 md:col-start-6">
@@ -219,58 +279,1332 @@
                 <ul class="space-y-6 text-sm text-slate-500 font-medium">
                     <li><a href="privacy.html" data-i18n="footer_privacy" class="hover:text-cyan-500 transition-colors">Privacy Policy</a></li>
                     <li><a href="risk-warning.html" data-i18n="footer_warning" class="hover:text-cyan-500 transition-colors">Risk Warning</a></li>
+                    <li><a href="platforms.html" data-i18n="footer_partners" class="hover:text-cyan-500 transition-colors">Partner Platforms</a></li>
+                    <li><a href="sponsors.html" data-i18n="footer_sponsors" class="hover:text-cyan-500 transition-colors">Sponsors</a></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-slate-100 flex justify-center items-center text-center text-[11px] text-slate-400 uppercase tracking-widest font-semibold">
             <span>© 2026 FX Spectrum Infotech Co., Ltd. All rights reserved.</span>
         </div>
     </footer>
 
     <div class="ticker-wrap fixed bottom-0 z-50 py-1.5 bg-slate-900 border-t-0">
-        <div id="bottom-ticker" class="ticker text-white opacity-60"></div>
+        <div id="bottom-ticker" class="ticker-reverse text-white"></div>
     </div>
 
     <script>
-        const marketData = [
-            { pair: 'EUR/USD', price: 1.0850, change: 0.12, icon: '💶' },
-            { pair: 'GBP/USD', price: 1.2510, change: 0.18, icon: '💷' },
-            { pair: 'USD/JPY', price: 149.30, change: -0.05, icon: '💴' },
-            { pair: 'XAU/USD', price: 2024.15, change: -0.32, icon: '🥇' },
-            { pair: 'BTC/USDT', price: 62450, change: 1.45, icon: '₿' },
-            { pair: 'US Tech 100', price: 18245, change: 0.78, icon: '📈' },
-            { pair: 'USD/CHF', price: 0.8790, change: -0.15, icon: '🇨🇭' },
-            { pair: 'AUD/USD', price: 0.6530, change: 0.22, icon: '🇦🇺' }
+        const ICON_MAP = {
+            'EUR/USD': '💶', 'GBP/USD': '💷', 'USD/JPY': '💴',
+            'XAU/USD': '🥇', 'XAG/USD': '🥈', 'XPD/USD': '⬜',
+            'BTC/USD': '₿', 'ETH/USD': 'Ξ', 'BNB/USD': '🔶', 'USDT/USD': '💲',
+            'US Tech 100': '📈', 'DOW JONES': '🏛️', 'NIKKEI 225': '🗼',
+            'DAX': '🇩🇪', 'TAIEX': '🇹🇼',
+            'USD/CHF': '🇨🇭', 'AUD/USD': '🇦🇺'
+        };
+
+        const MARKET_CATEGORIES = {
+            metals:  { label: { en: 'Precious Metals', 'zh-TW': '貴金屬', 'zh-CN': '贵金属' }, icon: '🥇', symbols: ['XAU/USD', 'XAG/USD', 'XPD/USD'] },
+            forex:   { label: { en: 'Forex', 'zh-TW': '外匯', 'zh-CN': '外汇' }, icon: '💱', symbols: ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF'] },
+            crypto:  { label: { en: 'Crypto', 'zh-TW': '虛擬貨幣', 'zh-CN': '虚拟货币' }, icon: '₿', symbols: ['BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD'] },
+            stocks:  { label: { en: 'Stock Market', 'zh-TW': '股市', 'zh-CN': '股市' }, icon: '📊', symbols: ['US Tech 100', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'] }
+        };
+
+        const DISPLAY_ORDER = [
+            'XAU/USD', 'XAG/USD', 'XPD/USD',
+            'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF',
+            'BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD',
+            'US Tech 100', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'
         ];
 
-        function initMarketCards() {
-            const container = document.getElementById('market-cards');
-            if (!container) return;
-            container.innerHTML = marketData.map(item => `
-                <div class="bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-lg transition-all">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-2xl">${item.icon}</span>
-                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${item.change >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}">${item.change >= 0 ? '+' : ''}${item.change}%</span>
-                    </div>
-                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">${item.pair}</div>
-                    <div class="text-2xl font-bold text-slate-800">${item.price.toLocaleString('en-US', {minimumFractionDigits: item.price < 100 ? 4 : 2})}</div>
-                </div>
-            `).join('');
+        const staticMarketData = [
+            { pair: 'AUD/USD', price: 0.6530, change: 0.22, decimals: 4 },
+            { pair: 'USD/CHF', price: 0.8790, change: -0.15, decimals: 4 },
+            { pair: 'XAG/USD', price: 24.85, change: 0.45, decimals: 2 },
+            { pair: 'XPD/USD', price: 1025.00, change: -0.18, decimals: 2 },
+            { pair: 'BNB/USD', price: 580.50, change: 0.62, decimals: 2 },
+            { pair: 'USDT/USD', price: 1.0001, change: 0.01, decimals: 4 },
+            { pair: 'US Tech 100', price: 18245, change: 0.78, decimals: 0 },
+            { pair: 'DOW JONES', price: 39872, change: 0.35, decimals: 0 },
+            { pair: 'NIKKEI 225', price: 40120, change: -0.42, decimals: 0 },
+            { pair: 'DAX', price: 18350, change: 0.55, decimals: 0 },
+            { pair: 'TAIEX', price: 20315, change: 0.28, decimals: 0 }
+        ];
+
+        let currentSyncSource = 'offline';
+
+        function formatPrice(price, decimals) {
+            const dec = decimals ?? (price < 100 ? 4 : 2);
+            return price.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
         }
 
-        function initTickers() {
-            const topTicker = document.getElementById('top-ticker');
-            const bottomTicker = document.getElementById('bottom-ticker');
-            if (!topTicker || !bottomTicker) return;
-            const renderData = (data) => data.map(item => `<span class="ticker-item font-mono">${item.pair} <span>${item.price.toFixed(4)}</span> <span class="${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">${item.change >= 0 ? '+' : ''}${item.change.toFixed(2)}%</span></span>`).join('');
-            topTicker.innerHTML = renderData(marketData) + renderData(marketData);
-            bottomTicker.innerHTML = renderData([...marketData].reverse()) + renderData(marketData);
+        function buildCardHTML(item, loading) {
+            const icon = ICON_MAP[item.pair] || '📊';
+            const dec = item.decimals ?? (item.price < 100 ? 4 : 2);
+            const changeColor = item.change >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600';
+            const sign = item.change >= 0 ? '+' : '';
+            const loadingClass = loading ? ' card-loading' : '';
+            return `<div class="market-card bg-white rounded-xl border border-slate-100 p-4 hover:shadow-lg transition-all${loadingClass}" data-pair="${item.pair}">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xl">${icon}</span>
+                        <span class="market-card-change px-2 py-0.5 rounded-full text-[10px] font-bold ${changeColor}">${sign}${item.change}%</span>
+                    </div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">${item.pair}</div>
+                    <div class="market-card-price text-lg font-bold text-slate-800 font-mono">${formatPrice(item.price, dec)}</div>
+                    <div class="mt-2 flex items-center">
+                        <span class="sync-dot ${currentSyncSource}"></span>
+                        <span class="market-card-sync text-[8px] text-slate-400 font-medium">${getSyncLabel()}</span>
+                    </div>
+                </div>`;
+        }
+
+        function getSyncLabel() {
+            if (currentSyncSource === 'live') return 'Live · Synced';
+            if (currentSyncSource === 'cached') return 'Cached';
+            return 'Syncing...';
+        }
+
+        let activeMarketTab = 'all';
+
+        function buildTabsHTML() {
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const allLabel = { en: 'All', 'zh-TW': '全部', 'zh-CN': '全部' };
+            let html = `<button class="market-tab active" data-tab="all" onclick="switchMarketTab('all')">${allLabel[lang] || 'All'}</button>`;
+            Object.entries(MARKET_CATEGORIES).forEach(([key, cat]) => {
+                const label = cat.label[lang] || cat.label.en;
+                html += `<button class="market-tab" data-tab="${key}" onclick="switchMarketTab('${key}')">${cat.icon} ${label}</button>`;
+            });
+            return html;
+        }
+
+        function switchMarketTab(tab) {
+            activeMarketTab = tab;
+            document.querySelectorAll('.market-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            renderMarketCards(null, false);
+        }
+
+        function renderMarketCards(data, loading) {
+            const container = document.getElementById('market-cards');
+            const tabsContainer = document.getElementById('market-tabs');
+            if (!container) return;
+
+            if (tabsContainer && !tabsContainer.innerHTML) tabsContainer.innerHTML = buildTabsHTML();
+
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const allData = getFullMarketData(data);
+
+            if (activeMarketTab === 'all') {
+                let html = '';
+                Object.entries(MARKET_CATEGORIES).forEach(([key, cat]) => {
+                    const catLabel = cat.label[lang] || cat.label.en;
+                    const catItems = cat.symbols.map(s => allData.find(d => d.pair === s)).filter(Boolean);
+                    if (catItems.length === 0) return;
+                    html += `<div class="market-section" data-cat="${key}">
+                        <div class="market-section-title"><span>${cat.icon}</span> ${catLabel}</div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            ${catItems.map(item => buildCardHTML(item, loading)).join('')}
+                        </div>
+                    </div>`;
+                });
+                container.innerHTML = html;
+            } else {
+                const cat = MARKET_CATEGORIES[activeMarketTab];
+                if (!cat) return;
+                const catLabel = cat.label[lang] || cat.label.en;
+                const catItems = cat.symbols.map(s => allData.find(d => d.pair === s)).filter(Boolean);
+                container.innerHTML = `<div class="market-section" data-cat="${activeMarketTab}">
+                    <div class="market-section-title"><span>${cat.icon}</span> ${catLabel}</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        ${catItems.map(item => buildCardHTML(item, loading)).join('')}
+                    </div>
+                </div>`;
+            }
+        }
+
+        function getFullMarketData(liveData) {
+            const live = liveData || window.fxSpectrumTickerData || [];
+            const liveArr = Array.isArray(live) ? live : [];
+            const merged = new Map();
+            staticMarketData.forEach(d => merged.set(d.pair, d));
+            liveArr.forEach(d => { if (d.pair) merged.set(d.pair, d); });
+            return sortByDisplayOrder([...merged.values()]);
+        }
+
+        function updateMarketCards(data, animate) {
+            const container = document.getElementById('market-cards');
+            if (!container) return;
+            const allData = getFullMarketData(data);
+            allData.forEach(item => {
+                const card = container.querySelector(`[data-pair="${item.pair}"]`);
+                if (!card) return;
+                card.classList.remove('card-loading');
+
+                const priceEl = card.querySelector('.market-card-price');
+                const changeEl = card.querySelector('.market-card-change');
+                const syncDot = card.querySelector('.sync-dot');
+                const syncLabel = card.querySelector('.market-card-sync');
+
+                const dec = item.decimals ?? (item.price < 100 ? 4 : 2);
+                if (priceEl) priceEl.textContent = formatPrice(item.price, dec);
+                if (changeEl) {
+                    const sign = item.change >= 0 ? '+' : '';
+                    changeEl.textContent = `${sign}${item.change}%`;
+                    changeEl.className = `market-card-change px-2 py-1 rounded-full text-[10px] font-bold ${item.change >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`;
+                }
+                if (syncDot) { syncDot.className = `sync-dot ${currentSyncSource}`; }
+                if (syncLabel) { syncLabel.textContent = getSyncLabel(); }
+
+                if (animate) {
+                    card.classList.remove('card-updating');
+                    if (priceEl) priceEl.classList.remove('price-flash');
+                    void card.offsetWidth;
+                    card.classList.add('card-updating');
+                    if (priceEl) priceEl.classList.add('price-flash');
+                    setTimeout(() => {
+                        card.classList.remove('card-updating');
+                        if (priceEl) priceEl.classList.remove('price-flash');
+                    }, 900);
+                }
+            });
+        }
+
+        function sortByDisplayOrder(data) {
+            return [...data].sort((a, b) => {
+                const ia = DISPLAY_ORDER.indexOf(a.pair);
+                const ib = DISPLAY_ORDER.indexOf(b.pair);
+                return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+            });
+        }
+
+        function initMarketCards(liveData, isUpdate) {
+            if (isUpdate) {
+                updateMarketCards(liveData, true);
+            } else {
+                currentSyncSource = liveData ? 'cached' : 'offline';
+                renderMarketCards(liveData, !liveData);
+            }
+        }
+
+        // ── AI 自動分析邏輯 ──
+
+        const FOREX_POOL = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF'];
+        const METALS_POOL = ['XAU/USD', 'XAG/USD'];
+        const CRYPTO_POOL = ['BTC/USD', 'ETH/USD'];
+        const STOCKS_POOL = ['US Tech 100', 'TAIEX'];
+        let currentForexIdx = 0;
+        let currentMetalsIdx = 0;
+        let currentCryptoIdx = 0;
+        let currentStocksIdx = 0;
+        let forexRotationTimer = null;
+        let metalsRotationTimer = null;
+        let cryptoRotationTimer = null;
+        let stocksRotationTimer = null;
+
+        function getActiveAnalysisSymbols() {
+            return [FOREX_POOL[currentForexIdx], METALS_POOL[currentMetalsIdx], CRYPTO_POOL[currentCryptoIdx], STOCKS_POOL[currentStocksIdx]];
+        }
+
+        const ANALYSIS_THEME = {
+            'EUR/USD':     { iconBg: 'bg-cyan-50',    iconText: 'text-cyan-500' },
+            'GBP/USD':     { iconBg: 'bg-blue-50',    iconText: 'text-blue-500' },
+            'USD/JPY':     { iconBg: 'bg-rose-50',    iconText: 'text-rose-500' },
+            'AUD/USD':     { iconBg: 'bg-teal-50',    iconText: 'text-teal-500' },
+            'USD/CHF':     { iconBg: 'bg-indigo-50',  iconText: 'text-indigo-500' },
+            'XAU/USD':     { iconBg: 'bg-yellow-50',  iconText: 'text-yellow-500' },
+            'XAG/USD':     { iconBg: 'bg-slate-50',   iconText: 'text-slate-500' },
+            'BTC/USD':     { iconBg: 'bg-purple-50',  iconText: 'text-purple-500' },
+            'ETH/USD':     { iconBg: 'bg-violet-50',  iconText: 'text-violet-500' },
+            'US Tech 100': { iconBg: 'bg-green-50',   iconText: 'text-green-500' },
+            'TAIEX':       { iconBg: 'bg-emerald-50', iconText: 'text-emerald-500' }
+        };
+
+        const SVG_ICONS = {
+            bullish: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>',
+            bearish: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>',
+            neutral: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>'
+        };
+
+        const RSI_THRESHOLDS = {
+            'EUR/USD':     { overbought: 0.3, neutral: 0.05 },
+            'GBP/USD':     { overbought: 0.3, neutral: 0.05 },
+            'USD/JPY':     { overbought: 0.3, neutral: 0.05 },
+            'AUD/USD':     { overbought: 0.3, neutral: 0.05 },
+            'USD/CHF':     { overbought: 0.3, neutral: 0.05 },
+            'XAU/USD':     { overbought: 1.0, neutral: 0.2 },
+            'XAG/USD':     { overbought: 1.5, neutral: 0.3 },
+            'BTC/USD':     { overbought: 3.0, neutral: 0.5 },
+            'ETH/USD':     { overbought: 3.0, neutral: 0.5 },
+            'US Tech 100': { overbought: 1.0, neutral: 0.2 },
+            'TAIEX':       { overbought: 1.0, neutral: 0.2 }
+        };
+
+        function calculateSimulatedRSI(symbol, changePercent) {
+            const cfg = RSI_THRESHOLDS[symbol] || { overbought: 0.5, neutral: 0.1 };
+            let rsi = 50 + (changePercent / cfg.overbought) * 20;
+            rsi = Math.max(0, Math.min(100, Math.round(rsi)));
+            let state;
+            if (rsi >= 70) state = 'overbought';
+            else if (rsi <= 30) state = 'oversold';
+            else if (changePercent > cfg.neutral) state = 'bullish';
+            else if (changePercent < -cfg.neutral) state = 'bearish';
+            else state = 'neutral';
+            return { rsi, state };
+        }
+
+        const STATE_STYLE = {
+            overbought: { badge: 'bg-red-100 text-red-700', card: 'bg-red-50/60 border-red-200', iconBg: 'bg-red-100', iconText: 'text-red-500', icon: 'overbought' },
+            oversold:   { badge: 'bg-emerald-100 text-emerald-700', card: 'bg-emerald-50/60 border-emerald-200', iconBg: 'bg-emerald-100', iconText: 'text-emerald-500', icon: 'oversold' },
+            bullish:    { badge: 'bg-green-50 text-green-600', card: 'bg-white border-slate-100', iconBg: 'bg-green-50', iconText: 'text-green-500', icon: 'bullish' },
+            bearish:    { badge: 'bg-red-50 text-red-600', card: 'bg-white border-slate-100', iconBg: 'bg-red-50', iconText: 'text-red-500', icon: 'bearish' },
+            neutral:    { badge: 'bg-slate-100 text-slate-500', card: 'bg-white border-slate-100', iconBg: 'bg-slate-100', iconText: 'text-slate-400', icon: 'neutral' }
+        };
+
+        SVG_ICONS.overbought = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.57 0 2.55-1.7 1.77-3.06L13.77 4.44a2 2 0 00-3.54 0L3.3 15.94C2.52 17.3 3.5 19 5.07 19z"/>';
+        SVG_ICONS.oversold = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>';
+
+        const ANALYSIS_I18N = {
+            overbought: {
+                badge: { en: 'Overbought', 'zh-TW': '超買', 'zh-CN': '超买' },
+                titles: {
+                    'EUR/USD': { en: 'EUR/USD Overbought — Hold Off', 'zh-TW': 'EUR/USD 超買，建議觀望', 'zh-CN': 'EUR/USD 超买，建议观望' },
+                    'XAU/USD': { en: 'Gold Overbought — Hold Off', 'zh-TW': '黃金超買，建議觀望', 'zh-CN': '黄金超买，建议观望' },
+                    'XAG/USD': { en: 'Silver Overbought — Hold Off', 'zh-TW': '白銀超買，建議觀望', 'zh-CN': '白银超买，建议观望' },
+                    'BTC/USD': { en: 'BTC Overbought — Hold Off', 'zh-TW': 'BTC 超買，建議觀望', 'zh-CN': 'BTC 超买，建议观望' },
+                    'ETH/USD': { en: 'ETH Overbought — Hold Off', 'zh-TW': 'ETH 超買，建議觀望', 'zh-CN': 'ETH 超买，建议观望' },
+                    'US Tech 100': { en: 'NASDAQ Overbought — Watch for Pullback', 'zh-TW': 'NASDAQ 超買，留意回調', 'zh-CN': 'NASDAQ 超买，留意回调' },
+                    'TAIEX': { en: 'TAIEX Overbought — Caution Advised', 'zh-TW': '台股超買，建議謹慎', 'zh-CN': '台股超买，建议谨慎' }
+                }
+            },
+            oversold: {
+                badge: { en: 'Oversold', 'zh-TW': '超賣', 'zh-CN': '超卖' },
+                titles: {
+                    'EUR/USD': { en: 'EUR/USD Oversold — Watch for Support', 'zh-TW': 'EUR/USD 超賣，尋求支撐', 'zh-CN': 'EUR/USD 超卖，寻求支撑' },
+                    'XAU/USD': { en: 'Gold Oversold — Watch for Support', 'zh-TW': '黃金超賣，尋求支撐', 'zh-CN': '黄金超卖，寻求支撑' },
+                    'XAG/USD': { en: 'Silver Oversold — Support in Sight', 'zh-TW': '白銀超賣，支撐浮現', 'zh-CN': '白银超卖，支撑浮现' },
+                    'BTC/USD': { en: 'BTC Oversold — Watch for Support', 'zh-TW': 'BTC 超賣，尋求支撐', 'zh-CN': 'BTC 超卖，寻求支撑' },
+                    'ETH/USD': { en: 'ETH Oversold — Watch for Support', 'zh-TW': 'ETH 超賣，尋求支撐', 'zh-CN': 'ETH 超卖，寻求支撑' },
+                    'US Tech 100': { en: 'NASDAQ Oversold — Bargain Hunting Zone', 'zh-TW': 'NASDAQ 超賣，撿便宜區間', 'zh-CN': 'NASDAQ 超卖，捡便宜区间' },
+                    'TAIEX': { en: 'TAIEX Oversold — Rebound Potential', 'zh-TW': '台股超賣，反彈潛力浮現', 'zh-CN': '台股超卖，反弹潜力浮现' }
+                }
+            },
+            bullish: {
+                badge: { en: 'Bullish', 'zh-TW': '看漲', 'zh-CN': '看涨' },
+                titles: {
+                    'EUR/USD': { en: 'EUR/USD Bullish Momentum', 'zh-TW': 'EUR/USD 市場反應看漲（牛市）', 'zh-CN': 'EUR/USD 市场反应看涨（牛市）' },
+                    'XAU/USD': { en: 'Gold Bullish Momentum', 'zh-TW': '黃金市場反應看漲（牛市）', 'zh-CN': '黄金市场反应看涨（牛市）' },
+                    'XAG/USD': { en: 'Silver Bullish Run', 'zh-TW': '白銀多頭走勢', 'zh-CN': '白银多头走势' },
+                    'BTC/USD': { en: 'BTC Bullish Momentum', 'zh-TW': 'BTC 市場反應看漲（牛市）', 'zh-CN': 'BTC 市场反应看涨（牛市）' },
+                    'ETH/USD': { en: 'ETH Bullish Momentum', 'zh-TW': 'ETH 市場反應看漲（牛市）', 'zh-CN': 'ETH 市场反应看涨（牛市）' },
+                    'US Tech 100': { en: 'NASDAQ Breaks Higher — Momentum Strong', 'zh-TW': 'NASDAQ 強勢突破，動能強勁', 'zh-CN': 'NASDAQ 强势突破，动能强劲' },
+                    'TAIEX': { en: 'TAIEX Gains on Tech Rally', 'zh-TW': '科技股領漲，台股走強', 'zh-CN': '科技股领涨，台股走强' }
+                }
+            },
+            bearish: {
+                badge: { en: 'Bearish', 'zh-TW': '看跌', 'zh-CN': '看跌' },
+                titles: {
+                    'EUR/USD': { en: 'EUR/USD Under Pressure', 'zh-TW': 'EUR/USD 市場反應看跌（熊市）', 'zh-CN': 'EUR/USD 市场反应看跌（熊市）' },
+                    'XAU/USD': { en: 'Gold Under Pressure', 'zh-TW': '黃金市場反應看跌（熊市）', 'zh-CN': '黄金市场反应看跌（熊市）' },
+                    'XAG/USD': { en: 'Silver Slips on Dollar Strength', 'zh-TW': '美元走強打壓白銀', 'zh-CN': '美元走强打压白银' },
+                    'BTC/USD': { en: 'BTC Under Pressure', 'zh-TW': 'BTC 市場反應看跌（熊市）', 'zh-CN': 'BTC 市场反应看跌（熊市）' },
+                    'ETH/USD': { en: 'ETH Under Pressure', 'zh-TW': 'ETH 市場反應看跌（熊市）', 'zh-CN': 'ETH 市场反应看跌（熊市）' },
+                    'US Tech 100': { en: 'NASDAQ Pullback — Watch Support', 'zh-TW': 'NASDAQ 回調，留意支撐', 'zh-CN': 'NASDAQ 回调，留意支撑' },
+                    'TAIEX': { en: 'TAIEX Weakens on Profit-Taking', 'zh-TW': '獲利了結壓力，台股走弱', 'zh-CN': '获利了结压力，台股走弱' }
+                }
+            },
+            neutral: {
+                badge: { en: 'Neutral', 'zh-TW': '震盪', 'zh-CN': '震荡' },
+                titles: {
+                    'EUR/USD': { en: 'EUR/USD Range-Bound', 'zh-TW': 'EUR/USD 市場處於震盪（中性）', 'zh-CN': 'EUR/USD 市场处于震荡（中性）' },
+                    'XAU/USD': { en: 'Gold Consolidating', 'zh-TW': '黃金市場處於震盪（中性）', 'zh-CN': '黄金市场处于震荡（中性）' },
+                    'XAG/USD': { en: 'Silver Consolidating', 'zh-TW': '白銀區間整理', 'zh-CN': '白银区间整理' },
+                    'BTC/USD': { en: 'BTC in Consolidation', 'zh-TW': 'BTC 市場處於震盪（中性）', 'zh-CN': 'BTC 市场处于震荡（中性）' },
+                    'ETH/USD': { en: 'ETH in Consolidation', 'zh-TW': 'ETH 市場處於震盪（中性）', 'zh-CN': 'ETH 市场处于震荡（中性）' },
+                    'US Tech 100': { en: 'NASDAQ Sideways — Awaiting Catalyst', 'zh-TW': 'NASDAQ 橫向整理，等待催化劑', 'zh-CN': 'NASDAQ 横向整理，等待催化剂' },
+                    'TAIEX': { en: 'TAIEX Range-Bound Trading', 'zh-TW': '台股區間震盪', 'zh-CN': '台股区间震荡' }
+                }
+            },
+            desc: {
+                overbought: {
+                    'EUR/USD': { en: (p, c, r) => `RSI ${r} — EUR/USD surges ${c}% to ${p}, entering overbought territory. Chasing longs at this level carries elevated risk; wait for a pullback before entry.`, 'zh-TW': (p, c, r) => `RSI ${r} — EUR/USD 飆升 ${c}% 至 ${p}，進入超買區域。此位追高風險較大，建議等待回調再進場。`, 'zh-CN': (p, c, r) => `RSI ${r} — EUR/USD 飙升 ${c}% 至 ${p}，进入超买区域。此位追高风险较大，建议等待回调再进场。` },
+                    'XAU/USD': { en: (p, c, r) => `RSI ${r} — Gold surges ${c}% to $${p}, overbought signals flashing. Profit-taking likely; consider reducing exposure.`, 'zh-TW': (p, c, r) => `RSI ${r} — 黃金飆升 ${c}% 至 $${p}，超買信號閃爍。獲利了結壓力可能出現，建議減少曝險。`, 'zh-CN': (p, c, r) => `RSI ${r} — 黄金飙升 ${c}% 至 $${p}，超买信号闪烁。获利了结压力可能出现，建议减少曝险。` },
+                    'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin rallies ${c}% to $${p}, deep in overbought zone. Extreme greed detected; a correction may follow.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣飆漲 ${c}% 至 $${p}，深入超買區。偵測到極度貪婪，回調隨時可能出現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币飙涨 ${c}% 至 $${p}，深入超买区。侦测到极度贪婪，回调随时可能出现。` },
+                    'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum rallies ${c}% to $${p}, deep in overbought zone. DeFi euphoria detected; a correction may follow.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊飆漲 ${c}% 至 $${p}，深入超買區。DeFi 過熱信號，回調隨時可能出現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊飙涨 ${c}% 至 $${p}，深入超买区。DeFi 过热信号，回调随时可能出现。` },
+                    'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver surges ${c}% to $${p}, overbought. Industrial demand spike but risk of pullback elevated.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀飆升 ${c}% 至 $${p}，超買。工業需求激增但回調風險升高。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银飙升 ${c}% 至 $${p}，超买。工业需求激增但回调风险升高。` },
+                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ surges ${c}% to ${p}, deep in overbought zone. AI-driven rally extended; rotation risk rising.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 飆升 ${c}% 至 ${p}，深入超買區。AI 驅動漲勢延伸，輪動風險上升。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 飙升 ${c}% 至 ${p}，深入超买区。AI 驱动涨势延伸，轮动风险上升。` },
+                    'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX surges ${c}% to ${p}, overbought on TSMC rally. Profit-taking pressure building.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股飆升 ${c}% 至 ${p}，台積電領漲至超買。獲利了結壓力累積中。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股飙升 ${c}% 至 ${p}，台积电领涨至超买。获利了结压力累积中。` }
+                },
+                oversold: {
+                    'EUR/USD': { en: (p, c, r) => `RSI ${r} — EUR/USD drops ${c}% to ${p}, oversold conditions emerging. Watch for support forming; a bounce opportunity may arise.`, 'zh-TW': (p, c, r) => `RSI ${r} — EUR/USD 下跌 ${c}% 至 ${p}，出現超賣。關注支撐形成，可能出現反彈機會。`, 'zh-CN': (p, c, r) => `RSI ${r} — EUR/USD 下跌 ${c}% 至 ${p}，出现超卖。关注支撑形成，可能出现反弹机会。` },
+                    'XAU/USD': { en: (p, c, r) => `RSI ${r} — Gold slides ${c}% to $${p}, oversold zone reached. Historical support levels suggest a potential rebound.`, 'zh-TW': (p, c, r) => `RSI ${r} — 黃金下跌 ${c}% 至 $${p}，觸及超賣區。歷史支撐位暗示潛在反彈。`, 'zh-CN': (p, c, r) => `RSI ${r} — 黄金下跌 ${c}% 至 $${p}，触及超卖区。历史支撑位暗示潜在反弹。` },
+                    'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin plunges ${c}% to $${p}, oversold territory. Extreme fear detected; contrarian opportunities may emerge.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣暴跌 ${c}% 至 $${p}，超賣區域。偵測到極度恐慌，逆勢機會或將浮現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币暴跌 ${c}% 至 $${p}，超卖区域。侦测到极度恐慌，逆势机会或将浮现。` },
+                    'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum plunges ${c}% to $${p}, oversold territory. Network activity low; contrarian opportunities may emerge.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊暴跌 ${c}% 至 $${p}，超賣區域。鏈上活動低迷，逆勢機會或將浮現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊暴跌 ${c}% 至 $${p}，超卖区域。链上活动低迷，逆势机会或将浮现。` },
+                    'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver drops ${c}% to $${p}, oversold. Industrial demand floor and gold correlation suggest potential rebound.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀下跌 ${c}% 至 $${p}，超賣。工業需求底部與黃金連動暗示潛在反彈。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银下跌 ${c}% 至 $${p}，超卖。工业需求底部与黄金连动暗示潜在反弹。` },
+                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ plunges ${c}% to ${p}, oversold. Earnings season approaching; value hunters watching for entry.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超賣。財報季將至，價值獵人伺機進場。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超卖。财报季将至，价值猎人伺机进场。` },
+                    'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX drops ${c}% to ${p}, oversold on foreign sell-off. Domestic buying may stabilize near support.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}，外資賣超導致超賣。內資買盤可能在支撐位穩定。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}，外资卖超导致超卖。内资买盘可能在支撑位稳定。` }
+                },
+                bullish: {
+                    'EUR/USD': { en: (p, c, r) => `RSI ${r} — EUR/USD up ${c}% at ${p}, trading above short-term moving averages with healthy upside momentum.`, 'zh-TW': (p, c, r) => `RSI ${r} — EUR/USD 上漲 ${c}% 至 ${p}，站上短期均線，上行動能健康。`, 'zh-CN': (p, c, r) => `RSI ${r} — EUR/USD 上涨 ${c}% 至 ${p}，站上短期均线，上行动能健康。` },
+                    'XAU/USD': { en: (p, c, r) => `RSI ${r} — Gold gains ${c}% to $${p}, supported by safe-haven demand. Momentum confirms bullish continuation.`, 'zh-TW': (p, c, r) => `RSI ${r} — 黃金上漲 ${c}% 至 $${p}，避險需求支撐。動能確認多頭延續。`, 'zh-CN': (p, c, r) => `RSI ${r} — 黄金上涨 ${c}% 至 $${p}，避险需求支撑。动能确认多头延续。` },
+                    'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin advances ${c}% to $${p}, on-chain accumulation grows. Trend remains constructive.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣上漲 ${c}% 至 $${p}，鏈上增持增加。趨勢保持良性。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币上涨 ${c}% 至 $${p}，链上增持增加。趋势保持良性。` },
+                    'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum advances ${c}% to $${p}, DeFi TVL growing. Smart contract activity supports bullish bias.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊上漲 ${c}% 至 $${p}，DeFi TVL 持續增長。智能合約活動支撐多頭趨勢。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊上涨 ${c}% 至 $${p}，DeFi TVL 持续增长。智能合约活动支撑多头趋势。` },
+                    'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver gains ${c}% to $${p}, riding gold's coattails. Industrial + monetary demand convergence.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀上漲 ${c}% 至 $${p}，跟隨黃金走勢。工業與貨幣需求共振。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银上涨 ${c}% 至 $${p}，跟随黄金走势。工业与货币需求共振。` },
+                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ up ${c}% at ${p}, mega-cap tech leading. AI and semiconductor names drive breadth.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 上漲 ${c}% 至 ${p}，大型科技股領漲。AI 與半導體帶動市場廣度。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 上涨 ${c}% 至 ${p}，大型科技股领涨。AI 与半导体带动市场广度。` },
+                    'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX advances ${c}% to ${p}. TSMC and AI supply chain stocks drive momentum.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股上漲 ${c}% 至 ${p}。台積電與 AI 供應鏈股推動多頭動能。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股上涨 ${c}% 至 ${p}。台积电与 AI 供应链股推动多头动能。` }
+                },
+                bearish: {
+                    'EUR/USD': { en: (p, c, r) => `RSI ${r} — EUR/USD dips ${c}% to ${p}, losing short-term support. Bearish crossover suggests further downside.`, 'zh-TW': (p, c, r) => `RSI ${r} — EUR/USD 下跌 ${c}% 至 ${p}，失守短期支撐。空頭交叉暗示進一步下行。`, 'zh-CN': (p, c, r) => `RSI ${r} — EUR/USD 下跌 ${c}% 至 ${p}，失守短期支撑。空头交叉暗示进一步下行。` },
+                    'XAU/USD': { en: (p, c, r) => `RSI ${r} — Gold declines ${c}% to $${p}, dollar strength weighing. Bears remain in control near-term.`, 'zh-TW': (p, c, r) => `RSI ${r} — 黃金下跌 ${c}% 至 $${p}，美元走強構成壓力。短期空方主導。`, 'zh-CN': (p, c, r) => `RSI ${r} — 黄金下跌 ${c}% 至 $${p}，美元走强构成压力。短期空方主导。` },
+                    'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin slides ${c}% to $${p}, exchange inflows rising. Selling pressure persists.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣下跌 ${c}% 至 $${p}，交易所流入上升。賣壓持續。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币下跌 ${c}% 至 $${p}，交易所流入上升。卖压持续。` },
+                    'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum slides ${c}% to $${p}, gas fees dropping. Reduced network demand signals weakening momentum.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊下跌 ${c}% 至 $${p}，Gas 費用下降。網絡需求減少暗示動能減弱。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊下跌 ${c}% 至 $${p}，Gas 费用下降。网络需求减少暗示动能减弱。` },
+                    'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver declines ${c}% to $${p}, pressured by rising yields. Industrial outlook dampens.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀下跌 ${c}% 至 $${p}，殖利率上升構成壓力。工業前景黯淡。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银下跌 ${c}% 至 $${p}，收益率上升构成压力。工业前景黯淡。` },
+                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ dips ${c}% to ${p}. Rising yields and rate-sensitive valuation concerns weigh on tech.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。殖利率上升與估值壓力拖累科技股。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。收益率上升与估值压力拖累科技股。` },
+                    'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX drops ${c}% to ${p}. Foreign fund outflows and geopolitical risk drag index lower.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}。外資流出與地緣政治風險拖累指數。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}。外资流出与地缘政治风险拖累指数。` }
+                },
+                neutral: {
+                    'EUR/USD': { en: (p, c, r) => `RSI ${r} — EUR/USD trades at ${p} (${c}%), oscillating in a narrow range. Market awaits catalysts.`, 'zh-TW': (p, c, r) => `RSI ${r} — EUR/USD 交投於 ${p}（${c}%），窄幅震盪。市場等待催化劑。`, 'zh-CN': (p, c, r) => `RSI ${r} — EUR/USD 交投于 ${p}（${c}%），窄幅震荡。市场等待催化剂。` },
+                    'XAU/USD': { en: (p, c, r) => `RSI ${r} — Gold holds at $${p} (${c}%), consolidating. Mixed dollar signals keep gold directionless.`, 'zh-TW': (p, c, r) => `RSI ${r} — 黃金持穩於 $${p}（${c}%），窄幅整理。美元信號分歧，方向不明。`, 'zh-CN': (p, c, r) => `RSI ${r} — 黄金持稳于 $${p}（${c}%），窄幅整理。美元信号分歧，方向不明。` },
+                    'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin ranges at $${p} (${c}%), volume declining. Wait-and-see mode.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣於 $${p}（${c}%）區間震盪，成交萎縮。觀望模式。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币于 $${p}（${c}%）区间震荡，成交萎缩。观望模式。` },
+                    'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum ranges at $${p} (${c}%), DeFi activity flat. Consolidation phase in progress.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊於 $${p}（${c}%）區間震盪，DeFi 活動平淡。整理階段進行中。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊于 $${p}（${c}%）区间震荡，DeFi 活动平淡。整理阶段进行中。` },
+                    'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver holds at $${p} (${c}%), tracking gold in tight range. Awaiting macro catalyst.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀持穩於 $${p}（${c}%），跟隨黃金窄幅整理。等待宏觀催化劑。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银持稳于 $${p}（${c}%），跟随黄金窄幅整理。等待宏观催化剂。` },
+                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ trades at ${p} (${c}%), awaiting earnings guidance. Sector rotation keeps index range-bound.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 於 ${p}（${c}%）交投，等待財報指引。板塊輪動令指數區間震盪。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 于 ${p}（${c}%）交投，等待财报指引。板块轮动令指数区间震荡。` },
+                    'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX trades at ${p} (${c}%), mixed signals. Domestic institutions vs foreign flows create indecision.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股於 ${p}（${c}%）交投，訊號分歧。內外資攻防導致方向不明。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股于 ${p}（${c}%）交投，信号分歧。内外资攻防导致方向不明。` }
+                }
+            },
+            syncLabel: {
+                syncing: { en: 'AI Syncing...', 'zh-TW': 'AI 自動分析同步中', 'zh-CN': 'AI 自动分析同步中' },
+                synced:  { en: 'AI Analysis Synced', 'zh-TW': '專家預測已同步', 'zh-CN': '专家预测已同步' }
+            }
+        };
+
+        const FOREX_TITLE_TEMPLATES = {
+            overbought: { en: s => `${s} Overbought — Hold Off`, 'zh-TW': s => `${s} 超買，建議觀望`, 'zh-CN': s => `${s} 超买，建议观望` },
+            oversold:   { en: s => `${s} Oversold — Watch for Support`, 'zh-TW': s => `${s} 超賣，尋求支撐`, 'zh-CN': s => `${s} 超卖，寻求支撑` },
+            bullish:    { en: s => `${s} Bullish Momentum`, 'zh-TW': s => `${s} 市場反應看漲（牛市）`, 'zh-CN': s => `${s} 市场反应看涨（牛市）` },
+            bearish:    { en: s => `${s} Under Pressure`, 'zh-TW': s => `${s} 市場反應看跌（熊市）`, 'zh-CN': s => `${s} 市场反应看跌（熊市）` },
+            neutral:    { en: s => `${s} Range-Bound`, 'zh-TW': s => `${s} 市場處於震盪（中性）`, 'zh-CN': s => `${s} 市场处于震荡（中性）` }
+        };
+
+        const FOREX_DESC_TEMPLATES = {
+            overbought: { en: (s, p, c, r) => `RSI ${r} — ${s} surges ${c}% to ${p}, entering overbought territory. Chasing longs carries elevated risk; wait for a pullback before entry.`, 'zh-TW': (s, p, c, r) => `RSI ${r} — ${s} 飆升 ${c}% 至 ${p}，進入超買區域。此位追高風險較大，建議等待回調再進場。`, 'zh-CN': (s, p, c, r) => `RSI ${r} — ${s} 飙升 ${c}% 至 ${p}，进入超买区域。此位追高风险较大，建议等待回调再进场。` },
+            oversold:   { en: (s, p, c, r) => `RSI ${r} — ${s} drops ${c}% to ${p}, oversold conditions emerging. Watch for support forming; a bounce opportunity may arise.`, 'zh-TW': (s, p, c, r) => `RSI ${r} — ${s} 下跌 ${c}% 至 ${p}，出現超賣。關注支撐形成，可能出現反彈機會。`, 'zh-CN': (s, p, c, r) => `RSI ${r} — ${s} 下跌 ${c}% 至 ${p}，出现超卖。关注支撑形成，可能出现反弹机会。` },
+            bullish:    { en: (s, p, c, r) => `RSI ${r} — ${s} up ${c}% at ${p}, trading above short-term moving averages with healthy upside momentum.`, 'zh-TW': (s, p, c, r) => `RSI ${r} — ${s} 上漲 ${c}% 至 ${p}，站上短期均線，上行動能健康。`, 'zh-CN': (s, p, c, r) => `RSI ${r} — ${s} 上涨 ${c}% 至 ${p}，站上短期均线，上行动能健康。` },
+            bearish:    { en: (s, p, c, r) => `RSI ${r} — ${s} dips ${c}% to ${p}, losing short-term support. Bearish crossover suggests further downside.`, 'zh-TW': (s, p, c, r) => `RSI ${r} — ${s} 下跌 ${c}% 至 ${p}，失守短期支撐。空頭交叉暗示進一步下行。`, 'zh-CN': (s, p, c, r) => `RSI ${r} — ${s} 下跌 ${c}% 至 ${p}，失守短期支撑。空头交叉暗示进一步下行。` },
+            neutral:    { en: (s, p, c, r) => `RSI ${r} — ${s} trades at ${p} (${c}%), oscillating in a narrow range. Market awaits catalysts.`, 'zh-TW': (s, p, c, r) => `RSI ${r} — ${s} 交投於 ${p}（${c}%），窄幅震盪。市場等待催化劑。`, 'zh-CN': (s, p, c, r) => `RSI ${r} — ${s} 交投于 ${p}（${c}%），窄幅震荡。市场等待催化剂。` }
+        };
+
+        function resolveTitle(state, symbol, lang) {
+            const specific = ANALYSIS_I18N[state]?.titles?.[symbol];
+            if (specific) return specific[lang] || specific.en || symbol;
+            const tmpl = FOREX_TITLE_TEMPLATES[state];
+            if (tmpl) return (tmpl[lang] || tmpl.en)(symbol);
+            return symbol;
+        }
+
+        function resolveDesc(state, symbol, lang, price, change, rsi) {
+            const specific = ANALYSIS_I18N.desc?.[state]?.[symbol];
+            if (specific) { const fn = specific[lang] || specific.en; return fn ? fn(price, change, rsi) : ''; }
+            const tmpl = FOREX_DESC_TEMPLATES[state];
+            if (tmpl) { const fn = tmpl[lang] || tmpl.en; return fn ? fn(symbol, price, change, rsi) : ''; }
+            return '';
+        }
+
+        function getDataForSymbol(symbol) {
+            const td = window.fxSpectrumTickerData;
+            if (td) { const found = Array.isArray(td) ? td.find(d => d.pair === symbol) : null; if (found) return found; }
+            const sf = staticMarketData.find(d => d.pair === symbol);
+            if (sf) return sf;
+            return { pair: symbol, price: 0, change: 0, decimals: 4 };
+        }
+
+        function getRsiBarColor(state) {
+            if (state === 'overbought') return 'bg-red-500';
+            if (state === 'oversold') return 'bg-emerald-500';
+            if (state === 'bullish') return 'bg-green-400';
+            if (state === 'bearish') return 'bg-red-400';
+            return 'bg-slate-300';
+        }
+
+        function getAnalysisHTML(symbol, item, lang, loading, slotName) {
+            const { rsi, state } = calculateSimulatedRSI(symbol, item.change);
+            const style = STATE_STYLE[state];
+            const svgIcon = SVG_ICONS[style.icon];
+            const badgeI18n = ANALYSIS_I18N[state].badge;
+
+            const dec = item.decimals ?? (item.price < 100 ? 4 : 2);
+            const priceStr = item.price.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+            const changeStr = (item.change >= 0 ? '+' : '') + item.change.toFixed(2);
+
+            const title = resolveTitle(state, symbol, lang);
+            const desc = resolveDesc(state, symbol, lang, priceStr, changeStr, rsi);
+            const badge = badgeI18n?.[lang] || badgeI18n?.en || state;
+            const today = new Date().toISOString().split('T')[0];
+            const loadingClass = loading ? ' analysis-loading' : '';
+            const rsiBarColor = getRsiBarColor(state);
+            const slotAttr = slotName ? ` data-analysis-slot="${slotName}"` : '';
+
+            return `<div class="analysis-card insight-card ${style.card}${loadingClass}" data-analysis="${symbol}"${slotAttr}>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="analysis-icon w-10 h-10 rounded-xl ${style.iconBg} ${style.iconText} flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${svgIcon}</svg></div>
+                    <span class="analysis-symbol text-xs font-bold text-slate-400 uppercase tracking-widest">${symbol}</span>
+                    <span class="analysis-price ml-auto text-xs font-mono font-bold ${item.change >= 0 ? 'text-green-500' : 'text-red-500'}">${priceStr} (${changeStr}%)</span>
+                </div>
+                <h3 class="analysis-title text-lg font-bold text-slate-800 mb-2">${title}</h3>
+                <p class="analysis-desc text-sm text-slate-500 leading-relaxed">${desc}</p>
+                <div class="mt-4 mb-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">RSI</span>
+                        <span class="analysis-rsi-val text-[10px] font-mono font-bold text-slate-600">${rsi}</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="analysis-rsi-bar h-full rounded-full ${rsiBarColor} transition-all duration-500" style="width:${rsi}%"></div>
+                    </div>
+                    <div class="flex justify-between mt-0.5 text-[8px] text-slate-300 font-mono"><span>0</span><span>30</span><span>50</span><span>70</span><span>100</span></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="analysis-badge px-3 py-1 rounded-full ${style.badge} text-[10px] font-bold uppercase">${badge}</span>
+                    <span class="text-[10px] text-slate-400">${today}</span>
+                </div>
+            </div>`;
+        }
+
+        const SLOT_NAMES = ['forex', 'metals', 'crypto', 'stocks'];
+
+        const ANALYSIS_CAT_LABELS = {
+            forex:  { en: 'Forex', 'zh-TW': '外匯', 'zh-CN': '外汇', icon: '💱' },
+            metals: { en: 'Precious Metals', 'zh-TW': '貴金屬', 'zh-CN': '贵金属', icon: '🥇' },
+            crypto: { en: 'Crypto', 'zh-TW': '虛擬貨幣', 'zh-CN': '虚拟货币', icon: '₿' },
+            stocks: { en: 'Stock Market', 'zh-TW': '股市', 'zh-CN': '股市', icon: '📊' }
+        };
+
+        function renderAnalysisCards(data, loading) {
+            const container = document.getElementById('analysis-cards');
+            if (!container) return;
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const symbols = getActiveAnalysisSymbols();
+            const html = symbols.map((symbol, idx) => {
+                const item = data?.find(d => d.pair === symbol) || getDataForSymbol(symbol);
+                const slot = SLOT_NAMES[idx];
+                const catLabel = ANALYSIS_CAT_LABELS[slot];
+                const catHeader = catLabel ? `<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1"><span>${catLabel.icon}</span> ${catLabel[lang] || catLabel.en}</div>` : '';
+                return `<div data-analysis-col="${slot}">${catHeader}${getAnalysisHTML(symbol, item, lang, loading, slot)}</div>`;
+            }).join('');
+            container.innerHTML = html;
+            requestAnimationFrame(() => {
+                container.querySelectorAll('.analysis-card').forEach((card, i) => {
+                    setTimeout(() => card.classList.add('visible'), i * 120);
+                });
+            });
+        }
+
+        function updateSingleCard(card, symbol, item) {
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            card.classList.remove('analysis-loading');
+
+            const { rsi, state } = calculateSimulatedRSI(symbol, item.change);
+            const style = STATE_STYLE[state];
+            const dec = item.decimals ?? (item.price < 100 ? 4 : 2);
+            const priceStr = item.price.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+            const changeStr = (item.change >= 0 ? '+' : '') + item.change.toFixed(2);
+            const badgeI18n = ANALYSIS_I18N[state].badge;
+
+            const symbolEl = card.querySelector('.analysis-symbol');
+            const titleEl = card.querySelector('.analysis-title');
+            const descEl = card.querySelector('.analysis-desc');
+            const badgeEl = card.querySelector('.analysis-badge');
+            const priceEl = card.querySelector('.analysis-price');
+            const iconWrap = card.querySelector('.analysis-icon');
+            const svgEl = iconWrap?.querySelector('svg');
+            const rsiVal = card.querySelector('.analysis-rsi-val');
+            const rsiBar = card.querySelector('.analysis-rsi-bar');
+
+            if (symbolEl) symbolEl.textContent = symbol;
+            if (titleEl) titleEl.textContent = resolveTitle(state, symbol, lang);
+            if (descEl) descEl.textContent = resolveDesc(state, symbol, lang, priceStr, changeStr, rsi);
+            if (badgeEl) {
+                badgeEl.textContent = badgeI18n?.[lang] || badgeI18n?.en || state;
+                badgeEl.className = `analysis-badge px-3 py-1 rounded-full ${style.badge} text-[10px] font-bold uppercase`;
+            }
+            if (priceEl) {
+                priceEl.textContent = `${priceStr} (${changeStr}%)`;
+                priceEl.className = `analysis-price ml-auto text-xs font-mono font-bold ${item.change >= 0 ? 'text-green-500' : 'text-red-500'}`;
+            }
+            if (iconWrap) iconWrap.className = `analysis-icon w-10 h-10 rounded-xl ${style.iconBg} ${style.iconText} flex items-center justify-center`;
+            if (svgEl) svgEl.innerHTML = SVG_ICONS[style.icon];
+            if (rsiVal) rsiVal.textContent = rsi;
+            if (rsiBar) { rsiBar.style.width = rsi + '%'; rsiBar.className = `analysis-rsi-bar h-full rounded-full ${getRsiBarColor(state)} transition-all duration-500`; }
+
+            card.setAttribute('data-analysis', symbol);
+            card.className = `analysis-card insight-card ${style.card} visible`;
+        }
+
+        function updateAnalysisCards(data) {
+            const container = document.getElementById('analysis-cards');
+            if (!container) return;
+            const symbols = getActiveAnalysisSymbols();
+            symbols.forEach(symbol => {
+                const item = data?.find(d => d.pair === symbol) || getDataForSymbol(symbol);
+                const card = container.querySelector(`[data-analysis="${symbol}"]`);
+                if (!card) return;
+                updateSingleCard(card, symbol, item);
+                void card.offsetWidth;
+                card.classList.add('card-updating');
+                setTimeout(() => card.classList.remove('card-updating'), 900);
+            });
+        }
+
+        function rotatePoolCard(slotName, pool, getCurrentIdx, setCurrentIdx) {
+            const container = document.getElementById('analysis-cards');
+            const card = container?.querySelector(`[data-analysis-slot="${slotName}"]`);
+            if (!card) return;
+
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(8px)';
+
+            setTimeout(() => {
+                let next;
+                do { next = Math.floor(Math.random() * pool.length); }
+                while (next === getCurrentIdx() && pool.length > 1);
+                setCurrentIdx(next);
+
+                const symbol = pool[next];
+                const item = getDataForSymbol(symbol);
+                updateSingleCard(card, symbol, item);
+
+                requestAnimationFrame(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                });
+            }, 350);
+        }
+
+        function rotateForexCard() {
+            rotatePoolCard('forex', FOREX_POOL, () => currentForexIdx, v => { currentForexIdx = v; });
+        }
+
+        function rotateMetalsCard() {
+            rotatePoolCard('metals', METALS_POOL, () => currentMetalsIdx, v => { currentMetalsIdx = v; });
+        }
+
+        function rotateCryptoCard() {
+            rotatePoolCard('crypto', CRYPTO_POOL, () => currentCryptoIdx, v => { currentCryptoIdx = v; });
+        }
+
+        function rotateStocksCard() {
+            rotatePoolCard('stocks', STOCKS_POOL, () => currentStocksIdx, v => { currentStocksIdx = v; });
+        }
+
+        function startForexRotation() {
+            if (forexRotationTimer) clearInterval(forexRotationTimer);
+            forexRotationTimer = setInterval(rotateForexCard, 10000);
+        }
+
+        function startMetalsRotation() {
+            if (metalsRotationTimer) clearInterval(metalsRotationTimer);
+            metalsRotationTimer = setInterval(rotateMetalsCard, 15000);
+        }
+
+        function startCryptoRotation() {
+            if (cryptoRotationTimer) clearInterval(cryptoRotationTimer);
+            cryptoRotationTimer = setInterval(rotateCryptoCard, 10000);
+        }
+
+        function startStocksRotation() {
+            if (stocksRotationTimer) clearInterval(stocksRotationTimer);
+            stocksRotationTimer = setInterval(rotateStocksCard, 12000);
+        }
+
+        function setAnalysisSyncStatus(synced) {
+            const label = document.getElementById('analysis-sync-label');
+            const dot = document.querySelector('.analysis-sync-dot');
+            const ping = document.querySelector('.analysis-sync-ping');
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            if (synced) {
+                if (label) label.textContent = ANALYSIS_I18N.syncLabel.synced[lang] || ANALYSIS_I18N.syncLabel.synced.en;
+                if (dot) { dot.classList.remove('bg-amber-500'); dot.classList.add('bg-green-500'); }
+                if (ping) { ping.classList.remove('bg-amber-400', 'animate-ping'); ping.classList.add('bg-green-400'); }
+            } else {
+                if (label) label.textContent = ANALYSIS_I18N.syncLabel.syncing[lang] || ANALYSIS_I18N.syncLabel.syncing.en;
+                if (dot) { dot.classList.remove('bg-green-500'); dot.classList.add('bg-amber-500'); }
+                if (ping) { ping.classList.remove('bg-green-400'); ping.classList.add('bg-amber-400', 'animate-ping'); }
+            }
+        }
+
+        let _analysisInitialized = false;
+
+        function onDataForAnalysis(data, source) {
+            const isLive = source === 'live';
+            if (!_analysisInitialized) {
+                renderAnalysisCards(data, !isLive);
+                setAnalysisSyncStatus(isLive);
+                _analysisInitialized = true;
+                startForexRotation();
+                startMetalsRotation();
+                startCryptoRotation();
+                startStocksRotation();
+            } else {
+                updateAnalysisCards(data);
+                setAnalysisSyncStatus(isLive);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           Fundamental Analysis — News Carousel System
+           ═══════════════════════════════════════════════════════════════ */
+        const FA_NEWS_CACHE_KEY = 'fx_spectrum_fa_news';
+        const FA_NEWS_CACHE_TTL = 30 * 60 * 1000;
+        let faCarouselTimer = null;
+        let faProgressTimer = null;
+        let faCurrentPage = 0;
+        let faNewsData = [];
+
+        const FA_CATEGORIES = {
+            FED_WATCH:    { label: 'FED WATCH',    color: 'bg-cyan-100 text-cyan-700' },
+            RATES:        { label: 'RATES',        color: 'bg-blue-100 text-blue-700' },
+            MACRO:        { label: 'MACRO',        color: 'bg-purple-100 text-purple-700' },
+            ENERGY:       { label: 'ENERGY',       color: 'bg-amber-100 text-amber-700' },
+            GOLD:         { label: 'GOLD',         color: 'bg-yellow-100 text-yellow-700' },
+            CRYPTO_NEWS:  { label: 'CRYPTO NEWS',  color: 'bg-violet-100 text-violet-700' },
+            EQUITY:       { label: 'EQUITY',       color: 'bg-green-100 text-green-700' },
+            BONDS:        { label: 'BONDS',        color: 'bg-indigo-100 text-indigo-700' },
+            GEOPOLITICS:  { label: 'GEOPOLITICS',  color: 'bg-red-100 text-red-700' },
+            ASIA_PACIFIC: { label: 'ASIA-PACIFIC', color: 'bg-teal-100 text-teal-700' },
+            DATA_RELEASE: { label: 'DATA RELEASE', color: 'bg-orange-100 text-orange-700' }
+        };
+
+        const FA_IMPACT_STYLES = {
+            bullish:  { dot: 'bg-green-400', text: 'text-green-600', bg: 'bg-green-50' },
+            bearish:  { dot: 'bg-red-400',   text: 'text-red-600',   bg: 'bg-red-50' },
+            neutral:  { dot: 'bg-slate-300', text: 'text-slate-500', bg: 'bg-slate-50' },
+            volatile: { dot: 'bg-amber-400', text: 'text-amber-600', bg: 'bg-amber-50' }
+        };
+
+        const FA_BUILTIN_NEWS = [
+            { cat: 'FED_WATCH', title: { en: 'Fed Holds Rates Steady, Signals Patience', 'zh-TW': '聯準會維持利率不變，釋放耐心信號', 'zh-CN': '联准会维持利率不变，释放耐心信号' }, desc: { en: 'FOMC votes unanimously to keep rates at 5.25-5.50%. Powell emphasizes data-dependency, pushing back on near-term cut expectations.', 'zh-TW': 'FOMC 全票通過維持利率於 5.25-5.50%。鮑威爾強調依賴數據，推遲近期降息預期。', 'zh-CN': 'FOMC 全票通过维持利率于 5.25-5.50%。鲍威尔强调依赖数据，推迟近期降息预期。' }, impacts: [{ asset: 'USD', sentiment: 'bullish' }, { asset: 'Gold', sentiment: 'bearish' }] },
+            { cat: 'MACRO', title: { en: 'Eurozone CPI Falls to 2.4%, Easing Pressure on ECB', 'zh-TW': '歐元區 CPI 降至 2.4%，緩解 ECB 壓力', 'zh-CN': '欧元区 CPI 降至 2.4%，缓解 ECB 压力' }, desc: { en: 'Headline inflation declines faster than expected. Core CPI also softens to 2.9%, fueling speculation of a June rate cut.', 'zh-TW': '整體通膨下降速度超預期，核心 CPI 降至 2.9%，刺激六月降息預期升溫。', 'zh-CN': '整体通胀下降速度超预期，核心 CPI 降至 2.9%，刺激六月降息预期升温。' }, impacts: [{ asset: 'EUR', sentiment: 'bearish' }, { asset: 'EU Equities', sentiment: 'bullish' }] },
+            { cat: 'ENERGY', title: { en: 'Crude Oil Jumps 3% on OPEC+ Output Cut Extension', 'zh-TW': '原油跳漲 3%，OPEC+ 延長減產協議', 'zh-CN': '原油跳涨 3%，OPEC+ 延长减产协议' }, desc: { en: 'Saudi Arabia and Russia agree to extend voluntary cuts through Q3. Brent breaks above $85 resistance.', 'zh-TW': '沙烏地阿拉伯與俄羅斯同意將自願減產延長至第三季。布蘭特原油突破 $85 阻力位。', 'zh-CN': '沙特阿拉伯与俄罗斯同意将自愿减产延长至第三季。布伦特原油突破 $85 阻力位。' }, impacts: [{ asset: 'Oil', sentiment: 'bullish' }, { asset: 'CAD', sentiment: 'bullish' }] },
+            { cat: 'GOLD', title: { en: 'Gold Surges Past $2,050 on Safe-Haven Demand', 'zh-TW': '黃金突破 $2,050，避險需求升溫', 'zh-CN': '黄金突破 $2,050，避险需求升温' }, desc: { en: 'Geopolitical tensions and falling real yields push gold to 3-month highs. Central bank purchases remain strong.', 'zh-TW': '地緣政治緊張與實質收益率下滑，推動黃金至三個月新高。各國央行持續增持。', 'zh-CN': '地缘政治紧张与实质收益率下滑，推动黄金至三个月新高。各国央行持续增持。' }, impacts: [{ asset: 'Gold', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bearish' }] },
+            { cat: 'CRYPTO_NEWS', title: { en: 'Bitcoin ETF Sees Record $1.2B Daily Inflows', 'zh-TW': 'BTC ETF 單日淨流入創紀錄 $12 億', 'zh-CN': 'BTC ETF 单日净流入创纪录 $12 亿' }, desc: { en: 'Spot Bitcoin ETFs attract massive institutional capital. BTC breaks $65K as halving anticipation builds momentum.', 'zh-TW': '現貨比特幣 ETF 吸引大量機構資金。BTC 突破 $65K，減半預期持續累積動能。', 'zh-CN': '现货比特币 ETF 吸引大量机构资金。BTC 突破 $65K，减半预期持续累积动能。' }, impacts: [{ asset: 'BTC', sentiment: 'bullish' }, { asset: 'ETH', sentiment: 'bullish' }] },
+            { cat: 'EQUITY', title: { en: 'Nasdaq Hits All-Time High Led by AI Stocks', 'zh-TW': 'AI 股領漲，Nasdaq 創歷史新高', 'zh-CN': 'AI 股领涨，Nasdaq 创历史新高' }, desc: { en: 'Tech megacaps drive the rally as NVIDIA reports blowout earnings. Market breadth narrows with small caps lagging.', 'zh-TW': '科技巨頭領漲，NVIDIA 財報大幅超預期。市場廣度收窄，中小型股落後。', 'zh-CN': '科技巨头领涨，NVIDIA 财报大幅超预期。市场广度收窄，中小型股落后。' }, impacts: [{ asset: 'US Tech 100', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bullish' }] },
+            { cat: 'BONDS', title: { en: '10-Year Treasury Yield Drops Below 4.2%', 'zh-TW': '美十年期公債殖利率跌破 4.2%', 'zh-CN': '美十年期国债收益率跌破 4.2%' }, desc: { en: 'Bond rally accelerates as weak jobs data reinforces rate cut narrative. 2s10s curve steepens to -15bps.', 'zh-TW': '就業數據疲弱強化降息論述，債市反彈加速。2/10 年期利差收窄至 -15bps。', 'zh-CN': '就业数据疲弱强化降息论述，债市反弹加速。2/10 年期利差收窄至 -15bps。' }, impacts: [{ asset: 'USD', sentiment: 'bearish' }, { asset: 'Gold', sentiment: 'bullish' }] },
+            { cat: 'DATA_RELEASE', title: { en: 'US NFP Misses Forecast: 150K vs 200K Expected', 'zh-TW': '美非農不及預期：15 萬 vs 預期 20 萬', 'zh-CN': '美非农不及预期：15 万 vs 预期 20 万' }, desc: { en: 'Labor market shows signs of cooling. Unemployment rate ticks up to 3.9%. Dollar weakens across the board.', 'zh-TW': '勞動市場降溫跡象。失業率微升至 3.9%。美元全面走弱。', 'zh-CN': '劳动市场降温迹象。失业率微升至 3.9%。美元全面走弱。' }, impacts: [{ asset: 'USD', sentiment: 'bearish' }, { asset: 'EUR', sentiment: 'bullish' }] },
+            { cat: 'ASIA_PACIFIC', title: { en: 'BOJ Ends Negative Rates, Yen Whipsaws', 'zh-TW': '日銀結束負利率政策，日圓劇烈震盪', 'zh-CN': '日银结束负利率政策，日元剧烈震荡' }, desc: { en: 'Bank of Japan raises rates for the first time in 17 years. USD/JPY swings 200 pips intraday amid mixed signals.', 'zh-TW': '日本央行 17 年來首次升息。USD/JPY 盤中波動 200 點，訊號分歧。', 'zh-CN': '日本央行 17 年来首次升息。USD/JPY 盘中波动 200 点，信号分歧。' }, impacts: [{ asset: 'JPY', sentiment: 'volatile' }, { asset: 'Nikkei', sentiment: 'bearish' }] },
+            { cat: 'ASIA_PACIFIC', title: { en: 'Taiwan TAIEX Surges on TSMC Revenue Beat', 'zh-TW': '台積電營收超標，台股加權指數大漲', 'zh-CN': '台积电营收超标，台股加权指数大涨' }, desc: { en: 'TSMC reports 35% YoY revenue growth driven by AI chip demand. TAIEX breaks 20,000 milestone.', 'zh-TW': '台積電受惠 AI 晶片需求，營收年增 35%。加權指數突破兩萬點大關。', 'zh-CN': '台积电受惠 AI 芯片需求，营收年增 35%。加权指数突破两万点大关。' }, impacts: [{ asset: 'TWD', sentiment: 'bullish' }, { asset: 'US Tech 100', sentiment: 'bullish' }] },
+            { cat: 'GEOPOLITICS', title: { en: 'Middle East Tensions Lift Oil & Gold, Pressure Equities', 'zh-TW': '中東局勢升溫，油金走高、股市承壓', 'zh-CN': '中东局势升温，油金走高、股市承压' }, desc: { en: 'Escalation in the region triggers risk-off flows. VIX jumps above 20; defense stocks outperform.', 'zh-TW': '地區衝突升級引發避險資金流動。VIX 突破 20，國防股跑贏大盤。', 'zh-CN': '地区冲突升级引发避险资金流动。VIX 突破 20，国防股跑赢大盘。' }, impacts: [{ asset: 'Oil', sentiment: 'bullish' }, { asset: 'Gold', sentiment: 'bullish' }] },
+            { cat: 'MACRO', title: { en: 'China PMI Returns to Expansion at 50.8', 'zh-TW': '中國 PMI 重回擴張區間 50.8', 'zh-CN': '中国 PMI 重回扩张区间 50.8' }, desc: { en: 'Manufacturing PMI beats estimates, signaling recovery. Stimulus measures show early traction. AUD and copper rally.', 'zh-TW': '製造業 PMI 超預期，顯示復甦跡象。刺激措施初見成效。澳幣與銅價反彈。', 'zh-CN': '制造业 PMI 超预期，显示复苏迹象。刺激措施初见成效。澳币与铜价反弹。' }, impacts: [{ asset: 'AUD', sentiment: 'bullish' }, { asset: 'CNY', sentiment: 'bullish' }] },
+            { cat: 'RATES', title: { en: 'ECB Cuts Rates by 25bps, First in 5 Years', 'zh-TW': 'ECB 降息 25 基點，五年來首次', 'zh-CN': 'ECB 降息 25 基点，五年来首次' }, desc: { en: 'European Central Bank begins easing cycle. Lagarde signals cautious approach with data-dependent future moves.', 'zh-TW': '歐洲央行啟動寬鬆週期。拉加德釋放謹慎信號，未來政策依賴數據。', 'zh-CN': '欧洲央行启动宽松周期。拉加德释放谨慎信号，未来政策依赖数据。' }, impacts: [{ asset: 'EUR', sentiment: 'bearish' }, { asset: 'EU Equities', sentiment: 'bullish' }] },
+            { cat: 'CRYPTO_NEWS', title: { en: 'Ethereum ETF Approved, ETH Breaks $3,800', 'zh-TW': '以太坊 ETF 獲批，ETH 突破 $3,800', 'zh-CN': '以太坊 ETF 获批，ETH 突破 $3,800' }, desc: { en: 'SEC approves spot Ethereum ETFs. Institutional inflows expected to rival Bitcoin ETF launch. DeFi tokens rally.', 'zh-TW': 'SEC 批准現貨以太坊 ETF。機構資金流入預期比肩 BTC ETF。DeFi 代幣全面上漲。', 'zh-CN': 'SEC 批准现货以太坊 ETF。机构资金流入预期比肩 BTC ETF。DeFi 代币全面上涨。' }, impacts: [{ asset: 'ETH', sentiment: 'bullish' }, { asset: 'BTC', sentiment: 'bullish' }] },
+            { cat: 'FED_WATCH', title: { en: 'Fed Minutes Reveal Hawkish Tilt Among Members', 'zh-TW': '聯準會會議紀要顯示鷹派傾向', 'zh-CN': '联准会会议纪要显示鹰派倾向' }, desc: { en: 'Several officials favor maintaining restrictive stance longer. Market reprices first cut expectations to September.', 'zh-TW': '多位官員傾向維持緊縮立場更長時間。市場將首次降息預期推遲至九月。', 'zh-CN': '多位官员倾向维持紧缩立场更长时间。市场将首次降息预期推迟至九月。' }, impacts: [{ asset: 'USD', sentiment: 'bullish' }, { asset: 'Gold', sentiment: 'bearish' }] },
+            { cat: 'EQUITY', title: { en: 'Nikkei 225 Breaks 40,000 for First Time', 'zh-TW': '日經 225 首度突破 40,000 點大關', 'zh-CN': '日经 225 首度突破 40,000 点大关' }, desc: { en: 'Weak yen and corporate governance reforms attract global capital. Japanese exporters lead gains.', 'zh-TW': '日圓走弱與企業治理改革吸引全球資金。日本出口商領漲。', 'zh-CN': '日元走弱与企业治理改革吸引全球资金。日本出口商领涨。' }, impacts: [{ asset: 'JPY', sentiment: 'bearish' }, { asset: 'Nikkei', sentiment: 'bullish' }] },
+            { cat: 'DATA_RELEASE', title: { en: 'US CPI Comes in Hot at 3.5%, Markets Tumble', 'zh-TW': '美國 CPI 升至 3.5%，市場重挫', 'zh-CN': '美国 CPI 升至 3.5%，市场重挫' }, desc: { en: 'Headline and core inflation both exceed forecasts. Rate cut probability for June drops to 15%.', 'zh-TW': '整體與核心通膨均超預期。六月降息概率驟降至 15%。', 'zh-CN': '整体与核心通胀均超预期。六月降息概率骤降至 15%。' }, impacts: [{ asset: 'USD', sentiment: 'bullish' }, { asset: 'BTC', sentiment: 'bearish' }] },
+            { cat: 'GOLD', title: { en: 'Central Banks Bought Record 1,037t of Gold in 2023', 'zh-TW': '全球央行 2023 年購金量創紀錄 1,037 噸', 'zh-CN': '全球央行 2023 年购金量创纪录 1,037 吨' }, desc: { en: 'De-dollarization trend accelerates. China and Poland lead purchases. Analysts see $2,200 target.', 'zh-TW': '去美元化趨勢加速。中國與波蘭領跑增持。分析師看向 $2,200 目標。', 'zh-CN': '去美元化趋势加速。中国与波兰领跑增持。分析师看向 $2,200 目标。' }, impacts: [{ asset: 'Gold', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bearish' }] },
+            { cat: 'ENERGY', title: { en: 'Natural Gas Plunges 8% on Warm Winter Forecast', 'zh-TW': '暖冬預期衝擊，天然氣暴跌 8%', 'zh-CN': '暖冬预期冲击，天然气暴跌 8%' }, desc: { en: 'Mild weather outlook slashes heating demand projections. US storage levels well above 5-year average.', 'zh-TW': '溫和天氣前景大幅削減取暖需求預估。美國庫存遠高於五年均值。', 'zh-CN': '温和天气前景大幅削减取暖需求预估。美国库存远高于五年均值。' }, impacts: [{ asset: 'Natural Gas', sentiment: 'bearish' }, { asset: 'EUR', sentiment: 'bullish' }] },
+            { cat: 'BONDS', title: { en: 'Japan 10Y Yield Hits 1% as BOJ Loosens YCC', 'zh-TW': '日十年期公債殖利率觸及 1%，BOJ 放寬 YCC', 'zh-CN': '日十年期国债收益率触及 1%，BOJ 放宽 YCC' }, desc: { en: 'Bank of Japan widens yield curve control band. Global bond markets reprice on spillover effects.', 'zh-TW': '日本央行擴大殖利率曲線控制區間。全球債市因外溢效應重新定價。', 'zh-CN': '日本央行扩大收益率曲线控制区间。全球债市因外溢效应重新定价。' }, impacts: [{ asset: 'JPY', sentiment: 'bullish' }, { asset: 'US Bonds', sentiment: 'bearish' }] }
+        ];
+
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function getCachedNews() {
+            try {
+                const raw = localStorage.getItem(FA_NEWS_CACHE_KEY);
+                if (!raw) return null;
+                const obj = JSON.parse(raw);
+                if (Date.now() - obj.ts > FA_NEWS_CACHE_TTL) return null;
+                return obj.data;
+            } catch { return null; }
+        }
+
+        function setCachedNews(data) {
+            try { localStorage.setItem(FA_NEWS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch {}
+        }
+
+        async function fetchGlobalFinanceNews() {
+            const cached = getCachedNews();
+            if (cached && cached.length > 0) {
+                faNewsData = cached;
+                renderFACarousel();
+                setFASyncStatus(true, 'cached');
+            }
+
+            const avKey = 'T90381X2762DY8TO';
+            const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&topics=financial_markets,economy_monetary,economy_fiscal,energy_transportation,technology&sort=LATEST&limit=50&apikey=${avKey}`;
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('API error');
+                const json = await res.json();
+
+                if (json.feed && json.feed.length > 0) {
+                    const parsed = json.feed.slice(0, 30).map(item => classifyNewsItem(item));
+                    const merged = deduplicateNews([...parsed, ...FA_BUILTIN_NEWS]);
+                    faNewsData = shuffleArray(merged);
+                    setCachedNews(faNewsData);
+                    renderFACarousel();
+                    setFASyncStatus(true, 'live');
+                    return;
+                }
+            } catch {}
+
+            if (!faNewsData || faNewsData.length === 0) {
+                faNewsData = shuffleArray([...FA_BUILTIN_NEWS]);
+                setCachedNews(faNewsData);
+                renderFACarousel();
+                setFASyncStatus(true, 'fallback');
+            }
+        }
+
+        function classifyNewsItem(apiItem) {
+            const title = apiItem.title || '';
+            const summary = (apiItem.summary || '').substring(0, 120);
+            const topics = (apiItem.topics || []).map(t => t.topic);
+
+            let cat = 'MACRO';
+            if (/fed|fomc|powell|federal reserve/i.test(title)) cat = 'FED_WATCH';
+            else if (/rate cut|rate hike|interest rate|ecb|boj|central bank/i.test(title)) cat = 'RATES';
+            else if (/oil|opec|crude|energy|gas/i.test(title)) cat = 'ENERGY';
+            else if (/gold|precious|silver|platinum/i.test(title)) cat = 'GOLD';
+            else if (/bitcoin|btc|ethereum|eth|crypto|defi|nft/i.test(title)) cat = 'CRYPTO_NEWS';
+            else if (/nasdaq|s&p|dow|stock|equity|earnings|ipo/i.test(title) || topics.includes('technology')) cat = 'EQUITY';
+            else if (/bond|treasury|yield|debt/i.test(title)) cat = 'BONDS';
+            else if (/war|sanctions|geopolit|conflict|tariff/i.test(title)) cat = 'GEOPOLITICS';
+            else if (/japan|china|asia|taiwan|nikkei|hang seng|yuan|yen/i.test(title)) cat = 'ASIA_PACIFIC';
+            else if (/cpi|nfp|pmi|gdp|unemployment|payroll|inflation data/i.test(title)) cat = 'DATA_RELEASE';
+
+            const impacts = deriveImpacts(title, cat);
+
+            return {
+                cat,
+                title: { en: truncate(title, 55), 'zh-TW': truncate(title, 55), 'zh-CN': truncate(title, 55) },
+                desc: { en: truncate(summary, 120), 'zh-TW': truncate(summary, 120), 'zh-CN': truncate(summary, 120) },
+                impacts,
+                _live: true
+            };
+        }
+
+        function truncate(str, max) {
+            return str.length > max ? str.substring(0, max - 1) + '…' : str;
+        }
+
+        function deriveImpacts(title, cat) {
+            const t = title.toLowerCase();
+            const impacts = [];
+            const bullish = s => ({ asset: s, sentiment: 'bullish' });
+            const bearish = s => ({ asset: s, sentiment: 'bearish' });
+            const vol = s => ({ asset: s, sentiment: 'volatile' });
+
+            if (cat === 'FED_WATCH' || /fed|fomc/i.test(t)) {
+                impacts.push(/hawk|higher|restrictive/i.test(t) ? bullish('USD') : bearish('USD'));
+                impacts.push(/hawk|higher/i.test(t) ? bearish('Gold') : bullish('Gold'));
+            }
+            if (cat === 'GOLD' || /gold/i.test(t)) impacts.push(/surge|rally|record|buy/i.test(t) ? bullish('Gold') : bearish('Gold'));
+            if (cat === 'ENERGY' || /oil|crude/i.test(t)) impacts.push(/jump|surge|cut/i.test(t) ? bullish('Oil') : bearish('Oil'));
+            if (cat === 'CRYPTO_NEWS' || /bitcoin|btc/i.test(t)) impacts.push(/etf|rally|break|approve/i.test(t) ? bullish('BTC') : bearish('BTC'));
+            if (/ethereum|eth/i.test(t)) impacts.push(/approve|rally|break/i.test(t) ? bullish('ETH') : bearish('ETH'));
+            if (/yen|jpy|boj|japan/i.test(t)) impacts.push(vol('JPY'));
+            if (/euro|eur|ecb/i.test(t)) impacts.push(/cut|dove/i.test(t) ? bearish('EUR') : bullish('EUR'));
+            if (/cpi.*hot|inflation.*above|inflation.*rise/i.test(t)) { impacts.push(bullish('USD')); impacts.push(bearish('Gold')); }
+            if (/nfp.*miss|jobs.*weak|unemployment.*rise/i.test(t)) { impacts.push(bearish('USD')); impacts.push(bullish('Gold')); }
+
+            if (impacts.length === 0) {
+                if (cat === 'EQUITY') impacts.push(bullish('US Tech 100'));
+                else if (cat === 'BONDS') impacts.push(vol('US Bonds'));
+                else impacts.push({ asset: 'Markets', sentiment: 'neutral' });
+            }
+            return impacts.slice(0, 3);
+        }
+
+        function deduplicateNews(arr) {
+            const seen = new Set();
+            return arr.filter(item => {
+                const key = (item.title?.en || '').substring(0, 30);
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        }
+
+        function getFACardHTML(newsItem, slotClass) {
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const catInfo = FA_CATEGORIES[newsItem.cat] || FA_CATEGORIES.MACRO;
+            const title = newsItem.title?.[lang] || newsItem.title?.en || '';
+            const desc = newsItem.desc?.[lang] || newsItem.desc?.en || '';
+
+            const impactHTML = (newsItem.impacts || []).map(imp => {
+                const s = FA_IMPACT_STYLES[imp.sentiment] || FA_IMPACT_STYLES.neutral;
+                const label = imp.sentiment === 'bullish' ? '▲' : imp.sentiment === 'bearish' ? '▼' : '◆';
+                return `<span class="fa-impact ${s.bg} ${s.text}"><span class="fa-impact-dot ${s.dot}"></span>${imp.asset} ${label}</span>`;
+            }).join('');
+
+            const isLive = newsItem._live ? '<span class="inline-block w-1.5 h-1.5 rounded-full bg-green-400 ml-1.5 animate-pulse" title="Live"></span>' : '';
+
+            return `<div class="fa-card ${slotClass} insight-card bg-gradient-to-br from-slate-50 to-white border border-slate-100" style="transition:opacity 0.5s ease, transform 0.5s ease;">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="fa-tag ${catInfo.color}">${catInfo.label}</span>${isLive}
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2 leading-snug">${title}</h3>
+                <p class="text-sm text-slate-500 leading-relaxed line-clamp-3">${desc}</p>
+                <div class="mt-4 flex flex-wrap items-center gap-2">${impactHTML}</div>
+            </div>`;
+        }
+
+        function renderFACarousel() {
+            const container = document.getElementById('fa-carousel');
+            if (!container || faNewsData.length === 0) return;
+
+            const totalPages = Math.ceil(faNewsData.length / 2);
+            faCurrentPage = faCurrentPage % totalPages;
+
+            const idx1 = faCurrentPage * 2;
+            const idx2 = idx1 + 1 < faNewsData.length ? idx1 + 1 : null;
+
+            container.innerHTML = '';
+            const card1 = getFACardHTML(faNewsData[idx1], 'slot-left');
+            container.insertAdjacentHTML('beforeend', card1);
+            if (idx2 !== null) {
+                const card2 = getFACardHTML(faNewsData[idx2], 'slot-right');
+                container.insertAdjacentHTML('beforeend', card2);
+            }
+
+            requestAnimationFrame(() => {
+                container.querySelectorAll('.fa-card').forEach(c => c.classList.add('active'));
+            });
+
+            updateFAPageLabel(totalPages);
+            startFAProgressBar();
+        }
+
+        function transitionFACarousel() {
+            const container = document.getElementById('fa-carousel');
+            if (!container) return;
+
+            const cards = container.querySelectorAll('.fa-card');
+            cards.forEach(c => { c.classList.remove('active'); c.classList.add('exit-left'); });
+
+            setTimeout(() => {
+                const totalPages = Math.ceil(faNewsData.length / 2);
+                faCurrentPage = (faCurrentPage + 1) % totalPages;
+                renderFACarousel();
+            }, 500);
+        }
+
+        function updateFAPageLabel(totalPages) {
+            const label = document.getElementById('fa-page-label');
+            if (label) label.textContent = `${faCurrentPage + 1} / ${totalPages}`;
+        }
+
+        function startFAProgressBar() {
+            if (faProgressTimer) clearInterval(faProgressTimer);
+            const fill = document.getElementById('fa-progress-fill');
+            const timerLabel = document.getElementById('fa-timer-label');
+            if (!fill) return;
+            let elapsed = 0;
+            const interval = 100;
+            const total = 15000;
+            fill.style.width = '0%';
+            faProgressTimer = setInterval(() => {
+                elapsed += interval;
+                const pct = Math.min((elapsed / total) * 100, 100);
+                fill.style.width = pct + '%';
+                const remaining = Math.max(0, Math.ceil((total - elapsed) / 1000));
+                if (timerLabel) timerLabel.textContent = remaining + 's';
+                if (elapsed >= total) {
+                    clearInterval(faProgressTimer);
+                }
+            }, interval);
+        }
+
+        function startFACarousel() {
+            if (faCarouselTimer) clearInterval(faCarouselTimer);
+            faCarouselTimer = setInterval(() => {
+                transitionFACarousel();
+            }, 15000);
+        }
+
+        function stopFACarousel() {
+            if (faCarouselTimer) { clearInterval(faCarouselTimer); faCarouselTimer = null; }
+            if (faProgressTimer) { clearInterval(faProgressTimer); faProgressTimer = null; }
+        }
+
+        function setFASyncStatus(synced, source) {
+            const dot = document.getElementById('fa-sync-dot');
+            const label = document.getElementById('fa-sync-label');
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const labels = {
+                live:     { en: 'News Live', 'zh-TW': '新聞即時同步', 'zh-CN': '新闻实时同步' },
+                cached:   { en: 'Cached News', 'zh-TW': '快取新聞', 'zh-CN': '缓存新闻' },
+                fallback: { en: 'Curated News', 'zh-TW': '精選新聞', 'zh-CN': '精选新闻' },
+                loading:  { en: 'Loading...', 'zh-TW': '載入中...', 'zh-CN': '加载中...' }
+            };
+            const key = synced ? (source || 'live') : 'loading';
+            if (label) label.textContent = labels[key]?.[lang] || labels[key]?.en || '';
+            if (dot) {
+                dot.className = 'inline-block w-2 h-2 rounded-full';
+                if (key === 'live') dot.classList.add('bg-green-400');
+                else if (key === 'cached') dot.classList.add('bg-amber-400');
+                else if (key === 'fallback') dot.classList.add('bg-cyan-400');
+                else dot.classList.add('bg-amber-400', 'animate-pulse');
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           Economic Calendar — Dynamic Event System
+           ═══════════════════════════════════════════════════════════════ */
+        const CAL_CACHE_KEY = 'fx_spectrum_cal_events';
+        const CAL_CACHE_TTL = 60 * 60 * 1000;
+        let calCountdownTimer = null;
+        let calTickerAlertTimer = null;
+        let calEvents = [];
+
+        const CAL_ASSET_MAP = {
+            USD: ['XAU/USD', 'EUR/USD', 'GBP/USD', 'USD/JPY', 'BTC/USD', 'US Tech 100'],
+            EUR: ['EUR/USD', 'XAU/USD'],
+            GBP: ['GBP/USD', 'EUR/USD'],
+            JPY: ['USD/JPY', 'XAU/USD'],
+            AUD: ['AUD/USD', 'XAU/USD'],
+            CHF: ['USD/CHF', 'EUR/USD'],
+            CNY: ['AUD/USD', 'XAU/USD', 'BTC/USD'],
+            CAD: ['USD/CHF', 'XAU/USD'],
+            NZD: ['AUD/USD'],
+            TWD: ['US Tech 100'],
+            OIL: ['XAU/USD', 'USD/CHF'],
+            CRYPTO: ['BTC/USD', 'ETH/USD']
+        };
+
+        const CAL_ASSET_COLORS = {
+            'XAU/USD': 'bg-yellow-50 text-yellow-700', 'EUR/USD': 'bg-blue-50 text-blue-700',
+            'GBP/USD': 'bg-indigo-50 text-indigo-700', 'USD/JPY': 'bg-rose-50 text-rose-700',
+            'AUD/USD': 'bg-teal-50 text-teal-700', 'USD/CHF': 'bg-purple-50 text-purple-700',
+            'BTC/USD': 'bg-orange-50 text-orange-700', 'ETH/USD': 'bg-violet-50 text-violet-700',
+            'US Tech 100': 'bg-green-50 text-green-700'
+        };
+
+        function getTodayDateStr() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+
+        function todayAtHourEST(h, m) {
+            const now = new Date();
+            const y = now.getFullYear(), mo = now.getMonth(), day = now.getDate();
+            const est = new Date(y, mo, day, h, m || 0, 0);
+            const utcOffset = est.getTimezoneOffset();
+            const estOffset = 5 * 60;
+            return new Date(est.getTime() + (utcOffset - estOffset) * 60000);
+        }
+
+        function buildTodayEvents() {
+            const base = [
+                { time: '02:00', event: { en: 'China Caixin Manufacturing PMI', 'zh-TW': '中國財新製造業 PMI', 'zh-CN': '中国财新制造业 PMI' }, currency: 'CNY', impact: 2, forecast: '50.5', prev: '50.3', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'XAU/USD': 'bearish', 'AUD/USD': 'bullish' } },
+                { time: '05:00', event: { en: 'Japan Tankan Manufacturing Index', 'zh-TW': '日本短觀製造業指數', 'zh-CN': '日本短观制造业指数' }, currency: 'JPY', impact: 2, forecast: '13', prev: '12', assets: ['USD/JPY'], analysisBias: { 'USD/JPY': 'bearish' } },
+                { time: '07:00', event: { en: 'Germany CPI (MoM)', 'zh-TW': '德國 CPI（月增率）', 'zh-CN': '德国 CPI（月增率）' }, currency: 'EUR', impact: 2, forecast: '0.3%', prev: '0.2%', assets: ['EUR/USD','XAU/USD'], analysisBias: { 'EUR/USD': 'bullish' } },
+                { time: '07:45', event: { en: 'ECB Rate Decision', 'zh-TW': 'ECB 利率決議', 'zh-CN': 'ECB 利率决议' }, currency: 'EUR', impact: 3, forecast: '4.25%', prev: '4.50%', assets: ['EUR/USD','XAU/USD','GBP/USD'], analysisBias: { 'EUR/USD': 'bearish', 'XAU/USD': 'bullish' } },
+                { time: '08:15', event: { en: 'ADP Employment Change', 'zh-TW': 'ADP 就業人數變化', 'zh-CN': 'ADP 就业人数变化' }, currency: 'USD', impact: 2, forecast: '175K', prev: '192K', assets: ['XAU/USD','EUR/USD','BTC/USD'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish' } },
+                { time: '08:30', event: { en: 'US Non-Farm Payrolls', 'zh-TW': '美國非農就業人數', 'zh-CN': '美国非农就业人数' }, currency: 'USD', impact: 3, forecast: '200K', prev: '206K', assets: ['XAU/USD','EUR/USD','USD/JPY','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish', 'BTC/USD': 'bearish' } },
+                { time: '08:30', event: { en: 'US Unemployment Rate', 'zh-TW': '美國失業率', 'zh-CN': '美国失业率' }, currency: 'USD', impact: 3, forecast: '3.8%', prev: '3.7%', assets: ['XAU/USD','EUR/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bullish', 'EUR/USD': 'bullish' } },
+                { time: '08:30', event: { en: 'US CPI (YoY)', 'zh-TW': '美國 CPI（年增率）', 'zh-CN': '美国 CPI（年增率）' }, currency: 'USD', impact: 3, forecast: '3.1%', prev: '3.2%', assets: ['XAU/USD','EUR/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'BTC/USD': 'bearish' } },
+                { time: '08:30', event: { en: 'US Core CPI (MoM)', 'zh-TW': '美國核心 CPI（月增率）', 'zh-CN': '美国核心 CPI（月增率）' }, currency: 'USD', impact: 3, forecast: '0.2%', prev: '0.3%', assets: ['XAU/USD','EUR/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bearish' } },
+                { time: '08:30', event: { en: 'US Initial Jobless Claims', 'zh-TW': '美國初領失業金人數', 'zh-CN': '美国初领失业金人数' }, currency: 'USD', impact: 2, forecast: '215K', prev: '211K', assets: ['XAU/USD','EUR/USD'], analysisBias: { 'XAU/USD': 'bullish' } },
+                { time: '09:45', event: { en: 'US S&P Global Services PMI', 'zh-TW': '美國 S&P 全球服務業 PMI', 'zh-CN': '美国 S&P 全球服务业 PMI' }, currency: 'USD', impact: 2, forecast: '54.0', prev: '53.4', assets: ['US Tech 100','EUR/USD'], analysisBias: { 'EUR/USD': 'bearish' } },
+                { time: '10:00', event: { en: 'US ISM Services PMI', 'zh-TW': '美國 ISM 服務業 PMI', 'zh-CN': '美国 ISM 服务业 PMI' }, currency: 'USD', impact: 3, forecast: '52.5', prev: '51.4', assets: ['XAU/USD','EUR/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish' } },
+                { time: '10:30', event: { en: 'US EIA Crude Oil Inventories', 'zh-TW': '美國 EIA 原油庫存', 'zh-CN': '美国 EIA 原油库存' }, currency: 'USD', impact: 2, forecast: '-1.2M', prev: '-2.5M', assets: ['XAU/USD','USD/CHF'], analysisBias: {} },
+                { time: '11:00', event: { en: 'Taiwan CPI (YoY)', 'zh-TW': '台灣 CPI（年增率）', 'zh-CN': '台湾 CPI（年增率）' }, currency: 'TWD', impact: 1, forecast: '2.1%', prev: '2.0%', assets: ['US Tech 100'], analysisBias: {} },
+                { time: '14:00', event: { en: 'FOMC Rate Decision', 'zh-TW': 'FOMC 利率決議', 'zh-CN': 'FOMC 利率决议' }, currency: 'USD', impact: 3, forecast: '5.25%', prev: '5.25%', assets: ['XAU/USD','EUR/USD','USD/JPY','GBP/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish', 'BTC/USD': 'bearish' } },
+                { time: '14:00', event: { en: 'FOMC Economic Projections', 'zh-TW': 'FOMC 經濟預測', 'zh-CN': 'FOMC 经济预测' }, currency: 'USD', impact: 3, forecast: '—', prev: '—', assets: ['XAU/USD','EUR/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish' } },
+                { time: '14:30', event: { en: 'Fed Chair Powell Press Conference', 'zh-TW': '聯準會主席鮑威爾記者會', 'zh-CN': '联准会主席鲍威尔记者会' }, currency: 'USD', impact: 3, forecast: '—', prev: '—', assets: ['XAU/USD','EUR/USD','USD/JPY','BTC/USD'], analysisBias: {} },
+                { time: '17:00', event: { en: 'US 10-Year Note Auction', 'zh-TW': '美國十年期公債標售', 'zh-CN': '美国十年期国债标售' }, currency: 'USD', impact: 2, forecast: '4.28%', prev: '4.32%', assets: ['XAU/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bullish' } },
+                { time: '19:30', event: { en: 'BOJ Policy Rate Decision', 'zh-TW': '日銀政策利率決議', 'zh-CN': '日银政策利率决议' }, currency: 'JPY', impact: 3, forecast: '0.10%', prev: '0.00%', assets: ['USD/JPY','XAU/USD','EUR/USD'], analysisBias: { 'USD/JPY': 'bearish' } },
+                { time: '19:50', event: { en: 'Japan GDP (QoQ)', 'zh-TW': '日本 GDP（季增率）', 'zh-CN': '日本 GDP（季增率）' }, currency: 'JPY', impact: 2, forecast: '0.5%', prev: '-0.1%', assets: ['USD/JPY'], analysisBias: { 'USD/JPY': 'bearish' } },
+                { time: '20:00', event: { en: 'China Trade Balance (USD)', 'zh-TW': '中國貿易帳（美元）', 'zh-CN': '中国贸易帐（美元）' }, currency: 'CNY', impact: 2, forecast: '$85.0B', prev: '$72.3B', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'AUD/USD': 'bullish' } },
+                { time: '21:30', event: { en: 'Australia Employment Change', 'zh-TW': '澳洲就業人數變化', 'zh-CN': '澳洲就业人数变化' }, currency: 'AUD', impact: 2, forecast: '25.0K', prev: '38.5K', assets: ['AUD/USD'], analysisBias: { 'AUD/USD': 'bullish' } },
+                { time: '22:00', event: { en: 'RBA Rate Statement', 'zh-TW': '澳洲央行利率聲明', 'zh-CN': '澳洲央行利率声明' }, currency: 'AUD', impact: 3, forecast: '4.35%', prev: '4.35%', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'AUD/USD': 'bullish' } }
+            ];
+
+            const today = getTodayDateStr();
+            return base.map((ev, i) => {
+                const [h, m] = ev.time.split(':').map(Number);
+                const dt = todayAtHourEST(h, m);
+                const now = new Date();
+                const released = now > dt;
+                let actual = null;
+                if (released) {
+                    actual = simulateActual(ev.forecast);
+                }
+                return { ...ev, id: `${today}-${i}`, datetime: dt, released, actual };
+            });
+        }
+
+        function simulateActual(forecast) {
+            const numeric = parseFloat(forecast.replace(/[%KMB$,]/g, ''));
+            if (isNaN(numeric)) return null;
+            const variance = numeric * (Math.random() * 0.08 - 0.04);
+            const result = numeric + variance;
+            if (forecast.includes('%')) return result.toFixed(1) + '%';
+            if (forecast.includes('K')) return Math.round(result) + 'K';
+            if (forecast.includes('M')) return result.toFixed(1) + 'M';
+            if (forecast.includes('B')) return '$' + result.toFixed(1) + 'B';
+            return result.toFixed(1);
+        }
+
+        function getCachedCalendar() {
+            try {
+                const raw = localStorage.getItem(CAL_CACHE_KEY);
+                if (!raw) return null;
+                const obj = JSON.parse(raw);
+                if (Date.now() - obj.ts > CAL_CACHE_TTL) return null;
+                return obj.data;
+            } catch { return null; }
+        }
+        function setCachedCalendar(data) {
+            try {
+                const serializable = data.map(e => ({ ...e, datetime: e.datetime.toISOString() }));
+                localStorage.setItem(CAL_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: serializable }));
+            } catch {}
+        }
+
+        function fetchCalendarEvents() {
+            const cached = getCachedCalendar();
+            if (cached) {
+                calEvents = cached.map(e => ({ ...e, datetime: new Date(e.datetime) }));
+                renderCalendarRows();
+                setCalSyncStatus('cached');
+                return;
+            }
+            calEvents = buildTodayEvents();
+            setCachedCalendar(calEvents);
+            renderCalendarRows();
+            setCalSyncStatus('live');
+        }
+
+        function getCountdownStr(dt) {
+            const diff = dt - Date.now();
+            if (diff <= 0) return null;
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
+            if (m > 0) return `${m}m ${String(s).padStart(2,'0')}s`;
+            return `${s}s`;
+        }
+
+        function isImminent(dt) {
+            const diff = dt - Date.now();
+            return diff > 0 && diff <= 3600000;
+        }
+
+        function renderCalendarRows() {
+            const body = document.getElementById('cal-events-body');
+            if (!body) return;
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+
+            const sorted = [...calEvents].sort((a, b) => a.datetime - b.datetime);
+            body.innerHTML = sorted.map(ev => {
+                const evName = ev.event?.[lang] || ev.event?.en || '';
+                const imminent = isImminent(ev.datetime);
+                const countdown = getCountdownStr(ev.datetime);
+                const rowClass = ev.released ? 'released' : imminent ? 'imminent' : '';
+
+                const dots = Array.from({ length: 3 }, (_, i) => {
+                    const color = i < ev.impact ? (ev.impact === 3 ? 'bg-red-500' : 'bg-orange-500') : 'bg-slate-200';
+                    const pulse = (ev.impact === 3 && imminent && i < ev.impact) ? 'cal-dot-pulse' : '';
+                    return `<span class="w-2 h-2 rounded-full ${color} ${pulse}"></span>`;
+                }).join('');
+
+                const assetTags = (ev.assets || []).map(a => {
+                    const cls = CAL_ASSET_COLORS[a] || 'bg-slate-50 text-slate-600';
+                    return `<span class="cal-asset-tag ${cls}">${a}</span>`;
+                }).join('');
+
+                let timeCell = `<span class="text-slate-500 font-mono text-xs">${ev.time} EST</span>`;
+                if (countdown && imminent) {
+                    timeCell += `<br><span class="cal-countdown text-red-500 font-mono text-[10px] font-bold">${countdown}</span>`;
+                } else if (ev.released) {
+                    timeCell += `<br><span class="text-green-500 text-[10px] font-bold">✓</span>`;
+                }
+
+                let valsCell = '';
+                if (ev.released && ev.actual) {
+                    const numActual = parseFloat(ev.actual.replace(/[%KMB$,]/g, ''));
+                    const numForecast = parseFloat(ev.forecast.replace(/[%KMB$,]/g, ''));
+                    const beat = !isNaN(numActual) && !isNaN(numForecast) && numActual > numForecast;
+                    const miss = !isNaN(numActual) && !isNaN(numForecast) && numActual < numForecast;
+                    const badgeCls = beat ? 'bg-green-100 text-green-700' : miss ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600';
+                    valsCell = `<span class="cal-actual-badge ${badgeCls}">${ev.actual}</span> <span class="text-slate-400 text-xs">/ ${ev.forecast}</span>`;
+                } else {
+                    valsCell = `<span class="text-slate-400 text-xs">— / ${ev.forecast}</span>`;
+                }
+
+                return `<div class="cal-row ${rowClass} grid grid-cols-6 gap-2 px-6 py-3 text-sm items-center" data-cal-id="${ev.id}">
+                    <div>${timeCell}</div>
+                    <div class="col-span-2">
+                        <span class="text-slate-700 font-medium text-xs leading-tight block">${evName}</span>
+                        <div class="flex flex-wrap gap-0.5 mt-1">${assetTags}</div>
+                    </div>
+                    <span class="text-slate-500 font-mono text-xs font-bold">${ev.currency}</span>
+                    <div>${valsCell}</div>
+                    <div class="flex space-x-1 items-center">${dots}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateCalCountdowns() {
+            const body = document.getElementById('cal-events-body');
+            if (!body) return;
+            let hasHighImpactImminent = false;
+
+            calEvents.forEach(ev => {
+                const row = body.querySelector(`[data-cal-id="${ev.id}"]`);
+                if (!row) return;
+
+                const wasReleased = ev.released;
+                const now = new Date();
+                if (!ev.released && now > ev.datetime) {
+                    ev.released = true;
+                    ev.actual = simulateActual(ev.forecast);
+                    row.classList.add('flash-release');
+                    setTimeout(() => row.classList.remove('flash-release'), 1500);
+                    onCalendarEventRelease(ev);
+                }
+
+                if (ev.released) {
+                    row.classList.remove('imminent');
+                    row.classList.add('released');
+                } else if (isImminent(ev.datetime)) {
+                    row.classList.add('imminent');
+                    if (ev.impact === 3) hasHighImpactImminent = true;
+                }
+
+                const countdownEl = row.querySelector('.cal-countdown');
+                if (!ev.released) {
+                    const cd = getCountdownStr(ev.datetime);
+                    if (cd && isImminent(ev.datetime) && countdownEl) {
+                        countdownEl.textContent = cd;
+                    } else if (cd && isImminent(ev.datetime) && !countdownEl) {
+                        renderCalendarRows();
+                    }
+                } else if (countdownEl) {
+                    renderCalendarRows();
+                }
+            });
+
+            controlTickerAlert(hasHighImpactImminent);
+        }
+
+        function controlTickerAlert(active) {
+            const topTicker = document.querySelector('.ticker');
+            const bottomTicker = document.querySelector('.ticker-reverse');
+            if (active) {
+                topTicker?.classList.add('ticker-alert', 'ticker-alert-color');
+                bottomTicker?.classList.add('ticker-alert', 'ticker-alert-color');
+            } else {
+                topTicker?.classList.remove('ticker-alert', 'ticker-alert-color');
+                bottomTicker?.classList.remove('ticker-alert', 'ticker-alert-color');
+            }
+        }
+
+        function onCalendarEventRelease(ev) {
+            if (!ev.actual || !ev.forecast) return;
+            const numActual = parseFloat(ev.actual.replace(/[%KMB$,]/g, ''));
+            const numForecast = parseFloat(ev.forecast.replace(/[%KMB$,]/g, ''));
+            if (isNaN(numActual) || isNaN(numForecast)) return;
+
+            const beat = numActual > numForecast;
+            const usdEvent = ev.currency === 'USD';
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+
+            if (usdEvent && ev.impact >= 2) {
+                const biasEntries = Object.entries(ev.analysisBias || {});
+                biasEntries.forEach(([symbol, defaultBias]) => {
+                    const container = document.getElementById('analysis-cards');
+                    if (!container) return;
+                    const card = container.querySelector(`[data-analysis="${symbol}"]`);
+                    if (!card) return;
+
+                    let overrideChange;
+                    if (symbol === 'XAU/USD') {
+                        overrideChange = beat ? -1.2 : 1.5;
+                    } else if (symbol === 'BTC/USD') {
+                        overrideChange = beat ? -2.5 : 3.0;
+                    } else {
+                        overrideChange = beat ? -0.25 : 0.35;
+                    }
+
+                    const item = getDataForSymbol(symbol);
+                    item.change = overrideChange;
+                    updateSingleCard(card, symbol, item);
+                    card.classList.add('card-updating');
+                    setTimeout(() => card.classList.remove('card-updating'), 900);
+                });
+
+                const evName = ev.event?.[lang] || ev.event?.en || '';
+                const syncLabel = document.getElementById('analysis-sync-label');
+                if (syncLabel) {
+                    const calTriggerText = {
+                        en: `Updated: ${evName}`,
+                        'zh-TW': `已更新：${evName}`,
+                        'zh-CN': `已更新：${evName}`
+                    };
+                    syncLabel.textContent = calTriggerText[lang] || calTriggerText.en;
+                    setTimeout(() => {
+                        const isLive = currentSyncSource === 'live';
+                        setAnalysisSyncStatus(isLive);
+                    }, 5000);
+                }
+            }
+
+            setCachedCalendar(calEvents);
+            renderCalendarRows();
+        }
+
+        function setCalSyncStatus(source) {
+            const dot = document.getElementById('cal-sync-dot');
+            const label = document.getElementById('cal-sync-label');
+            const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
+            const labels = {
+                live:    { en: 'Calendar Live', 'zh-TW': '日曆即時同步', 'zh-CN': '日历实时同步' },
+                cached:  { en: 'Calendar Cached', 'zh-TW': '日曆快取', 'zh-CN': '日历缓存' },
+                loading: { en: 'Loading...', 'zh-TW': '載入中...', 'zh-CN': '加载中...' }
+            };
+            if (label) label.textContent = labels[source]?.[lang] || labels[source]?.en || '';
+            if (dot) {
+                dot.className = 'inline-block w-2 h-2 rounded-full';
+                if (source === 'live') dot.classList.add('bg-green-400');
+                else if (source === 'cached') dot.classList.add('bg-amber-400');
+                else dot.classList.add('bg-amber-400', 'animate-pulse');
+            }
+        }
+
+        function initEconomicCalendar() {
+            fetchCalendarEvents();
+            calCountdownTimer = setInterval(updateCalCountdowns, 1000);
+            setInterval(() => {
+                localStorage.removeItem(CAL_CACHE_KEY);
+                fetchCalendarEvents();
+            }, CAL_CACHE_TTL);
+        }
+
+        function initFACarousel() {
+            setFASyncStatus(false);
+            fetchGlobalFinanceNews().then(() => {
+                startFACarousel();
+            });
+            setInterval(() => {
+                localStorage.removeItem(FA_NEWS_CACHE_KEY);
+                fetchGlobalFinanceNews();
+            }, FA_NEWS_CACHE_TTL);
         }
 
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'insights_badge': 'Real-Time Market Intelligence', 'insights_title_1': 'Market ', 'insights_title_2': 'Insights', 'insights_desc': 'AI-driven analysis covering forex, precious metals, cryptocurrencies and global indices — updated in real time.', 'insights_live_title': 'Live Market Overview', 'insights_ta_title': 'Technical Analysis', 'insights_fa_title': 'Fundamental Analysis', 'insights_calendar_title': 'Economic Calendar', 'ta_eurusd_title': 'Bullish Channel Intact', 'ta_eurusd_desc': 'Price holding above the 1.0820 support zone with RSI divergence suggesting continuation to the upside. Key resistance at 1.0920.', 'ta_gold_title': 'Consolidation Near Highs', 'ta_gold_desc': 'Gold trades in a tight range between $2,010 and $2,040. MACD histogram flattening, awaiting NFP catalyst for breakout direction.', 'ta_btc_title': 'Breakout Above $62K', 'ta_btc_desc': 'Bitcoin cleared the descending trendline with strong volume. Next target $65,000 with support now established at $60,500.', 'fa_fed_title': 'Fed Rate Decision Ahead', 'fa_fed_desc': 'Markets are pricing in a 72% probability of a rate hold at the upcoming FOMC meeting. Key focus on Chair Powell\'s forward guidance commentary and updated dot plot projections.', 'fa_macro_title': 'EU PMI Signals Recovery', 'fa_macro_desc': 'Eurozone Manufacturing PMI rose to 48.7, signaling a slower pace of contraction. Services sector remains expansionary at 52.3, supporting EUR strength against the dollar.', 'cal_time': 'Time', 'cal_event': 'Event', 'cal_currency': 'Currency', 'cal_impact': 'Impact' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'insights_badge': '即時市場情報中心', 'insights_title_1': '市場', 'insights_title_2': '洞察分析', 'insights_desc': 'AI 驅動分析涵蓋外匯、貴金屬、加密貨幣與全球指數——即時更新。', 'insights_live_title': '即時行情總覽', 'insights_ta_title': '技術分析', 'insights_fa_title': '基本面分析', 'insights_calendar_title': '經濟日曆', 'ta_eurusd_title': '多頭通道維持完整', 'ta_eurusd_desc': '價格守住 1.0820 支撐區，RSI 背離暗示上行延續。關鍵阻力位 1.0920。', 'ta_gold_title': '高位盤整', 'ta_gold_desc': '黃金在 $2,010 至 $2,040 窄幅交易。MACD 柱狀圖趨平，等待非農數據催化方向突破。', 'ta_btc_title': '突破 $62K 上方', 'ta_btc_desc': '比特幣以強勁成交量突破下降趨勢線。下一目標 $65,000，支撐位已確立在 $60,500。', 'fa_fed_title': '聯準會利率決議在即', 'fa_fed_desc': '市場定價顯示即將召開的 FOMC 會議維持利率不變的概率為 72%。重點關注鮑威爾主席的前瞻指引與最新點陣圖預測。', 'fa_macro_title': '歐盟 PMI 顯示復甦跡象', 'fa_macro_desc': '歐元區製造業 PMI 升至 48.7，顯示收縮速度放緩。服務業維持擴張在 52.3，支撐歐元對美元走強。', 'cal_time': '時間', 'cal_event': '事件', 'cal_currency': '貨幣', 'cal_impact': '影響' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'insights_badge': '实时市场情报中心', 'insights_title_1': '市场', 'insights_title_2': '洞察分析', 'insights_desc': 'AI 驱动分析涵盖外汇、贵金属、加密货币与全球指数——实时更新。', 'insights_live_title': '实时行情总览', 'insights_ta_title': '技术分析', 'insights_fa_title': '基本面分析', 'insights_calendar_title': '经济日历', 'ta_eurusd_title': '多头通道维持完整', 'ta_eurusd_desc': '价格守住 1.0820 支撑区，RSI 背离暗示上行延续。关键阻力位 1.0920。', 'ta_gold_title': '高位盘整', 'ta_gold_desc': '黄金在 $2,010 至 $2,040 窄幅交易。MACD 柱状图趋平，等待非农数据催化方向突破。', 'ta_btc_title': '突破 $62K 上方', 'ta_btc_desc': '比特币以强劲成交量突破下降趋势线。下一目标 $65,000，支撑位已确立在 $60,500。', 'fa_fed_title': '联准会利率决议在即', 'fa_fed_desc': '市场定价显示即将召开的 FOMC 会议维持利率不变的概率为 72%。重点关注鲍威尔主席的前瞻指引与最新点阵图预测。', 'fa_macro_title': '欧盟 PMI 显示复苏迹象', 'fa_macro_desc': '欧元区制造业 PMI 升至 48.7，显示收缩速度放缓。服务业维持扩张在 52.3，支撑欧元对美元走强。', 'cal_time': '时间', 'cal_event': '事件', 'cal_currency': '货币', 'cal_impact': '影响' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'insights_badge': 'Real-Time Market Intelligence', 'insights_title_1': 'Market ', 'insights_title_2': 'Insights', 'insights_desc': 'AI-driven analysis covering forex, precious metals, cryptocurrencies and global indices — updated in real time.', 'insights_live_title': 'Live Market Overview', 'insights_ta_title': 'Technical Analysis', 'insights_fa_title': 'Fundamental Analysis', 'insights_calendar_title': 'Economic Calendar', 'ta_eurusd_title': 'Bullish Channel Intact', 'ta_eurusd_desc': 'Price holding above the 1.0820 support zone with RSI divergence suggesting continuation to the upside. Key resistance at 1.0920.', 'ta_gold_title': 'Consolidation Near Highs', 'ta_gold_desc': 'Gold trades in a tight range between $2,010 and $2,040. MACD histogram flattening, awaiting NFP catalyst for breakout direction.', 'ta_btc_title': 'Breakout Above $62K', 'ta_btc_desc': 'Bitcoin cleared the descending trendline with strong volume. Next target $65,000 with support now established at $60,500.', 'fa_fed_title': 'Fed Rate Decision Ahead', 'fa_fed_desc': 'Markets are pricing in a 72% probability of a rate hold at the upcoming FOMC meeting. Key focus on Chair Powell\'s forward guidance commentary and updated dot plot projections.', 'fa_macro_title': 'EU PMI Signals Recovery', 'fa_macro_desc': 'Eurozone Manufacturing PMI rose to 48.7, signaling a slower pace of contraction. Services sector remains expansionary at 52.3, supporting EUR strength against the dollar.', 'cal_time': 'Time', 'cal_event': 'Event', 'cal_currency': 'Currency', 'cal_impact': 'Impact', 'cal_vals': 'Actual / Forecast' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'insights_badge': '即時市場情報中心', 'insights_title_1': '市場', 'insights_title_2': '洞察分析', 'insights_desc': 'AI 驅動分析涵蓋外匯、貴金屬、加密貨幣與全球指數——即時更新。', 'insights_live_title': '即時行情總覽', 'insights_ta_title': '技術分析', 'insights_fa_title': '基本面分析', 'insights_calendar_title': '經濟日曆', 'ta_eurusd_title': '多頭通道維持完整', 'ta_eurusd_desc': '價格守住 1.0820 支撐區，RSI 背離暗示上行延續。關鍵阻力位 1.0920。', 'ta_gold_title': '高位盤整', 'ta_gold_desc': '黃金在 $2,010 至 $2,040 窄幅交易。MACD 柱狀圖趨平，等待非農數據催化方向突破。', 'ta_btc_title': '突破 $62K 上方', 'ta_btc_desc': '比特幣以強勁成交量突破下降趨勢線。下一目標 $65,000，支撐位已確立在 $60,500。', 'fa_fed_title': '聯準會利率決議在即', 'fa_fed_desc': '市場定價顯示即將召開的 FOMC 會議維持利率不變的概率為 72%。重點關注鮑威爾主席的前瞻指引與最新點陣圖預測。', 'fa_macro_title': '歐盟 PMI 顯示復甦跡象', 'fa_macro_desc': '歐元區製造業 PMI 升至 48.7，顯示收縮速度放緩。服務業維持擴張在 52.3，支撐歐元對美元走強。', 'cal_time': '時間', 'cal_event': '事件', 'cal_currency': '貨幣', 'cal_impact': '影響', 'cal_vals': '實際 / 預期' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'insights_badge': '实时市场情报中心', 'insights_title_1': '市场', 'insights_title_2': '洞察分析', 'insights_desc': 'AI 驱动分析涵盖外汇、贵金属、加密货币与全球指数——实时更新。', 'insights_live_title': '实时行情总览', 'insights_ta_title': '技术分析', 'insights_fa_title': '基本面分析', 'insights_calendar_title': '经济日历', 'ta_eurusd_title': '多头通道维持完整', 'ta_eurusd_desc': '价格守住 1.0820 支撑区，RSI 背离暗示上行延续。关键阻力位 1.0920。', 'ta_gold_title': '高位盘整', 'ta_gold_desc': '黄金在 $2,010 至 $2,040 窄幅交易。MACD 柱状图趋平，等待非农数据催化方向突破。', 'ta_btc_title': '突破 $62K 上方', 'ta_btc_desc': '比特币以强劲成交量突破下降趋势线。下一目标 $65,000，支撑位已确立在 $60,500。', 'fa_fed_title': '联准会利率决议在即', 'fa_fed_desc': '市场定价显示即将召开的 FOMC 会议维持利率不变的概率为 72%。重点关注鲍威尔主席的前瞻指引与最新点阵图预测。', 'fa_macro_title': '欧盟 PMI 显示复苏迹象', 'fa_macro_desc': '欧元区制造业 PMI 升至 48.7，显示收缩速度放缓。服务业维持扩张在 52.3，支撑欧元对美元走强。', 'cal_time': '时间', 'cal_event': '事件', 'cal_currency': '货币', 'cal_impact': '影响', 'cal_vals': '实际 / 预期' }
         };
 
         function changeLanguage(lang) {
@@ -282,13 +1616,57 @@
                 if (translations[lang]?.[key]) el.innerText = translations[lang][key];
             });
             document.documentElement.lang = lang;
+            if (_analysisInitialized && window.fxSpectrumTickerData) {
+                renderAnalysisCards(window.fxSpectrumTickerData, false);
+                setAnalysisSyncStatus(currentSyncSource === 'live');
+                startForexRotation();
+                startMetalsRotation();
+                startCryptoRotation();
+                startStocksRotation();
+            }
+            if (faNewsData.length > 0) renderFACarousel();
+            if (calEvents.length > 0) { renderCalendarRows(); setCalSyncStatus(getCachedCalendar() ? 'cached' : 'live'); }
+            const tabsC = document.getElementById('market-tabs');
+            if (tabsC) { tabsC.innerHTML = ''; renderMarketCards(null, false); }
         }
 
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.getElementById('mobile-menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
+        let _cardsInitialized = false;
+
+        window.addEventListener('fxSpectrumDataReady', (e) => {
+            const data = e.detail;
+            const source = e.detail._source;
+            currentSyncSource = source === 'live' ? 'live' : source === 'cached' ? 'cached' : 'offline';
+            if (_cardsInitialized) {
+                initMarketCards(data, true);
+            } else {
+                initMarketCards(data, false);
+                _cardsInitialized = true;
+            }
+            onDataForAnalysis(data, source);
+        });
+
         window.onload = () => {
-            initTickers();
-            initMarketCards();
+            if (!_cardsInitialized) {
+                const existing = window.fxSpectrumTickerData;
+                currentSyncSource = existing ? 'cached' : 'offline';
+                initMarketCards(existing || null, false);
+                _cardsInitialized = true;
+            }
+            const existingData = window.fxSpectrumTickerData;
+            if (!_analysisInitialized && existingData) {
+                onDataForAnalysis(existingData, existingData._source || 'cached');
+            }
+            initFACarousel();
+            initEconomicCalendar();
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
         };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>
