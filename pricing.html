@@ -41,6 +41,19 @@
         .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
         .hamburger-btn { display: none; }
         @media (max-width: 767px) { .hamburger-btn { display: flex; } }
+
+        .ib-form-section { margin-top: 80px; padding: 60px 24px; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 2rem; }
+        .ib-form-container { max-width: 800px; margin: 0 auto; }
+        .ib-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .ib-form-input { width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #1e293b; background: #fff; transition: all 0.25s ease; outline: none; }
+        .ib-form-input:focus { border-color: #06B6D4; box-shadow: 0 0 0 3px rgba(6,182,212,0.12); }
+        .ib-form-input::placeholder { color: #94a3b8; }
+        .ib-form-textarea { resize: vertical; min-height: 100px; }
+        .ib-form-btn { display: block; margin: 0 auto; padding: 12px 40px; border: none; border-radius: 14px; font-size: 0.85rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #06B6D4, #A855F7); cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.03em; }
+        .ib-form-btn:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(6,182,212,0.3); }
+        .ib-form-btn:active { transform: scale(0.98); }
+        .ib-form-success { display: none; text-align: center; padding: 40px 20px; }
+        @media (max-width: 767px) { .ib-form-grid { grid-template-columns: 1fr; } .ib-form-section { margin-top: 40px; padding: 40px 16px; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -174,6 +187,62 @@
             </div>
         </div>
 
+        <div class="max-w-7xl mx-auto px-4 mt-10 mb-8">
+            <div id="pricing-partner-logos" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+        </div>
+
+        <section id="ib-contact-section" class="ib-form-section max-w-7xl mx-auto">
+            <div class="ib-form-container">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-50 to-purple-50 mb-5">
+                        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h2 id="ib-form-title" class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">IB or Industry Professional? Learn More</h2>
+                    <p id="ib-form-desc" class="text-slate-500 text-sm md:text-base max-w-lg mx-auto leading-relaxed">Leave your contact details below and a dedicated representative will reach out to you.</p>
+                </div>
+                <form id="ib-lead-form" class="space-y-5">
+                    <div class="ib-form-grid">
+                        <div>
+                            <label id="ib-label-lastname" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Last Name</label>
+                            <input type="text" id="ib-input-lastname" required placeholder="Last name" class="ib-form-input">
+                        </div>
+                        <div>
+                            <label id="ib-label-firstname" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">First Name</label>
+                            <input type="text" id="ib-input-firstname" required placeholder="First name" class="ib-form-input">
+                        </div>
+                        <div>
+                            <label id="ib-label-org" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Organization</label>
+                            <input type="text" id="ib-input-org" placeholder="Company / Team name" class="ib-form-input">
+                        </div>
+                        <div>
+                            <label id="ib-label-phone" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Phone</label>
+                            <input type="tel" id="ib-input-phone" required placeholder="+886 912..." class="ib-form-input">
+                        </div>
+                        <div>
+                            <label id="ib-label-email" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email</label>
+                            <input type="email" id="ib-input-email" required placeholder="example@mail.com" class="ib-form-input">
+                        </div>
+                        <div>
+                            <label id="ib-label-social" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Social Media ID</label>
+                            <input type="text" id="ib-input-social" placeholder="Telegram / WhatsApp / Line ID" class="ib-form-input">
+                        </div>
+                    </div>
+                    <div>
+                        <label id="ib-label-msg" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Message</label>
+                        <textarea id="ib-input-msg" placeholder="Tell us about your needs..." class="ib-form-input ib-form-textarea"></textarea>
+                    </div>
+                    <button type="submit" id="ib-btn-submit" class="ib-form-btn">Inquire About Partnership</button>
+                </form>
+                <div id="ib-form-success" class="ib-form-success">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 mb-5">
+                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h3 id="ib-success-title" class="text-2xl font-bold text-slate-800 mb-3">Submitted Successfully!</h3>
+                    <p id="ib-success-msg" class="text-slate-500 text-sm">Thank you for your interest. Our team will contact you shortly.</p>
+                </div>
+            </div>
+        </section>
+
         <div id="contact-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay modal-hidden bg-black/80 backdrop-blur-sm">
             <div class="relative w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl modal-content p-8 overflow-y-auto max-h-[95vh]">
                 <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -283,9 +352,9 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzuB65CD8rzc_YrediUF6FQ3M1DqoPyAv4cBwH9uu_nWfcV-tDT61G94AYbY51qA1dO3A/exec';
 
         const pricingTranslations = {
-            tc: { title: "FX Spectrum 專業授權方案", subtitle: "選擇最適合您的交易規模與平台的方案", monthly: "月繳", semi: "半年繳", yearly: "年繳 (最划算)", limitedTitle: "限時推廣方案", limitedSub: "※ 僅限本月首 10 位推廣名額, 數量有限", restrictedTitle: "綁定指定平台付費方案", restrictedSub: "適合單一券商交易者", unrestrictedTitle: "不綁定指定平台方案", unrestrictedSub: "專業交易員首選", fullyUnlocked: "完全解鎖", cannotAdd: "不可加選", selectOneOfTwo: "2選1", canAdd: "可加選", trialPeriod: "使用期限 30 天", featureBroker: "綁定官方指定合作券商", featureBrokerRestricted: "官方指定券商帳號 (不可自選)", featureUnrestricted: "不限券商、不限帳號數量", featureStrategy: "專屬一對一策略調優服務", featureSupport: "支持線上技術諮詢", btnClaim: "立即前往領取", btnSubscribe: "立即訂閱", btnContact: "聯絡官方獲取授權", cycleLabel: { monthly: "/ 月", "semi-annual": "/ 半年", yearly: "/ 年" }, h1: "極速下單", h1s: "毫秒級毫無延遲", h2: "資金安全", h2s: "嚴格執行止損保本", h3: "利潤極大化", h3s: "全自動移動止盈", h4: "精算配置", h4s: "自動計算每單風險", footer1: "* 付費方案均包含永久技術支援與版本更新。", footer2: "* 「指定平台」係指該授權僅限於與本司簽約之券商帳號。", plan1Unavailable: "此方案僅限月繳試用", modalTitle: "留下聯繫資訊", modalSub: "管理員將儘速與您聯繫", labelLastName: "姓氏", labelFirstName: "名字", labelEmail: "信箱", labelSocial: "社群媒體 ID", labelPhone: "電話", labelMsg: "備註", btnSubmit: "確認送出", successTitle: "提交成功！", successMsg: "感謝您的留下資訊，我們將儘速與您聯繫。", btnClose: "關閉" },
-            sc: { title: "FX Spectrum 专业授权方案", subtitle: "选择最适合您的交易规模与平台的方案", monthly: "月支付", semi: "半年支付", yearly: "年支付 (最划算)", limitedTitle: "限时推广方案", limitedSub: "※ 仅限本月首 10 位推广名額, 数量有限", restrictedTitle: "绑定指定平台付费方案", restrictedSub: "适合单一券商交易者", unrestrictedTitle: "不绑定指定平台方案", unrestrictedSub: "专业交易员首选", fullyUnlocked: "完全解锁", cannotAdd: "不可加选", selectOneOfTwo: "2选1", canAdd: "可加选", trialPeriod: "使用期限 30 天", featureBroker: "绑定官方指定合作券商", featureBrokerRestricted: "官方指定券商账号 (不可自选)", featureUnrestricted: "不限券商、不限账号数量", featureStrategy: "专属一对一策略调优服务", featureSupport: "支持在线技术咨询", btnClaim: "立即前往领取", btnSubscribe: "立即订阅", btnContact: "联络官方获取授权", cycleLabel: { monthly: "/ 月", "semi-annual": "/ 半年", yearly: "/ 年" }, h1: "极速下单", h1s: "毫秒级毫无延迟", h2: "资金安全", h2s: "严格执行止损保本", h3: "利润极大化", h3s: "全自动移动止盈", h4: "精算配置", h4s: "自动计算每单风险", footer1: "* 付费方案均包含永久技术支援与版本更新。", footer2: "* 「指定平台」系指该授权仅限于与本司签约之券商账号。", plan1Unavailable: "此方案仅限月缴试用", modalTitle: "留下联系信息", modalSub: "管理员將尽速与您联系", labelLastName: "姓", labelFirstName: "名", labelEmail: "邮箱", labelSocial: "社群媒体 ID", labelPhone: "电话", labelMsg: "备注", btnSubmit: "确认提交", successTitle: "提交成功！", successMsg: "感谢您留下信息，我們將尽速与您联系。", btnClose: "关闭" },
-            en: { title: "FX Spectrum Professional Licensing", subtitle: "Choose the plan that best fits your trading scale and platform", monthly: "Monthly", semi: "Semi-Annual", yearly: "Yearly (Best Value)", limitedTitle: "Limited Promotion", limitedSub: "※ Limited to first 10 slots this month only", restrictedTitle: "Platform-Restricted Plan", restrictedSub: "Ideal for single broker traders", unrestrictedTitle: "Unrestricted Platform Plan", unrestrictedSub: "First choice for professional traders", fullyUnlocked: "Fully Unlocked", cannotAdd: "Not Available", selectOneOfTwo: "Select 1 of 2", canAdd: "Add-on Available", trialPeriod: "30-day trial period", featureBroker: "Bound to official partner brokers", featureBrokerRestricted: "Official broker account (Non-selectable)", featureUnrestricted: "No broker limits, unlimited accounts", featureStrategy: "Exclusive 1-on-1 Strategy Optimization", featureSupport: "Online Technical Support", btnClaim: "Claim Now", btnSubscribe: "Subscribe Now", btnContact: "Contact for Authorization", cycleLabel: { monthly: "/ mo", "semi-annual": "/ 6-mo", yearly: "/ yr" }, h1: "Rapid Execution", h1s: "Millisecond latency-free", h2: "Capital Security", h2s: "Strict Breakeven execution", h3: "Profit Max", h3s: "Auto Trailing Stop", h4: "Risk Calculation", h4s: "Auto-calculate lot size", footer1: "* Paid plans include lifetime technical support and updates.", footer2: "* 'Restricted Platform' refers to licensing limited to contracted brokers.", plan1Unavailable: "Trial only available for Monthly", modalTitle: "Contact Information", modalSub: "Manager will contact you shortly", labelLastName: "Last Name", labelFirstName: "First Name", labelEmail: "Email", labelSocial: "Social Media ID", labelPhone: "Phone", labelMsg: "Message", btnSubmit: "Submit", successTitle: "Success!", successMsg: "Thank you for your interest. We will reach out to you soon.", btnClose: "Close" }
+            tc: { ibTitle: "IB 或交易人員想了解更多？", ibDesc: "請於下方留下聯繫方式，我們將有專人與您接洽。", ibLastName: "姓氏", ibFirstName: "名字", ibOrg: "公司 / 組織名稱", ibPhone: "聯繫電話", ibEmail: "電子郵件", ibSocial: "社群媒體 ID", ibMsg: "諮詢內容", ibBtn: "立即諮詢合作方案", ibSuccessTitle: "提交成功！", ibSuccessMsg: "感謝您的留下資訊，我們的團隊將盡速與您聯繫。", ibPlLastName: "姓氏", ibPlFirstName: "名字", ibPlOrg: "公司 / 團隊名稱", ibPlPhone: "+886 912...", ibPlEmail: "example@mail.com", ibPlSocial: "Telegram / WhatsApp / Line ID", ibPlMsg: "請告訴我們您的需求...", title: "FX Spectrum 專業授權方案", subtitle: "選擇最適合您的交易規模與平台的方案", monthly: "月繳", semi: "半年繳", yearly: "年繳 (最划算)", limitedTitle: "限時推廣方案", limitedSub: "※ 僅限本月首 10 位推廣名額, 數量有限", restrictedTitle: "綁定指定平台付費方案", restrictedSub: "適合單一券商交易者", unrestrictedTitle: "不綁定指定平台方案", unrestrictedSub: "專業交易員首選", fullyUnlocked: "完全解鎖", cannotAdd: "不可加選", selectOneOfTwo: "2選1", canAdd: "可加選", trialPeriod: "使用期限 30 天", featureBroker: "綁定官方指定合作券商", featureBrokerRestricted: "官方指定券商帳號 (不可自選)", featureUnrestricted: "不限券商、不限帳號數量", featureStrategy: "專屬一對一策略調優服務", featureSupport: "支持線上技術諮詢", btnClaim: "立即前往領取", btnSubscribe: "立即訂閱", btnContact: "聯絡官方獲取授權", cycleLabel: { monthly: "/ 月", "semi-annual": "/ 半年", yearly: "/ 年" }, h1: "極速下單", h1s: "毫秒級毫無延遲", h2: "資金安全", h2s: "嚴格執行止損保本", h3: "利潤極大化", h3s: "全自動移動止盈", h4: "精算配置", h4s: "自動計算每單風險", footer1: "* 付費方案均包含永久技術支援與版本更新。", footer2: "* 「指定平台」係指該授權僅限於與本司簽約之券商帳號。", plan1Unavailable: "此方案僅限月繳試用", modalTitle: "留下聯繫資訊", modalSub: "管理員將儘速與您聯繫", labelLastName: "姓氏", labelFirstName: "名字", labelEmail: "信箱", labelSocial: "社群媒體 ID", labelPhone: "電話", labelMsg: "備註", btnSubmit: "確認送出", successTitle: "提交成功！", successMsg: "感謝您的留下資訊，我們將儘速與您聯繫。", btnClose: "關閉" },
+            sc: { ibTitle: "IB 或从业人员想了解更多？", ibDesc: "请于下方留下联系方式，我们将有专人与您接洽。", ibLastName: "姓", ibFirstName: "名", ibOrg: "公司 / 组织名称", ibPhone: "联系电话", ibEmail: "电子邮箱", ibSocial: "社群媒体 ID", ibMsg: "咨询内容", ibBtn: "立即咨询合作方案", ibSuccessTitle: "提交成功！", ibSuccessMsg: "感谢您留下信息，我们的团队将尽速与您联系。", ibPlLastName: "姓", ibPlFirstName: "名", ibPlOrg: "公司 / 团队名称", ibPlPhone: "+86 138...", ibPlEmail: "example@mail.com", ibPlSocial: "Telegram / WhatsApp / Line ID", ibPlMsg: "请告诉我们您的需求...", title: "FX Spectrum 专业授权方案", subtitle: "选择最适合您的交易规模与平台的方案", monthly: "月支付", semi: "半年支付", yearly: "年支付 (最划算)", limitedTitle: "限时推广方案", limitedSub: "※ 仅限本月首 10 位推广名額, 数量有限", restrictedTitle: "绑定指定平台付费方案", restrictedSub: "适合单一券商交易者", unrestrictedTitle: "不绑定指定平台方案", unrestrictedSub: "专业交易员首选", fullyUnlocked: "完全解锁", cannotAdd: "不可加选", selectOneOfTwo: "2选1", canAdd: "可加选", trialPeriod: "使用期限 30 天", featureBroker: "绑定官方指定合作券商", featureBrokerRestricted: "官方指定券商账号 (不可自选)", featureUnrestricted: "不限券商、不限账号数量", featureStrategy: "专属一对一策略调优服务", featureSupport: "支持在线技术咨询", btnClaim: "立即前往领取", btnSubscribe: "立即订阅", btnContact: "联络官方获取授权", cycleLabel: { monthly: "/ 月", "semi-annual": "/ 半年", yearly: "/ 年" }, h1: "极速下单", h1s: "毫秒级毫无延迟", h2: "资金安全", h2s: "严格执行止损保本", h3: "利润极大化", h3s: "全自动移动止盈", h4: "精算配置", h4s: "自动计算每单风险", footer1: "* 付费方案均包含永久技术支援与版本更新。", footer2: "* 「指定平台」系指该授权仅限于与本司签约之券商账号。", plan1Unavailable: "此方案仅限月缴试用", modalTitle: "留下联系信息", modalSub: "管理员將尽速与您联系", labelLastName: "姓", labelFirstName: "名", labelEmail: "邮箱", labelSocial: "社群媒体 ID", labelPhone: "电话", labelMsg: "备注", btnSubmit: "确认提交", successTitle: "提交成功！", successMsg: "感谢您留下信息，我們將尽速与您联系。", btnClose: "关闭" },
+            en: { ibTitle: "IB or Industry Trader? Learn More", ibDesc: "Leave your contact details below and a dedicated representative will reach out to you.", ibLastName: "Last Name", ibFirstName: "First Name", ibOrg: "Organization", ibPhone: "Phone", ibEmail: "Email", ibSocial: "Social Media ID", ibMsg: "Message", ibBtn: "Inquire About Partnership", ibSuccessTitle: "Submitted Successfully!", ibSuccessMsg: "Thank you for your interest. Our team will contact you shortly.", ibPlLastName: "Last name", ibPlFirstName: "First name", ibPlOrg: "Company / Team name", ibPlPhone: "+886 912...", ibPlEmail: "example@mail.com", ibPlSocial: "Telegram / WhatsApp / Line ID", ibPlMsg: "Tell us about your needs...", title: "FX Spectrum Professional Licensing", subtitle: "Choose the plan that best fits your trading scale and platform", monthly: "Monthly", semi: "Semi-Annual", yearly: "Yearly (Best Value)", limitedTitle: "Limited Promotion", limitedSub: "※ Limited to first 10 slots this month only", restrictedTitle: "Platform-Restricted Plan", restrictedSub: "Ideal for single broker traders", unrestrictedTitle: "Unrestricted Platform Plan", unrestrictedSub: "First choice for professional traders", fullyUnlocked: "Fully Unlocked", cannotAdd: "Not Available", selectOneOfTwo: "Select 1 of 2", canAdd: "Add-on Available", trialPeriod: "30-day trial period", featureBroker: "Bound to official partner brokers", featureBrokerRestricted: "Official broker account (Non-selectable)", featureUnrestricted: "No broker limits, unlimited accounts", featureStrategy: "Exclusive 1-on-1 Strategy Optimization", featureSupport: "Online Technical Support", btnClaim: "Claim Now", btnSubscribe: "Subscribe Now", btnContact: "Contact for Authorization", cycleLabel: { monthly: "/ mo", "semi-annual": "/ 6-mo", yearly: "/ yr" }, h1: "Rapid Execution", h1s: "Millisecond latency-free", h2: "Capital Security", h2s: "Strict Breakeven execution", h3: "Profit Max", h3s: "Auto Trailing Stop", h4: "Risk Calculation", h4s: "Auto-calculate lot size", footer1: "* Paid plans include lifetime technical support and updates.", footer2: "* 'Restricted Platform' refers to licensing limited to contracted brokers.", plan1Unavailable: "Trial only available for Monthly", modalTitle: "Contact Information", modalSub: "Manager will contact you shortly", labelLastName: "Last Name", labelFirstName: "First Name", labelEmail: "Email", labelSocial: "Social Media ID", labelPhone: "Phone", labelMsg: "Message", btnSubmit: "Submit", successTitle: "Success!", successMsg: "Thank you for your interest. We will reach out to you soon.", btnClose: "Close" }
         };
 
         const prices = { restricted: { monthly: 200, semi: 600, yearly: 1000 }, unrestricted: { monthly: 500, semi: 2700, yearly: 5000 } };
@@ -323,18 +392,75 @@
         }
         function closeModal() { document.getElementById('contact-modal').classList.add('modal-hidden'); }
 
+        function submitToSheet(payload, btn, onSuccess) {
+            const origText = btn.innerText || btn.textContent;
+            btn.disabled = true;
+            btn.innerText = 'Sending...';
+            btn.style.opacity = '0.7';
+            console.log('[Form Submit]', payload.type, payload);
+            fetch(scriptURL, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                if (onSuccess) onSuccess();
+            }).catch(err => {
+                console.error('[Form Error]', err);
+                alert('Submission failed. Please try again.');
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = origText;
+                btn.style.opacity = '1';
+            });
+        }
+
         document.getElementById('lead-form').onsubmit = function(e) {
             e.preventDefault();
-            const btnSubmit = document.getElementById('btn-submit');
-            const originalText = btnSubmit.innerText;
-            btnSubmit.disabled = true; btnSubmit.innerText = 'Sending...';
-            const data = { plan: document.getElementById('input-plan').value, cycle: currentCycle, lastName: document.getElementById('input-lastname').value, firstName: document.getElementById('input-firstname').value, email: document.getElementById('input-email').value, socialType: currentSocialType, socialId: document.getElementById('input-social-id').value, phone: document.getElementById('input-phone').value, message: document.getElementById('input-msg').value };
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) }).then(() => {
+            const data = {
+                type: 'PLAN_SUBSCRIPTION',
+                timestamp: new Date().toLocaleString(),
+                lastName: document.getElementById('input-lastname').value,
+                firstName: document.getElementById('input-firstname').value,
+                organization: '',
+                phone: document.getElementById('input-phone').value,
+                email: document.getElementById('input-email').value,
+                socialType: currentSocialType,
+                socialId: document.getElementById('input-social-id').value,
+                message: document.getElementById('input-msg').value,
+                plan: document.getElementById('input-plan').value,
+                cycle: currentCycle
+            };
+            submitToSheet(data, document.getElementById('btn-submit'), () => {
                 document.getElementById('modal-form-view').classList.add('hidden');
                 document.getElementById('modal-success-view').classList.remove('hidden');
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-            }).catch(err => { console.error("Submission error:", err); alert("Submission failed. Please try again."); }).finally(() => { btnSubmit.disabled = false; btnSubmit.innerText = originalText; });
+            });
         };
+
+        const pricingPartnerLogos = [
+            { id: 1, name: 'T Assistant', fileName: 't-assistant.jpg', desc: { en: 'T Assistant – Smart Trading Bot', tc: 'T Assistant 智能交易助手', sc: 'T Assistant 智能交易助手' } },
+            { id: 2, name: 'Exit Plus', fileName: 'exit-plus.jpg', desc: { en: 'Exit Plus – Intelligent Exit System', tc: 'Exit Plus 智能出場系統', sc: 'Exit Plus 智能出场系统' } },
+            { id: 3, name: 'Risk Reward', fileName: 'risk-reward.jpg', desc: { en: 'Risk Reward – R/R Analysis Tool', tc: 'Risk Reward 風險回報工具', sc: 'Risk Reward 风险回报工具' } },
+            { id: 4, name: 'Star', fileName: 'star.jpg', desc: { en: 'Star – Advanced Strategy Module', tc: 'Star 進階策略模組', sc: 'Star 进阶策略模组' } }
+        ];
+
+        function renderPricingLogos() {
+            const grid = document.getElementById('pricing-partner-logos');
+            if (!grid) return;
+            const lang = currentPricingLang || 'en';
+            grid.innerHTML = pricingPartnerLogos.map(p => {
+                const descText = p.desc[lang] || p.desc.en;
+                return `
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col">
+                    <div class="p-10 flex items-center justify-center h-56">
+                        <img src="img/${p.fileName}" alt="${p.name}" class="max-h-full max-w-full object-contain" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="hidden items-center justify-center w-full h-full text-base font-semibold text-slate-400 tracking-wide">${p.name}</div>
+                    </div>
+                    <div class="px-4 py-3 text-center text-sm font-bold text-white" style="background:linear-gradient(135deg,#06B6D4,#A855F7);">${descText}</div>
+                </div>`;
+            }).join('');
+        }
 
         function renderPricing() {
             try {
@@ -370,6 +496,8 @@
                 document.getElementById('label-phone').innerText = t.labelPhone; document.getElementById('label-message').innerText = t.labelMsg;
                 document.getElementById('btn-submit').innerText = t.btnSubmit; document.getElementById('success-title').innerText = t.successTitle;
                 document.getElementById('success-msg').innerText = t.successMsg; document.getElementById('btn-close').innerText = t.btnClose;
+                renderPricingLogos();
+                renderIBFormLang(t);
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             } catch (e) { console.error("Render error:", e); }
         }
@@ -396,7 +524,43 @@
             document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
 
-        window.onload = () => { renderPricing(); changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en'); };
+        function renderIBFormLang(t) {
+            if (!t) return;
+            const s = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+            const p = (id, txt) => { const el = document.getElementById(id); if (el) el.placeholder = txt; };
+            s('ib-form-title', t.ibTitle); s('ib-form-desc', t.ibDesc);
+            s('ib-label-lastname', t.ibLastName); s('ib-label-firstname', t.ibFirstName);
+            s('ib-label-org', t.ibOrg); s('ib-label-phone', t.ibPhone); s('ib-label-email', t.ibEmail);
+            s('ib-label-social', t.ibSocial); s('ib-label-msg', t.ibMsg); s('ib-btn-submit', t.ibBtn);
+            s('ib-success-title', t.ibSuccessTitle); s('ib-success-msg', t.ibSuccessMsg);
+            p('ib-input-lastname', t.ibPlLastName); p('ib-input-firstname', t.ibPlFirstName);
+            p('ib-input-org', t.ibPlOrg); p('ib-input-phone', t.ibPlPhone); p('ib-input-email', t.ibPlEmail);
+            p('ib-input-social', t.ibPlSocial); p('ib-input-msg', t.ibPlMsg);
+        }
+
+        document.getElementById('ib-lead-form').onsubmit = function(e) {
+            e.preventDefault();
+            const data = {
+                type: 'IB_INQUIRY',
+                timestamp: new Date().toLocaleString(),
+                lastName: document.getElementById('ib-input-lastname').value,
+                firstName: document.getElementById('ib-input-firstname').value,
+                organization: document.getElementById('ib-input-org').value,
+                phone: document.getElementById('ib-input-phone').value,
+                email: document.getElementById('ib-input-email').value,
+                socialType: '',
+                socialId: document.getElementById('ib-input-social').value,
+                message: document.getElementById('ib-input-msg').value,
+                plan: '',
+                cycle: ''
+            };
+            submitToSheet(data, document.getElementById('ib-btn-submit'), () => {
+                document.getElementById('ib-lead-form').style.display = 'none';
+                document.getElementById('ib-form-success').style.display = 'block';
+            });
+        };
+
+        window.onload = () => { renderPricing(); renderPricingLogos(); changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en'); };
         window.onclick = function(e) { if (!e.target.closest('#social-selector-btn') && !e.target.closest('#social-list')) document.getElementById('social-list').classList.remove('show'); }
     </script>
     <script src="script.js"></script>

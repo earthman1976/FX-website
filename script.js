@@ -7,7 +7,9 @@
     const AV_TARGETS = [
         { symbol: 'EUR/USD', from: 'EUR', to: 'USD', decimals: 4 },
         { symbol: 'GBP/USD', from: 'GBP', to: 'USD', decimals: 4 },
-        { symbol: 'USD/JPY', from: 'USD', to: 'JPY', decimals: 2 }
+        { symbol: 'USD/JPY', from: 'USD', to: 'JPY', decimals: 2 },
+        { symbol: 'AUD/USD', from: 'AUD', to: 'USD', decimals: 4 },
+        { symbol: 'USD/CHF', from: 'USD', to: 'CHF', decimals: 4 }
     ];
 
     const CRYPTO_TARGETS = [
@@ -17,19 +19,39 @@
         { symbol: 'USDT/USD', binanceSymbol: 'USDCUSDT', decimals: 4, isStable: true }
     ];
 
-    const ALL_SYMBOLS = ['XAU/USD', 'XAG/USD', 'XPD/USD', 'EUR/USD', 'GBP/USD', 'USD/JPY', 'BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD'];
+    const INDEX_TARGETS = [
+        { symbol: 'NASDAQ',     avSymbol: 'IXIC',  decimals: 0 },
+        { symbol: 'DOW JONES',  avSymbol: 'DJI',   decimals: 0 },
+        { symbol: 'NIKKEI 225', avSymbol: 'NI225', decimals: 0 },
+        { symbol: 'DAX',        avSymbol: 'GDAXI', decimals: 0 },
+        { symbol: 'TAIEX',      avSymbol: 'TWA00', decimals: 0 }
+    ];
+
+    const ALL_SYMBOLS = [
+        'XAU/USD', 'XAG/USD', 'XPD/USD',
+        'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF',
+        'BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD',
+        'NASDAQ', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'
+    ];
 
     const FALLBACK_DATA = [
         { pair: 'XAU/USD', price: 2024.15, change: -0.32, decimals: 2 },
         { pair: 'XAG/USD', price: 24.85, change: 0.45, decimals: 2 },
+        { pair: 'XPD/USD', price: 1025.00, change: -0.18, decimals: 2 },
         { pair: 'EUR/USD', price: 1.0850, change: 0.12, decimals: 4 },
         { pair: 'GBP/USD', price: 1.2510, change: 0.18, decimals: 4 },
         { pair: 'USD/JPY', price: 149.30, change: -0.05, decimals: 2 },
+        { pair: 'AUD/USD', price: 0.6530, change: 0.22, decimals: 4 },
+        { pair: 'USD/CHF', price: 0.8790, change: -0.15, decimals: 4 },
         { pair: 'BTC/USD', price: 62450.00, change: 1.45, decimals: 2 },
         { pair: 'ETH/USD', price: 3450.00, change: 0.85, decimals: 2 },
         { pair: 'BNB/USD', price: 580.50, change: 0.62, decimals: 2 },
         { pair: 'USDT/USD', price: 1.0001, change: 0.01, decimals: 4 },
-        { pair: 'XPD/USD', price: 1025.00, change: -0.18, decimals: 2 }
+        { pair: 'NASDAQ', price: 22807, change: 0.45, decimals: 0 },
+        { pair: 'DOW JONES', price: 42300, change: 0.18, decimals: 0 },
+        { pair: 'NIKKEI 225', price: 38500, change: -0.25, decimals: 0 },
+        { pair: 'DAX', price: 18200, change: 0.32, decimals: 0 },
+        { pair: 'TAIEX', price: 22500, change: 0.15, decimals: 0 }
     ];
 
     function getCachedData() {
@@ -107,6 +129,19 @@
         return { pair: target.symbol, price, change, decimals: target.decimals };
     }
 
+    async function fetchIndexQuote(target) {
+        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${target.avSymbol}&apikey=${AV_API_KEY}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const gq = json['Global Quote'];
+        if (!gq || !gq['05. price']) return null;
+        const price = Math.round(parseFloat(gq['05. price']));
+        const changeStr = (gq['10. change percent'] || '0').replace('%', '');
+        const change = parseFloat(parseFloat(changeStr).toFixed(2));
+        if (isNaN(price) || price <= 0) return null;
+        return { pair: target.symbol, price, change, decimals: target.decimals };
+    }
+
     async function fetchAllRates() {
         const results = [];
 
@@ -123,7 +158,7 @@
                 const fb = FALLBACK_DATA.find(d => d.pair === target.symbol);
                 if (fb) results.push(fb);
             }
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 2000));
         }
 
         try {
@@ -156,6 +191,25 @@
             }
         }
 
+        for (const target of INDEX_TARGETS) {
+            try {
+                const rate = await fetchIndexQuote(target);
+                if (rate) {
+                    results.push(rate);
+                    console.log(`[Index] ✓ ${target.symbol}: ${rate.price}`);
+                } else {
+                    const fb = FALLBACK_DATA.find(d => d.pair === target.symbol);
+                    if (fb) results.push(fb);
+                    console.warn(`[Index] ✗ ${target.symbol}: using fallback`);
+                }
+            } catch (e) {
+                const fb = FALLBACK_DATA.find(d => d.pair === target.symbol);
+                if (fb) results.push(fb);
+                console.warn(`[Index] ✗ ${target.symbol}: ${e.message}`);
+            }
+            await new Promise(r => setTimeout(r, 2000));
+        }
+
         results.sort((a, b) => ALL_SYMBOLS.indexOf(a.pair) - ALL_SYMBOLS.indexOf(b.pair));
         return results;
     }
@@ -183,12 +237,28 @@
         if (topTicker) topTicker.innerHTML = html + html;
         if (bottomTicker) bottomTicker.innerHTML = htmlReversed + htmlReversed;
     }
+    window.fxSpectrumPopulateTickers = populateTickers;
 
     function broadcastData(data, source) {
-        const payload = data.map(d => ({ ...d }));
+        const payload = data.filter(d => d && d.pair).map(d => ({ ...d }));
         payload._source = source || 'fallback';
         window.fxSpectrumTickerData = payload;
         window.dispatchEvent(new CustomEvent('fxSpectrumDataReady', { detail: payload }));
+    }
+
+    async function refreshLiveData() {
+        try {
+            console.log('[FX Spectrum] Fetching live market data...');
+            const liveData = await fetchAllRates();
+            if (liveData.length) {
+                setCachedData(liveData);
+                populateTickers(liveData);
+                broadcastData(liveData, 'live');
+                console.log(`[FX Spectrum] Live data updated — ${liveData.length} symbols at ${new Date().toLocaleTimeString()}`);
+            }
+        } catch (e) {
+            console.warn('[FX Spectrum] API fetch failed, retrying next cycle.', e);
+        }
     }
 
     async function initLiveTicker() {
@@ -196,23 +266,14 @@
         if (cached) {
             populateTickers(cached);
             broadcastData(cached, 'cached');
+            console.log('[FX Spectrum] Loaded cached data — next refresh in 5 min.');
         } else {
             populateTickers(FALLBACK_DATA);
             broadcastData(FALLBACK_DATA, 'fallback');
+            await refreshLiveData();
         }
 
-        if (!cached) {
-            try {
-                const liveData = await fetchAllRates();
-                if (liveData.length) {
-                    setCachedData(liveData);
-                    populateTickers(liveData);
-                    broadcastData(liveData, 'live');
-                }
-            } catch (e) {
-                console.warn('Ticker API fetch failed, using fallback data.');
-            }
-        }
+        setInterval(refreshLiveData, 5 * 60 * 1000);
     }
 
     if (document.readyState === 'loading') {

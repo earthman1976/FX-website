@@ -6,6 +6,7 @@
     <title>FX Spectrum | Global Market Analysis & Intelligent Trading Expert</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-cyan: #06B6D4;
@@ -88,6 +89,13 @@
         }
 
         .card-cyan { background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%); border: 2px solid rgba(6, 182, 212, 0.4); }
+        .card-terminal { background: #0f172a; border: none; font-family: 'JetBrains Mono', monospace; }
+        .card-terminal .order-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.04); margin-bottom: 6px; opacity: 0; transform: translateY(8px); animation: orderIn 0.5s ease forwards; font-family: 'JetBrains Mono', monospace; }
+        @keyframes orderIn { to { opacity: 1; transform: translateY(0); } }
+        .card-terminal .order-row.fade-out { animation: orderOut 0.4s ease forwards; }
+        @keyframes orderOut { to { opacity: 0; transform: translateY(-8px); } }
+        .roi-flash { animation: roiFlash 0.6s ease; }
+        @keyframes roiFlash { 0%,100% { color: rgb(34 211 238); } 50% { color: rgb(103 232 249); text-shadow: 0 0 12px rgba(34,211,238,0.8); } }
         .card-purple { background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%); border: 2px solid rgba(168, 85, 247, 0.4); }
         .card-emerald { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid rgba(16, 185, 129, 0.4); }
         .card-indigo { background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%); border: 2px solid rgba(79, 70, 229, 0.4); }
@@ -166,6 +174,59 @@
         @keyframes fadeInOut {
             0% { opacity: 0; transform: translateY(5px); }
             100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-trust-section {
+            position: relative;
+            background: #050b15;
+            overflow: hidden;
+        }
+        .brand-trust-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+        .brand-trust-section::after {
+            content: "";
+            position: absolute;
+            width: 620px;
+            height: 620px;
+            right: -220px;
+            top: -240px;
+            border-radius: 50%;
+            border: 1px solid rgba(6,182,212,0.18);
+            box-shadow: 0 0 0 70px rgba(168,85,247,0.05);
+            pointer-events: none;
+        }
+        .brand-reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+        .brand-reveal.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .brand-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #ffffff;
+            color: #0f172a;
+            font-weight: 800;
+            padding: 14px 24px;
+            border-radius: 9999px;
+            transition: all 0.28s ease;
+        }
+        .brand-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(255,255,255,0.18);
         }
     </style>
 </head>
@@ -248,61 +309,108 @@
     </div>
 
     <!-- 主要內容區 -->
-    <main class="flex-grow flex flex-col lg:flex-row items-center relative px-8 max-w-7xl mx-auto w-full pt-12 pb-24 gap-12">
-        <div class="w-full lg:w-7/12 z-10">
-            <div data-i18n="hero_badge" class="inline-block px-4 py-1.5 mb-6 rounded-full bg-cyan-50 text-cyan-600 text-xs font-bold tracking-widest uppercase">2026 Intelligent Trading Dimension</div>
-            <h1 class="text-4xl md:text-5xl lg:text-[4.2rem] font-bold leading-[1.1] mb-8 text-slate-900 tracking-tighter">
-                <div data-i18n="hero_title_1" class="block whitespace-nowrap">Redefining Trading</div>
-                <div data-i18n="hero_title_2" class="block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">With Advanced AI</div>
+    <main class="flex-grow relative px-8 max-w-7xl mx-auto w-full pt-12 pb-24">
+        <!-- Hero Header: full width -->
+        <div class="w-full mb-12 z-10 relative text-center">
+            <div data-i18n="hero_badge" class="inline-block px-8 py-3 mb-6 rounded-full bg-cyan-50 text-cyan-600 text-sm font-bold tracking-widest uppercase">2026 Intelligent Trading Dimension</div>
+            <h1 class="text-4xl md:text-5xl lg:text-[4.2rem] font-bold leading-[1.1] mb-8 text-slate-900 tracking-tighter text-center">
+                <span data-i18n="hero_title_1">Redefining Trading</span> <span data-i18n="hero_title_2" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">Advanced EA</span>
             </h1>
-            <p data-i18n="hero_desc" class="text-base md:text-lg text-slate-500 mb-12 max-w-xl leading-relaxed">Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.</p>
-            
-            <div class="grid grid-cols-2 gap-6 max-w-2xl">
-                <a href="https://t.me/+T1s2b4A7O6g3OTBl" target="_blank" class="action-card glass-card card-cyan group cursor-pointer">
-                    <div class="w-20 h-20 rounded-2xl bg-white shadow-sm text-cyan-500 flex items-center justify-center mb-6 group-hover:bg-cyan-500 group-hover:text-white transition-all"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg></div>
-                    <span data-i18n="btn_tools" class="text-xl font-bold text-slate-800">Explore Tools</span>
-                    <p data-i18n="tool_card_desc" class="text-[10px] text-slate-600 font-semibold mt-2 uppercase tracking-[0.2em]">EA & AI Analytics</p>
-                </a>
-                <a href="https://t.me/+YC-M-MmxsXJjNDll" target="_blank" class="action-card glass-card card-purple group cursor-pointer">
-                    <div class="w-20 h-20 rounded-2xl bg-white shadow-sm text-purple-500 flex items-center justify-center mb-6 group-hover:bg-purple-500 group-hover:text-white transition-all"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg></div>
-                    <span data-i18n="btn_academy" class="text-xl font-bold text-slate-800">Enter Academy</span>
-                    <p data-i18n="academy_card_desc" class="text-[10px] text-slate-600 font-semibold mt-2 uppercase tracking-[0.2em]">Master the Market</p>
-                </a>
-                <div class="glass-card card-emerald">
-                    <span data-i18n="card_perf_title" class="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-6">Live Performance</span>
-                    <div class="h-16 w-36 flex items-end justify-center space-x-1.5 mb-8">
-                        <div class="w-full bg-emerald-500/30 rounded-t-sm h-1/2"></div>
-                        <div class="w-full bg-emerald-500/50 rounded-t-sm h-2/3"></div>
-                        <div class="w-full bg-emerald-500/70 rounded-t-sm h-1/2"></div>
-                        <div class="w-full bg-emerald-500 rounded-t-sm h-full"></div>
+            <p data-i18n="hero_desc" class="text-base md:text-lg text-slate-500 leading-relaxed max-w-3xl mx-auto">Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.</p>
+        </div>
+        <!-- Cards + Slide: side by side -->
+        <div class="flex flex-col lg:flex-row items-start gap-20">
+            <div class="w-full lg:w-7/12 z-10">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass-card card-terminal" style="align-items:stretch;text-align:left;padding:1.5rem 1.8rem;">
+                        <div class="flex items-center justify-between mb-3">
+                            <span data-i18n="card_copy_title" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live Copy Trading</span>
+                            <span class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>LIVE</span>
+                        </div>
+                        <div id="live-roi-wrap" class="mb-1"><span id="live-roi-value" class="text-3xl font-black text-cyan-400 tracking-tight">+87.70%</span></div>
+                        <div data-i18n="card_copy_roi" class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-4">Est. Yearly ROI</div>
+                        <div id="live-order-list" class="flex-grow flex flex-col justify-end"></div>
                     </div>
-                    <div id="live-client-profit" class="mt-2 text-[10px] sm:text-[11px] font-bold text-emerald-800/80 bg-white/40 px-4 py-3 rounded-2xl border border-emerald-200 min-w-[200px] flex flex-col items-center justify-center leading-relaxed"></div>
-                </div>
-                <div class="glass-card card-indigo relative overflow-hidden">
-                    <span id="sentiment-category" class="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-4">Market Insight</span>
-                    <div id="sentiment-product" class="text-xs font-bold text-indigo-600 mb-2">Analyzing...</div>
-                    <div id="sentiment-value" class="text-2xl font-bold text-slate-800 flex flex-col items-center min-h-[80px]"></div>
-                    <div class="mt-6 flex items-center justify-center space-x-2 text-[10px] text-indigo-800 font-bold bg-white/60 px-4 py-1.5 rounded-full border border-indigo-200">
-                        <div id="sentiment-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        <span id="sentiment-status-text" data-i18n="status_syncing">Scanning Market...</span>
+                    <a href="https://t.me/+YC-M-MmxsXJjNDll" target="_blank" class="action-card glass-card card-purple group cursor-pointer">
+                        <div class="w-20 h-20 rounded-2xl bg-white shadow-sm text-purple-500 flex items-center justify-center mb-6 group-hover:bg-purple-500 group-hover:text-white transition-all"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg></div>
+                        <span data-i18n="btn_academy" class="text-xl font-bold text-slate-800">Enter Academy</span>
+                        <p data-i18n="academy_card_desc" class="text-[10px] text-slate-600 font-semibold mt-2 uppercase tracking-[0.2em]">Master the Market</p>
+                    </a>
+                    <div class="glass-card card-emerald">
+                        <span data-i18n="card_perf_title" class="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-6">Live Performance</span>
+                        <div class="h-16 w-36 flex items-end justify-center space-x-1.5 mb-8">
+                            <div class="w-full bg-emerald-500/30 rounded-t-sm h-1/2"></div>
+                            <div class="w-full bg-emerald-500/50 rounded-t-sm h-2/3"></div>
+                            <div class="w-full bg-emerald-500/70 rounded-t-sm h-1/2"></div>
+                            <div class="w-full bg-emerald-500 rounded-t-sm h-full"></div>
+                        </div>
+                        <div id="live-client-profit" class="mt-2 text-[10px] sm:text-[11px] font-bold text-emerald-800/80 bg-white/40 px-4 py-3 rounded-2xl border border-emerald-200 min-w-[200px] flex flex-col items-center justify-center leading-relaxed"></div>
+                    </div>
+                    <div class="glass-card card-indigo relative overflow-hidden">
+                        <span id="sentiment-category" class="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-4">Market Insight</span>
+                        <div id="sentiment-product" class="text-xs font-bold text-indigo-600 mb-2">Analyzing...</div>
+                        <div id="sentiment-value" class="text-2xl font-bold text-slate-800 flex flex-col items-center min-h-[80px]"></div>
+                        <div class="mt-6 flex items-center justify-center space-x-2 text-[10px] text-indigo-800 font-bold bg-white/60 px-4 py-1.5 rounded-full border border-indigo-200">
+                            <div id="sentiment-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span id="sentiment-status-text" data-i18n="status_syncing">Scanning Market...</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="w-full lg:w-5/12 z-0">
-            <div class="slider-container">
-                <div class="slider-wrapper" id="slider-wrapper">
-                   <img src="img/man.jpg" class="slide" alt="Market Analysis">
-                   <img src="img/man1.jpg" class="slide" alt="AI Trading">
-                   <img src="img/man2.jpg" class="slide" alt="Financial Education">
+            <div class="w-full lg:w-5/12 z-0">
+                <div class="slider-container">
+                    <div class="slider-wrapper" id="slider-wrapper">
+                       <img src="img/promote.jpg" class="slide" alt="Market Analysis">
+                       <img src="img/man1.jpg" class="slide" alt="AI Trading">
+                       <img src="img/man2.jpg" class="slide" alt="Financial Education">
+                    </div>
+                    <div class="slider-btn btn-prev" onclick="moveSlide(-1)"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></div>
+                    <div class="slider-btn btn-next" onclick="moveSlide(1)"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div>
+                    <div class="slider-dots" id="slider-dots"></div>
                 </div>
-                <div class="slider-btn btn-prev" onclick="moveSlide(-1)"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></div>
-                <div class="slider-btn btn-next" onclick="moveSlide(1)"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div>
-                <div class="slider-dots" id="slider-dots"></div>
             </div>
         </div>
     </main>
+
+    <section class="brand-trust-section py-24">
+        <div class="relative z-10 px-8 max-w-7xl mx-auto w-full">
+            <div class="max-w-5xl mb-16">
+                <h2 data-i18n="brand_sec_title" class="text-4xl md:text-5xl font-black tracking-tight leading-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 mb-6">
+                    為何IB和trader都選擇FX Spectrum?
+                </h2>
+                <p data-i18n="brand_sec_desc" class="text-slate-300 text-base md:text-lg leading-relaxed max-w-4xl">
+                    我們匯集全球數千名交易者的實戰回饋，將資深盤感轉化為精密的自動化邏輯，打造出深度優化的全自動加平倉系統，徹底排除無謂操作，直擊市場獲利核心。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <article class="brand-reveal rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+                    <div class="text-cyan-400 text-xl font-black mb-5">01/</div>
+                    <h3 data-i18n="brand_feat1_title" class="text-white text-xl font-extrabold mb-4">拒絕「黑盒子」交易</h3>
+                    <p data-i18n="brand_feat1_desc" class="text-slate-300 leading-relaxed text-sm md:text-base">每一項策略參數皆可追溯並經過學術驗證，從進出場邏輯到部位管理都提供可解釋框架，避免盲目追隨訊號。</p>
+                </article>
+
+                <article class="brand-reveal rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+                    <div class="text-cyan-400 text-xl font-black mb-5">02/</div>
+                    <h3 data-i18n="brand_feat2_title" class="text-white text-xl font-extrabold mb-4">全球多空環境自適應</h3>
+                    <p data-i18n="brand_feat2_desc" class="text-slate-300 leading-relaxed text-sm md:text-base">結合跨市場數據同步與波動 regime 判讀，策略可依多空切換即時調整，降低單一市場風格失效的風險。</p>
+                </article>
+
+                <article class="brand-reveal rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+                    <div class="text-cyan-400 text-xl font-black mb-5">03/</div>
+                    <h3 data-i18n="brand_feat3_title" class="text-white text-xl font-extrabold mb-4">機構級風控標準</h3>
+                    <p data-i18n="brand_feat3_desc" class="text-slate-300 leading-relaxed text-sm md:text-base">以回撤、波動、夏普比率為核心監控指標，建立分層止損與資金配置機制，讓績效與生存能力同時被量化。</p>
+                </article>
+            </div>
+
+            <div class="rounded-3xl border border-white/10 bg-white/[0.04] p-7 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <p data-i18n="brand_quote" class="text-slate-200 italic text-base md:text-lg leading-relaxed">
+                    「交易不只是關注短期獲利，更是能有效長期輸出。」 — FX Spectrum Infotech
+                </p>
+                <a href="about.html" data-i18n="brand_cta" class="brand-cta-btn whitespace-nowrap">閱讀我們的技術白皮書</a>
+            </div>
+        </div>
+    </section>
 
     <!-- 頁尾 -->
     <footer class="mt-20 py-16 px-8 border-t border-slate-100 bg-white/40 backdrop-blur-lg pb-24 text-left">
@@ -367,7 +475,7 @@
             { category: { en: 'Forex', 'zh-TW': '外匯市場', 'zh-CN': '外汇市场' }, product: 'EUR / USD', status: { en: 'Strong Bullish', 'zh-TW': '市場反應看漲', 'zh-CN': '市场情绪看涨' }, sub: { en: '(Bullish)', 'zh-TW': '(牛市)', 'zh-CN': '(牛市)' }, trend: 'up' },
             { category: { en: 'Precious Metals', 'zh-TW': '貴金屬', 'zh-CN': '贵金属' }, product: 'XAU / USD (Gold)', status: { en: 'Neutral Bearish', 'zh-TW': '市場反應看跌', 'zh-CN': '市场情绪看跌' }, sub: { en: '(Bearish)', 'zh-TW': '(熊市)', 'zh-CN': '(熊市)' }, trend: 'down' },
             { category: { en: 'Crypto Currency', 'zh-TW': '加密貨幣', 'zh-CN': '虚拟货币' }, product: 'BTC / USDT', status: { en: 'Strong Bullish', 'zh-TW': '市場反應看漲', 'zh-CN': '市场情绪看涨' }, sub: { en: '(Bullish)', 'zh-TW': '(牛市)', 'zh-CN': '(牛市)' }, trend: 'up' },
-            { category: { en: 'Indices', 'zh-TW': '股票指數', 'zh-CN': '股票指数' }, product: 'US Tech 100', status: { en: 'Market Consolidating', 'zh-TW': '市場盤整中', 'zh-CN': '市场盘整中' }, sub: { en: '(Sideways)', 'zh-TW': '(盤整)', 'zh-CN': '(盤整)' }, trend: 'side' },
+            { category: { en: 'Indices', 'zh-TW': '股票指數', 'zh-CN': '股票指数' }, product: 'NASDAQ', status: { en: 'Market Consolidating', 'zh-TW': '市場盤整中', 'zh-CN': '市场盘整中' }, sub: { en: '(Sideways)', 'zh-TW': '(盤整)', 'zh-CN': '(盤整)' }, trend: 'side' },
             { category: { en: 'Forex', 'zh-TW': '外匯市場', 'zh-CN': '外汇市场' }, product: 'USD / JPY', status: { en: 'Trend Reversal', 'zh-TW': '市場反應看跌', 'zh-CN': '市场情绪看跌' }, sub: { en: '(Bearish)', 'zh-TW': '(熊市)', 'zh-CN': '(熊市)' }, trend: 'down' }
         ];
 
@@ -455,9 +563,9 @@
         }
 
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'hero_badge': '2026 Intelligent Trading Dimension', 'hero_title_1': 'Redefining Trading', 'hero_title_2': 'With Advanced AI', 'hero_desc': 'Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.', 'btn_tools': 'Explore Tools', 'tool_card_desc': 'EA & AI Analytics', 'btn_academy': 'Enter Academy', 'academy_card_desc': 'Master the Market', 'card_perf_title': 'Live Performance', 'status_syncing': 'Scanning Market...', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'hero_badge': '2026 智能交易新維度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外匯交易', 'hero_desc': '您的全方位專業門戶：結合 AI 驅動的市場洞察、頂尖 EA 自動化工具與深度教育體系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 與 AI 數據分析', 'btn_academy': '進入教育學院', 'academy_card_desc': '掌握市場獲利邏輯', 'card_perf_title': '即時獲利表現', 'status_syncing': '市場掃描中...', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'hero_badge': '2026 智能交易新维度', 'hero_title_1': '以智能科技', 'hero_title_2': '重塑外汇交易', 'hero_desc': '您的全方位专业门户：结合 AI 驱动的市场洞察、頂尖 EA 自动化工具与深度教育体系。', 'btn_tools': '探索交易工具', 'tool_card_desc': 'EA 与 AI 数据分析', 'btn_academy': '進入教育学院', 'academy_card_desc': '掌握市场获利逻辑', 'card_perf_title': '即时获利表现', 'status_syncing': '市场扫描中...', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'hero_badge': '2026 Intelligent Trading Dimension', 'hero_title_1': 'Redefining Trading', 'hero_title_2': 'Advanced EA', 'hero_desc': 'Your comprehensive professional portal: Combining AI-driven market insights, top-tier EA automation tools, and in-depth education.', 'card_copy_title': 'Live Copy Trading', 'card_copy_roi': 'Est. Yearly ROI', 'btn_academy': 'Enter Academy', 'academy_card_desc': 'Master the Market', 'card_perf_title': 'Live Performance', 'status_syncing': 'Scanning Market...', 'brand_sec_title': 'In an Era Flooded with EAs, Why Do Professional Traders Choose Us?', 'brand_sec_desc': 'We combine the computational power of AI neural networks with veteran trader intuition on structure and risk rhythm to build an intelligent engine that evolves over time.', 'brand_feat1_title': 'No More Black-Box Trading', 'brand_feat1_desc': 'Every strategy parameter is traceable and academically validated, from entries and exits to position control, so decisions remain interpretable.', 'brand_feat2_title': 'Adaptive to Global Bull/Bear Regimes', 'brand_feat2_desc': 'Cross-market data synchronization and volatility-regime detection allow dynamic adaptation, reducing style-drift and single-market dependency.', 'brand_feat3_title': 'Institutional-Grade Risk Standards', 'brand_feat3_desc': 'Drawdown, volatility, and Sharpe ratio are monitored as core metrics, with layered stop-loss and capital-allocation controls to quantify both return and survivability.', 'brand_quote': '"Trading is not about short-term profit, but about effective long-term output." — FX Spectrum Infotech', 'brand_cta': 'Read Our Technical Whitepaper', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'hero_badge': '智能領航・智聯交易新境界', 'hero_title_1': '智慧重塑交易', 'hero_title_2': '自動致富未來', 'hero_desc': '匯集全球即時洞察、頂尖 EA 自動化系統與專業教育，為現代交易員打造的全方位智富引擎。', 'card_copy_title': '即時跟單績效', 'card_copy_roi': '預估年化報酬率', 'btn_academy': '進入教育學院', 'academy_card_desc': '掌握市場獲利邏輯', 'card_perf_title': '即時獲利表現', 'status_syncing': '市場掃描中...', 'brand_sec_title': '為何IB和trader都選擇FX Spectrum?', 'brand_sec_desc': '我們匯集全球數千名交易者的實戰回饋，將資深盤感轉化為精密的自動化邏輯，打造出深度優化的全自動加平倉系統，徹底排除無謂操作，直擊市場獲利核心。', 'brand_feat1_title': '拒絕「黑盒子」交易', 'brand_feat1_desc': '每一項策略參數皆可追溯並經過學術驗證，從進出場邏輯到部位管理都提供可解釋框架，避免盲目追隨訊號。', 'brand_feat2_title': '全球多空環境自適應', 'brand_feat2_desc': '結合跨市場數據同步與波動 regime 判讀，策略可依多空切換即時調整，降低單一市場風格失效的風險。', 'brand_feat3_title': '機構級風控標準', 'brand_feat3_desc': '以回撤、波動、夏普比率為核心監控指標，建立分層止損與資金配置機制，讓績效與生存能力同時被量化。', 'brand_quote': '「交易不只是關注短期獲利，更是能有效長期輸出。」 — FX Spectrum Infotech', 'brand_cta': '閱讀我們的技術白皮書', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'hero_badge': '智能领航・智联交易新境界', 'hero_title_1': '智慧重塑交易', 'hero_title_2': '自动致富未来', 'hero_desc': '汇集全球即时洞察、顶尖 EA 自动化系统与专业教育，为现代交易员打造的全方位智富引擎。', 'card_copy_title': '即时跟单绩效', 'card_copy_roi': '预估年化报酬率', 'btn_academy': '进入教育学院', 'academy_card_desc': '掌握市场获利逻辑', 'card_perf_title': '即时获利表现', 'status_syncing': '市场扫描中...', 'brand_sec_title': '为何IB和trader都选择FX Spectrum?', 'brand_sec_desc': '我们汇集全球数千名交易者的实战反馈，将资深盘感转化为精密的自动化逻辑，打造出深度优化的全自动加平仓系统，彻底排除无谓操作，直击市场获利核心。', 'brand_feat1_title': '拒绝“黑盒子”交易', 'brand_feat1_desc': '每一项策略参数都可追溯并经过学术验证，从进出场逻辑到仓位管理都提供可解释框架，避免盲目追随信号。', 'brand_feat2_title': '全球多空环境自适应', 'brand_feat2_desc': '结合跨市场数据同步与波动 regime 判读，策略可根据多空切换实时调整，降低单一市场风格失效风险。', 'brand_feat3_title': '机构级风控标准', 'brand_feat3_desc': '以回撤、波动、夏普比率为核心监控指标，建立分层止损与资金配置机制，让绩效与生存能力同时被量化。', 'brand_quote': '“交易不只是关注短期获利，更是能有效长期输出。” — FX Spectrum Infotech', 'brand_cta': '阅读我们的技术白皮书', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商' }
         };
 
         function changeLanguage(lang) {
@@ -479,12 +587,145 @@
             document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
 
+        function initBrandReveal() {
+            const items = document.querySelectorAll('.brand-reveal');
+            if (!items.length) return;
+            if (!('IntersectionObserver' in window)) {
+                items.forEach(el => el.classList.add('show'));
+                return;
+            }
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            items.forEach(el => io.observe(el));
+        }
+
+        const DIRECTIONS = ['LONG','SHORT'];
+        const PERFORMANCE_POOL = [
+            { product: 'XAU/USD', minPips: 60, maxPips: 150, weight: 18 },
+            { product: 'EUR/USD', minPips: 15, maxPips: 45, weight: 10 },
+            { product: 'BTC/USDT', minPips: 250, maxPips: 600, weight: 16 },
+            { product: 'GBP/USD', minPips: 20, maxPips: 55, weight: 12 },
+            { product: 'ETH/USDT', minPips: 180, maxPips: 420, weight: 14 },
+            { product: 'NASDAQ', minPips: 80, maxPips: 200, weight: 14 },
+            { product: 'USD/JPY', minPips: 12, maxPips: 40, weight: 10 }
+        ];
+        const totalWeight = PERFORMANCE_POOL.reduce((s, p) => s + p.weight, 0);
+        let liveOrders = [];
+        let baseROI = 87.7;
+        let simulatedMinutes = 0;
+        let simulatedHour = 0;
+        let tickCount = 0;
+
+        function pickProduct() {
+            let r = Math.random() * totalWeight;
+            for (const p of PERFORMANCE_POOL) {
+                r -= p.weight;
+                if (r <= 0) return p;
+            }
+            return PERFORMANCE_POOL[0];
+        }
+
+        function genOrder() {
+            const spec = pickProduct();
+            const pips = (spec.minPips + Math.random() * (spec.maxPips - spec.minPips)).toFixed(1);
+            const dir = DIRECTIONS[Math.floor(Math.random() * 2)];
+            return { product: spec.product, dir, pips };
+        }
+
+        function hourlyDrift() {
+            const delta = (Math.random() * 0.04 + 0.01) * (Math.random() > 0.5 ? 1 : -1);
+            baseROI = Math.max(80, Math.min(99, baseROI + delta));
+        }
+
+        function dailySettlement() {
+            baseROI += 0.2 + Math.random() * 0.6;
+            baseROI = Math.min(99, baseROI);
+        }
+
+        function updateROIDisplay() {
+            const el = document.getElementById('live-roi-value');
+            const wrap = document.getElementById('live-roi-wrap');
+            if (!el) return;
+            const s = baseROI.toFixed(2);
+            el.textContent = '+' + s + '%';
+            wrap?.classList.remove('roi-flash');
+            void wrap?.offsetWidth;
+            wrap?.classList.add('roi-flash');
+        }
+
+        function countUpROI(delta) {
+            baseROI += delta;
+            baseROI = Math.min(99, Math.max(80, baseROI));
+            updateROIDisplay();
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('live-order-list');
+            if (!container) return;
+            container.innerHTML = liveOrders.map((o, i) => {
+                const color = o.dir === 'LONG' ? 'text-cyan-400' : 'text-purple-400';
+                const dirColor = o.dir === 'LONG' ? 'text-emerald-400' : 'text-rose-400';
+                return `<div class="order-row font-mono" style="animation-delay:${i * 0.1}s">
+                    <span class="text-[11px] font-bold text-white/90">${o.product}</span>
+                    <span class="text-[10px] font-bold ${dirColor}">${o.dir}</span>
+                    <span class="text-[11px] font-black ${color}">+${o.pips} P</span>
+                </div>`;
+            }).join('');
+        }
+
+        function refreshLiveOrders() {
+            const container = document.getElementById('live-order-list');
+            if (!container) return;
+            const rows = container.querySelectorAll('.order-row');
+            if (rows.length > 0) rows[0].classList.add('fade-out');
+            setTimeout(() => {
+                if (liveOrders.length >= 3) liveOrders.shift();
+                const newOrder = genOrder();
+                liveOrders.push(newOrder);
+                renderOrders();
+                const micro = 0.01 + Math.random() * 0.04;
+                countUpROI(micro);
+            }, rows.length > 0 ? 400 : 0);
+
+            tickCount++;
+            simulatedMinutes += 5;
+            if (simulatedMinutes >= 60) {
+                simulatedMinutes = 0;
+                simulatedHour++;
+                hourlyDrift();
+                updateROIDisplay();
+            }
+            if (simulatedHour >= 24) {
+                simulatedHour = 0;
+                dailySettlement();
+                updateROIDisplay();
+            }
+        }
+
+        function initLiveOrders() {
+            baseROI = 87.7 + (Math.random() * 0.5 - 0.25);
+            simulatedMinutes = Math.floor(Math.random() * 60);
+            simulatedHour = Math.floor(Math.random() * 24);
+            liveOrders = [genOrder(), genOrder(), genOrder()];
+            renderOrders();
+            updateROIDisplay();
+        }
+
         window.onload = () => {
             initSlider();
             rotateExpertPredictions();
             rotateClientProfits();
+            initLiveOrders();
             setInterval(rotateExpertPredictions, 4000);
-            setInterval(rotateClientProfits, 3500); 
+            setInterval(rotateClientProfits, 3500);
+            setInterval(refreshLiveOrders, 5000);
+            initBrandReveal();
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
         };
     </script>

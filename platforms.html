@@ -27,6 +27,96 @@
         .mobile-menu a:hover, .mobile-menu a.active-link { color: #06B6D4; background: #f0fdfa; }
         .hamburger-btn { display: none; }
         @media (max-width: 767px) { .hamburger-btn { display: flex; } }
+
+        .platforms-verify-section {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 16px;
+        }
+        .platforms-verify-desc {
+            color: #64748b;
+            max-width: 900px;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            margin-bottom: 22px;
+        }
+        .platforms-verify-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 28px;
+            min-width: 220px;
+            min-height: 48px;
+            border-radius: 9999px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #06B6D4, #A855F7);
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+        }
+        .platforms-verify-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+        }
+        .platforms-verify-icon {
+            width: 18px;
+            height: 18px;
+        }
+        .platforms-verify-actions {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+        .platforms-verify-back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 220px;
+            min-height: 48px;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #06B6D4, #A855F7);
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+        }
+        .platforms-verify-back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+        }
+        @media (max-width: 767px) {
+            .platforms-verify-section {
+                margin-top: 44px;
+                padding: 0 8px;
+            }
+            .platforms-verify-desc {
+                font-size: 0.9rem;
+                margin-bottom: 16px;
+            }
+            .platforms-verify-btn {
+                width: 100%;
+                max-width: 320px;
+                padding: 12px 16px;
+            }
+            .platforms-verify-actions {
+                flex-direction: column;
+            }
+            .platforms-verify-back-btn {
+                width: 100%;
+                max-width: 320px;
+                padding: 12px 16px;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -116,8 +206,18 @@
             <div id="partner-logos-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"></div>
         </section>
 
-        <div class="text-center pt-4 pb-8">
-            <a href="index.html" data-i18n="pp_back" class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg transition-all">Back to Home</a>
+        <div id="verify-section" class="platforms-verify-section">
+            <p data-i18n="pp_verify_desc" class="platforms-verify-desc">為了保障您的資金安全，您可以透過 WikiFX（外匯天眼）了解以上相關經紀商的監管評分、合規資訊與用戶評價。</p>
+            <div class="platforms-verify-actions flex flex-row items-center justify-center gap-4 mt-8">
+                <a href="https://www.wikifx.com/en/" target="_blank" rel="noopener noreferrer" class="platforms-verify-btn">
+                    <span data-i18n="pp_verify_btn">前往 WikiFX 查詢平台分數</span>
+                    <svg class="platforms-verify-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5h6m0 0v6m0-6L10 14"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 9v10h10"></path>
+                    </svg>
+                </a>
+                <a href="index.html" data-i18n="pp_back" class="platforms-verify-back-btn">Back to Home</a>
+            </div>
         </div>
     </main>
 
@@ -171,9 +271,9 @@
 
     <script>
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'pp_badge': 'Regulated Brokers', 'pp_title_1': 'Partner ', 'pp_title_2': 'Platforms', 'pp_desc': 'We exclusively collaborate with internationally regulated brokers to ensure fund security and a fair trading environment for all users.', 'pp_back': 'Back to Home' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'pp_badge': '受監管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我們僅與受國際監管機構嚴格監督的知名券商合作，確保所有用戶的資金安全與公平的交易環境。', 'pp_back': '返回首頁' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'pp_badge': '受监管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我们仅与受国际监管机构严格监督的知名券商合作，确保所有用户的资金安全与公平的交易环境。', 'pp_back': '返回首页' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'pp_badge': 'Regulated Brokers', 'pp_title_1': 'Partner ', 'pp_title_2': 'Platforms', 'pp_desc': 'We exclusively collaborate with internationally regulated brokers to ensure fund security and a fair trading environment for all users.', 'pp_verify_desc': 'To better protect your funds, you can use WikiFX to review the regulatory scores, compliance details, and user feedback of the partner brokers above.', 'pp_verify_btn': 'Check Broker Scores on WikiFX', 'pp_back': 'Back to Home' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'pp_badge': '受監管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我們僅與受國際監管機構嚴格監督的知名券商合作，確保所有用戶的資金安全與公平的交易環境。', 'pp_verify_desc': '為了保障您的資金安全，您可以透過 WikiFX（外匯天眼）了解以上相關經紀商的監管評分、合規資訊與用戶評價。', 'pp_verify_btn': '前往 WikiFX 查詢平台分數', 'pp_back': '返回首頁' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'pp_badge': '受监管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我们仅与受国际监管机构严格监督的知名券商合作，确保所有用户的资金安全与公平的交易环境。', 'pp_verify_desc': '为了保障您的资金安全，您可以通过 WikiFX（外汇天眼）了解以上相关经纪商的监管评分、合规信息与用户评价。', 'pp_verify_btn': '前往 WikiFX 查询平台分数', 'pp_back': '返回首页' }
         };
 
         function changeLanguage(lang) {
@@ -194,23 +294,31 @@
         }
 
         const partnerLogos = [
-            { id: 1, name: 'Broker 01', fileName: 'ETO.jpg' },
-            { id: 2, name: 'Broker 02', fileName: 'IC markets.jpg' },
-            { id: 3, name: 'Broker 03', fileName: 'XM group.jpg' },
-            { id: 4, name: 'Broker 04', fileName: 'broker_04.jpg' },
-            { id: 5, name: 'Broker 05', fileName: 'broker_05.png' },
-            { id: 6, name: 'Broker 06', fileName: 'broker_06.svg' },
+            { id: 1, name: 'ETO Markets', fileName: 'ETO.jpg', url: 'https://www.etomarkets.com/' },
+            { id: 2, name: 'IC Markets', fileName: 'IC markets.jpg', url: 'https://www.icmarkets.com/' },
+            { id: 3, name: 'XM', fileName: 'XM group.jpg', url: 'https://www.xm.com/' },
+            { id: 4, name: 'AvaTrade', fileName: 'avatrade.jpg', url: 'https://www.avatrade.com/' },
+            { id: 5, name: 'TMGM', fileName: 'TMGM.jpg', url: 'https://www.tmgm.com/' },
+            { id: 6, name: 'Lirunex', fileName: 'LX.jpg', url: 'https://www.lirunex.com/' },
+            { id: 7, name: 'FXTM', fileName: 'FXTM.jpg', url: 'https://www.forextime.com/' },
+            { id: 8, name: 'FXCM', fileName: 'fxcm.jpg', url: 'https://www.fxcm.com/' },
+            { id: 9, name: 'Eightcap (EC Markets)', fileName: 'ec.jpg', url: 'https://www.eightcap.com/' },
+            { id: 10, name: 'Vantage', fileName: 'vantage.jpg', url: 'https://www.vantagemarkets.com/' },
+            { id: 11, name: 'MiTrade', fileName: 'mitrade.jpg', url: 'https://www.mitrade.com/' },
+            { id: 12, name: 'FXTF', fileName: 'fxtf.jpg', url: 'https://www.fxtf.co.jp/' },
         ];
 
         function renderPartnerLogos() {
             const grid = document.getElementById('partner-logos-grid');
             if (!grid) return;
             grid.innerHTML = partnerLogos.map(p => `
-                <div class="bg-white border border-slate-100 rounded-xl p-6 flex items-center justify-center h-28 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
-                    <img src="img/${p.fileName}" alt="${p.name}" class="max-h-full max-w-full object-contain" loading="lazy"
-                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                    <div class="hidden items-center justify-center w-full h-full text-sm font-semibold text-slate-400 tracking-wide">${p.name}</div>
-                </div>
+                <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="block">
+                    <div class="bg-white border border-slate-100 rounded-xl p-6 flex items-center justify-center h-28 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
+                        <img src="img/${p.fileName}" alt="${p.name}" class="max-h-full max-w-full object-contain" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="hidden items-center justify-center w-full h-full text-sm font-semibold text-slate-400 tracking-wide">${p.name}</div>
+                    </div>
+                </a>
             `).join('');
         }
 

@@ -298,7 +298,7 @@
             'EUR/USD': '💶', 'GBP/USD': '💷', 'USD/JPY': '💴',
             'XAU/USD': '🥇', 'XAG/USD': '🥈', 'XPD/USD': '⬜',
             'BTC/USD': '₿', 'ETH/USD': 'Ξ', 'BNB/USD': '🔶', 'USDT/USD': '💲',
-            'US Tech 100': '📈', 'DOW JONES': '🏛️', 'NIKKEI 225': '🗼',
+            'NASDAQ': '📈', 'DOW JONES': '🏛️', 'NIKKEI 225': '🇯🇵',
             'DAX': '🇩🇪', 'TAIEX': '🇹🇼',
             'USD/CHF': '🇨🇭', 'AUD/USD': '🇦🇺'
         };
@@ -307,14 +307,14 @@
             metals:  { label: { en: 'Precious Metals', 'zh-TW': '貴金屬', 'zh-CN': '贵金属' }, icon: '🥇', symbols: ['XAU/USD', 'XAG/USD', 'XPD/USD'] },
             forex:   { label: { en: 'Forex', 'zh-TW': '外匯', 'zh-CN': '外汇' }, icon: '💱', symbols: ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF'] },
             crypto:  { label: { en: 'Crypto', 'zh-TW': '虛擬貨幣', 'zh-CN': '虚拟货币' }, icon: '₿', symbols: ['BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD'] },
-            stocks:  { label: { en: 'Stock Market', 'zh-TW': '股市', 'zh-CN': '股市' }, icon: '📊', symbols: ['US Tech 100', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'] }
+            stocks:  { label: { en: 'Index', 'zh-TW': '指數', 'zh-CN': '指数' }, icon: '📊', symbols: ['NASDAQ', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'] }
         };
 
         const DISPLAY_ORDER = [
             'XAU/USD', 'XAG/USD', 'XPD/USD',
             'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF',
             'BTC/USD', 'ETH/USD', 'BNB/USD', 'USDT/USD',
-            'US Tech 100', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'
+            'NASDAQ', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX'
         ];
 
         const staticMarketData = [
@@ -324,11 +324,11 @@
             { pair: 'XPD/USD', price: 1025.00, change: -0.18, decimals: 2 },
             { pair: 'BNB/USD', price: 580.50, change: 0.62, decimals: 2 },
             { pair: 'USDT/USD', price: 1.0001, change: 0.01, decimals: 4 },
-            { pair: 'US Tech 100', price: 18245, change: 0.78, decimals: 0 },
-            { pair: 'DOW JONES', price: 39872, change: 0.35, decimals: 0 },
-            { pair: 'NIKKEI 225', price: 40120, change: -0.42, decimals: 0 },
-            { pair: 'DAX', price: 18350, change: 0.55, decimals: 0 },
-            { pair: 'TAIEX', price: 20315, change: 0.28, decimals: 0 }
+            { pair: 'NASDAQ', price: 22807, change: 0.45, decimals: 0 },
+            { pair: 'DOW JONES', price: 42300, change: 0.18, decimals: 0 },
+            { pair: 'NIKKEI 225', price: 38500, change: -0.25, decimals: 0 },
+            { pair: 'DAX', price: 18200, change: 0.32, decimals: 0 },
+            { pair: 'TAIEX', price: 22500, change: 0.15, decimals: 0 }
         ];
 
         let currentSyncSource = 'offline';
@@ -341,16 +341,19 @@
         function buildCardHTML(item, loading) {
             const icon = ICON_MAP[item.pair] || '📊';
             const dec = item.decimals ?? (item.price < 100 ? 4 : 2);
+            const isPlaceholder = item._placeholder && item.price === 0;
             const changeColor = item.change >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600';
             const sign = item.change >= 0 ? '+' : '';
-            const loadingClass = loading ? ' card-loading' : '';
+            const loadingClass = (loading || isPlaceholder) ? ' card-loading' : '';
+            const priceDisplay = isPlaceholder ? '---' : formatPrice(item.price, dec);
+            const changeDisplay = isPlaceholder ? '0.00' : item.change;
             return `<div class="market-card bg-white rounded-xl border border-slate-100 p-4 hover:shadow-lg transition-all${loadingClass}" data-pair="${item.pair}">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xl">${icon}</span>
-                        <span class="market-card-change px-2 py-0.5 rounded-full text-[10px] font-bold ${changeColor}">${sign}${item.change}%</span>
+                        <span class="market-card-change px-2 py-0.5 rounded-full text-[10px] font-bold ${changeColor}">${sign}${changeDisplay}%</span>
                     </div>
                     <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">${item.pair}</div>
-                    <div class="market-card-price text-lg font-bold text-slate-800 font-mono">${formatPrice(item.price, dec)}</div>
+                    <div class="market-card-price text-lg font-bold text-slate-800 font-mono">${priceDisplay}</div>
                     <div class="mt-2 flex items-center">
                         <span class="sync-dot ${currentSyncSource}"></span>
                         <span class="market-card-sync text-[8px] text-slate-400 font-medium">${getSyncLabel()}</span>
@@ -423,12 +426,28 @@
             }
         }
 
+        const PAIR_ALIAS = { 'US Tech 100': 'NASDAQ' };
+        const INDEX_SYMBOLS = new Set(['NASDAQ', 'DOW JONES', 'NIKKEI 225', 'DAX', 'TAIEX']);
+        const FOREX_SYMBOLS = new Set(['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF']);
+
+        function normalizePair(item) {
+            const pair = PAIR_ALIAS[item.pair] || item.pair;
+            if (item.decimals == null) {
+                if (INDEX_SYMBOLS.has(pair)) item.decimals = 0;
+                else if (FOREX_SYMBOLS.has(pair)) item.decimals = 4;
+            }
+            return { ...item, pair };
+        }
+
         function getFullMarketData(liveData) {
-            const live = liveData || window.fxSpectrumTickerData || [];
-            const liveArr = Array.isArray(live) ? live : [];
             const merged = new Map();
-            staticMarketData.forEach(d => merged.set(d.pair, d));
-            liveArr.forEach(d => { if (d.pair) merged.set(d.pair, d); });
+            staticMarketData.forEach(d => merged.set(d.pair, { ...d }));
+            const globalArr = window.fxSpectrumTickerData;
+            if (Array.isArray(globalArr)) {
+                globalArr.forEach(d => { if (d.pair) { const n = normalizePair(d); merged.set(n.pair, n); } });
+            }
+            const passedArr = Array.isArray(liveData) ? liveData : [];
+            passedArr.forEach(d => { if (d.pair) { const n = normalizePair(d); merged.set(n.pair, n); } });
             return sortByDisplayOrder([...merged.values()]);
         }
 
@@ -436,7 +455,9 @@
             const container = document.getElementById('market-cards');
             if (!container) return;
             const allData = getFullMarketData(data);
+            console.log(`[updateMarketCards] Updating ${allData.length} items (syncSource=${currentSyncSource}):`);
             allData.forEach(item => {
+                console.log(`  → ${item.pair}: $${item.price} (${item.change >= 0 ? '+' : ''}${item.change}%) [decimals=${item.decimals ?? 'auto'}]`);
                 const card = container.querySelector(`[data-pair="${item.pair}"]`);
                 if (!card) return;
                 card.classList.remove('card-loading');
@@ -492,7 +513,7 @@
         const FOREX_POOL = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CHF'];
         const METALS_POOL = ['XAU/USD', 'XAG/USD'];
         const CRYPTO_POOL = ['BTC/USD', 'ETH/USD'];
-        const STOCKS_POOL = ['US Tech 100', 'TAIEX'];
+        const STOCKS_POOL = ['NASDAQ', 'TAIEX'];
         let currentForexIdx = 0;
         let currentMetalsIdx = 0;
         let currentCryptoIdx = 0;
@@ -516,7 +537,7 @@
             'XAG/USD':     { iconBg: 'bg-slate-50',   iconText: 'text-slate-500' },
             'BTC/USD':     { iconBg: 'bg-purple-50',  iconText: 'text-purple-500' },
             'ETH/USD':     { iconBg: 'bg-violet-50',  iconText: 'text-violet-500' },
-            'US Tech 100': { iconBg: 'bg-green-50',   iconText: 'text-green-500' },
+            'NASDAQ': { iconBg: 'bg-green-50',   iconText: 'text-green-500' },
             'TAIEX':       { iconBg: 'bg-emerald-50', iconText: 'text-emerald-500' }
         };
 
@@ -536,7 +557,7 @@
             'XAG/USD':     { overbought: 1.5, neutral: 0.3 },
             'BTC/USD':     { overbought: 3.0, neutral: 0.5 },
             'ETH/USD':     { overbought: 3.0, neutral: 0.5 },
-            'US Tech 100': { overbought: 1.0, neutral: 0.2 },
+            'NASDAQ': { overbought: 1.0, neutral: 0.2 },
             'TAIEX':       { overbought: 1.0, neutral: 0.2 }
         };
 
@@ -573,7 +594,7 @@
                     'XAG/USD': { en: 'Silver Overbought — Hold Off', 'zh-TW': '白銀超買，建議觀望', 'zh-CN': '白银超买，建议观望' },
                     'BTC/USD': { en: 'BTC Overbought — Hold Off', 'zh-TW': 'BTC 超買，建議觀望', 'zh-CN': 'BTC 超买，建议观望' },
                     'ETH/USD': { en: 'ETH Overbought — Hold Off', 'zh-TW': 'ETH 超買，建議觀望', 'zh-CN': 'ETH 超买，建议观望' },
-                    'US Tech 100': { en: 'NASDAQ Overbought — Watch for Pullback', 'zh-TW': 'NASDAQ 超買，留意回調', 'zh-CN': 'NASDAQ 超买，留意回调' },
+                    'NASDAQ': { en: 'NASDAQ Overbought — Watch for Pullback', 'zh-TW': 'NASDAQ 超買，留意回調', 'zh-CN': 'NASDAQ 超买，留意回调' },
                     'TAIEX': { en: 'TAIEX Overbought — Caution Advised', 'zh-TW': '台股超買，建議謹慎', 'zh-CN': '台股超买，建议谨慎' }
                 }
             },
@@ -585,7 +606,7 @@
                     'XAG/USD': { en: 'Silver Oversold — Support in Sight', 'zh-TW': '白銀超賣，支撐浮現', 'zh-CN': '白银超卖，支撑浮现' },
                     'BTC/USD': { en: 'BTC Oversold — Watch for Support', 'zh-TW': 'BTC 超賣，尋求支撐', 'zh-CN': 'BTC 超卖，寻求支撑' },
                     'ETH/USD': { en: 'ETH Oversold — Watch for Support', 'zh-TW': 'ETH 超賣，尋求支撐', 'zh-CN': 'ETH 超卖，寻求支撑' },
-                    'US Tech 100': { en: 'NASDAQ Oversold — Bargain Hunting Zone', 'zh-TW': 'NASDAQ 超賣，撿便宜區間', 'zh-CN': 'NASDAQ 超卖，捡便宜区间' },
+                    'NASDAQ': { en: 'NASDAQ Oversold — Bargain Hunting Zone', 'zh-TW': 'NASDAQ 超賣，撿便宜區間', 'zh-CN': 'NASDAQ 超卖，捡便宜区间' },
                     'TAIEX': { en: 'TAIEX Oversold — Rebound Potential', 'zh-TW': '台股超賣，反彈潛力浮現', 'zh-CN': '台股超卖，反弹潜力浮现' }
                 }
             },
@@ -597,7 +618,7 @@
                     'XAG/USD': { en: 'Silver Bullish Run', 'zh-TW': '白銀多頭走勢', 'zh-CN': '白银多头走势' },
                     'BTC/USD': { en: 'BTC Bullish Momentum', 'zh-TW': 'BTC 市場反應看漲（牛市）', 'zh-CN': 'BTC 市场反应看涨（牛市）' },
                     'ETH/USD': { en: 'ETH Bullish Momentum', 'zh-TW': 'ETH 市場反應看漲（牛市）', 'zh-CN': 'ETH 市场反应看涨（牛市）' },
-                    'US Tech 100': { en: 'NASDAQ Breaks Higher — Momentum Strong', 'zh-TW': 'NASDAQ 強勢突破，動能強勁', 'zh-CN': 'NASDAQ 强势突破，动能强劲' },
+                    'NASDAQ': { en: 'NASDAQ Breaks Higher — Momentum Strong', 'zh-TW': 'NASDAQ 強勢突破，動能強勁', 'zh-CN': 'NASDAQ 强势突破，动能强劲' },
                     'TAIEX': { en: 'TAIEX Gains on Tech Rally', 'zh-TW': '科技股領漲，台股走強', 'zh-CN': '科技股领涨，台股走强' }
                 }
             },
@@ -609,7 +630,7 @@
                     'XAG/USD': { en: 'Silver Slips on Dollar Strength', 'zh-TW': '美元走強打壓白銀', 'zh-CN': '美元走强打压白银' },
                     'BTC/USD': { en: 'BTC Under Pressure', 'zh-TW': 'BTC 市場反應看跌（熊市）', 'zh-CN': 'BTC 市场反应看跌（熊市）' },
                     'ETH/USD': { en: 'ETH Under Pressure', 'zh-TW': 'ETH 市場反應看跌（熊市）', 'zh-CN': 'ETH 市场反应看跌（熊市）' },
-                    'US Tech 100': { en: 'NASDAQ Pullback — Watch Support', 'zh-TW': 'NASDAQ 回調，留意支撐', 'zh-CN': 'NASDAQ 回调，留意支撑' },
+                    'NASDAQ': { en: 'NASDAQ Pullback — Watch Support', 'zh-TW': 'NASDAQ 回調，留意支撐', 'zh-CN': 'NASDAQ 回调，留意支撑' },
                     'TAIEX': { en: 'TAIEX Weakens on Profit-Taking', 'zh-TW': '獲利了結壓力，台股走弱', 'zh-CN': '获利了结压力，台股走弱' }
                 }
             },
@@ -621,7 +642,7 @@
                     'XAG/USD': { en: 'Silver Consolidating', 'zh-TW': '白銀區間整理', 'zh-CN': '白银区间整理' },
                     'BTC/USD': { en: 'BTC in Consolidation', 'zh-TW': 'BTC 市場處於震盪（中性）', 'zh-CN': 'BTC 市场处于震荡（中性）' },
                     'ETH/USD': { en: 'ETH in Consolidation', 'zh-TW': 'ETH 市場處於震盪（中性）', 'zh-CN': 'ETH 市场处于震荡（中性）' },
-                    'US Tech 100': { en: 'NASDAQ Sideways — Awaiting Catalyst', 'zh-TW': 'NASDAQ 橫向整理，等待催化劑', 'zh-CN': 'NASDAQ 横向整理，等待催化剂' },
+                    'NASDAQ': { en: 'NASDAQ Sideways — Awaiting Catalyst', 'zh-TW': 'NASDAQ 橫向整理，等待催化劑', 'zh-CN': 'NASDAQ 横向整理，等待催化剂' },
                     'TAIEX': { en: 'TAIEX Range-Bound Trading', 'zh-TW': '台股區間震盪', 'zh-CN': '台股区间震荡' }
                 }
             },
@@ -632,7 +653,7 @@
                     'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin rallies ${c}% to $${p}, deep in overbought zone. Extreme greed detected; a correction may follow.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣飆漲 ${c}% 至 $${p}，深入超買區。偵測到極度貪婪，回調隨時可能出現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币飙涨 ${c}% 至 $${p}，深入超买区。侦测到极度贪婪，回调随时可能出现。` },
                     'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum rallies ${c}% to $${p}, deep in overbought zone. DeFi euphoria detected; a correction may follow.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊飆漲 ${c}% 至 $${p}，深入超買區。DeFi 過熱信號，回調隨時可能出現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊飙涨 ${c}% 至 $${p}，深入超买区。DeFi 过热信号，回调随时可能出现。` },
                     'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver surges ${c}% to $${p}, overbought. Industrial demand spike but risk of pullback elevated.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀飆升 ${c}% 至 $${p}，超買。工業需求激增但回調風險升高。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银飙升 ${c}% 至 $${p}，超买。工业需求激增但回调风险升高。` },
-                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ surges ${c}% to ${p}, deep in overbought zone. AI-driven rally extended; rotation risk rising.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 飆升 ${c}% 至 ${p}，深入超買區。AI 驅動漲勢延伸，輪動風險上升。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 飙升 ${c}% 至 ${p}，深入超买区。AI 驱动涨势延伸，轮动风险上升。` },
+                    'NASDAQ': { en: (p, c, r) => `RSI ${r} — NASDAQ surges ${c}% to ${p}, deep in overbought zone. AI-driven rally extended; rotation risk rising.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 飆升 ${c}% 至 ${p}，深入超買區。AI 驅動漲勢延伸，輪動風險上升。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 飙升 ${c}% 至 ${p}，深入超买区。AI 驱动涨势延伸，轮动风险上升。` },
                     'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX surges ${c}% to ${p}, overbought on TSMC rally. Profit-taking pressure building.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股飆升 ${c}% 至 ${p}，台積電領漲至超買。獲利了結壓力累積中。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股飙升 ${c}% 至 ${p}，台积电领涨至超买。获利了结压力累积中。` }
                 },
                 oversold: {
@@ -641,7 +662,7 @@
                     'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin plunges ${c}% to $${p}, oversold territory. Extreme fear detected; contrarian opportunities may emerge.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣暴跌 ${c}% 至 $${p}，超賣區域。偵測到極度恐慌，逆勢機會或將浮現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币暴跌 ${c}% 至 $${p}，超卖区域。侦测到极度恐慌，逆势机会或将浮现。` },
                     'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum plunges ${c}% to $${p}, oversold territory. Network activity low; contrarian opportunities may emerge.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊暴跌 ${c}% 至 $${p}，超賣區域。鏈上活動低迷，逆勢機會或將浮現。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊暴跌 ${c}% 至 $${p}，超卖区域。链上活动低迷，逆势机会或将浮现。` },
                     'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver drops ${c}% to $${p}, oversold. Industrial demand floor and gold correlation suggest potential rebound.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀下跌 ${c}% 至 $${p}，超賣。工業需求底部與黃金連動暗示潛在反彈。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银下跌 ${c}% 至 $${p}，超卖。工业需求底部与黄金连动暗示潜在反弹。` },
-                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ plunges ${c}% to ${p}, oversold. Earnings season approaching; value hunters watching for entry.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超賣。財報季將至，價值獵人伺機進場。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超卖。财报季将至，价值猎人伺机进场。` },
+                    'NASDAQ': { en: (p, c, r) => `RSI ${r} — NASDAQ plunges ${c}% to ${p}, oversold. Earnings season approaching; value hunters watching for entry.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超賣。財報季將至，價值獵人伺機進場。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 暴跌 ${c}% 至 ${p}，超卖。财报季将至，价值猎人伺机进场。` },
                     'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX drops ${c}% to ${p}, oversold on foreign sell-off. Domestic buying may stabilize near support.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}，外資賣超導致超賣。內資買盤可能在支撐位穩定。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}，外资卖超导致超卖。内资买盘可能在支撑位稳定。` }
                 },
                 bullish: {
@@ -650,7 +671,7 @@
                     'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin advances ${c}% to $${p}, on-chain accumulation grows. Trend remains constructive.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣上漲 ${c}% 至 $${p}，鏈上增持增加。趨勢保持良性。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币上涨 ${c}% 至 $${p}，链上增持增加。趋势保持良性。` },
                     'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum advances ${c}% to $${p}, DeFi TVL growing. Smart contract activity supports bullish bias.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊上漲 ${c}% 至 $${p}，DeFi TVL 持續增長。智能合約活動支撐多頭趨勢。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊上涨 ${c}% 至 $${p}，DeFi TVL 持续增长。智能合约活动支撑多头趋势。` },
                     'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver gains ${c}% to $${p}, riding gold's coattails. Industrial + monetary demand convergence.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀上漲 ${c}% 至 $${p}，跟隨黃金走勢。工業與貨幣需求共振。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银上涨 ${c}% 至 $${p}，跟随黄金走势。工业与货币需求共振。` },
-                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ up ${c}% at ${p}, mega-cap tech leading. AI and semiconductor names drive breadth.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 上漲 ${c}% 至 ${p}，大型科技股領漲。AI 與半導體帶動市場廣度。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 上涨 ${c}% 至 ${p}，大型科技股领涨。AI 与半导体带动市场广度。` },
+                    'NASDAQ': { en: (p, c, r) => `RSI ${r} — NASDAQ up ${c}% at ${p}, mega-cap tech leading. AI and semiconductor names drive breadth.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 上漲 ${c}% 至 ${p}，大型科技股領漲。AI 與半導體帶動市場廣度。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 上涨 ${c}% 至 ${p}，大型科技股领涨。AI 与半导体带动市场广度。` },
                     'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX advances ${c}% to ${p}. TSMC and AI supply chain stocks drive momentum.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股上漲 ${c}% 至 ${p}。台積電與 AI 供應鏈股推動多頭動能。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股上涨 ${c}% 至 ${p}。台积电与 AI 供应链股推动多头动能。` }
                 },
                 bearish: {
@@ -659,7 +680,7 @@
                     'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin slides ${c}% to $${p}, exchange inflows rising. Selling pressure persists.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣下跌 ${c}% 至 $${p}，交易所流入上升。賣壓持續。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币下跌 ${c}% 至 $${p}，交易所流入上升。卖压持续。` },
                     'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum slides ${c}% to $${p}, gas fees dropping. Reduced network demand signals weakening momentum.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊下跌 ${c}% 至 $${p}，Gas 費用下降。網絡需求減少暗示動能減弱。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊下跌 ${c}% 至 $${p}，Gas 费用下降。网络需求减少暗示动能减弱。` },
                     'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver declines ${c}% to $${p}, pressured by rising yields. Industrial outlook dampens.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀下跌 ${c}% 至 $${p}，殖利率上升構成壓力。工業前景黯淡。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银下跌 ${c}% 至 $${p}，收益率上升构成压力。工业前景黯淡。` },
-                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ dips ${c}% to ${p}. Rising yields and rate-sensitive valuation concerns weigh on tech.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。殖利率上升與估值壓力拖累科技股。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。收益率上升与估值压力拖累科技股。` },
+                    'NASDAQ': { en: (p, c, r) => `RSI ${r} — NASDAQ dips ${c}% to ${p}. Rising yields and rate-sensitive valuation concerns weigh on tech.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。殖利率上升與估值壓力拖累科技股。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 下跌 ${c}% 至 ${p}。收益率上升与估值压力拖累科技股。` },
                     'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX drops ${c}% to ${p}. Foreign fund outflows and geopolitical risk drag index lower.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}。外資流出與地緣政治風險拖累指數。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股下跌 ${c}% 至 ${p}。外资流出与地缘政治风险拖累指数。` }
                 },
                 neutral: {
@@ -668,7 +689,7 @@
                     'BTC/USD': { en: (p, c, r) => `RSI ${r} — Bitcoin ranges at $${p} (${c}%), volume declining. Wait-and-see mode.`, 'zh-TW': (p, c, r) => `RSI ${r} — 比特幣於 $${p}（${c}%）區間震盪，成交萎縮。觀望模式。`, 'zh-CN': (p, c, r) => `RSI ${r} — 比特币于 $${p}（${c}%）区间震荡，成交萎缩。观望模式。` },
                     'ETH/USD': { en: (p, c, r) => `RSI ${r} — Ethereum ranges at $${p} (${c}%), DeFi activity flat. Consolidation phase in progress.`, 'zh-TW': (p, c, r) => `RSI ${r} — 以太坊於 $${p}（${c}%）區間震盪，DeFi 活動平淡。整理階段進行中。`, 'zh-CN': (p, c, r) => `RSI ${r} — 以太坊于 $${p}（${c}%）区间震荡，DeFi 活动平淡。整理阶段进行中。` },
                     'XAG/USD': { en: (p, c, r) => `RSI ${r} — Silver holds at $${p} (${c}%), tracking gold in tight range. Awaiting macro catalyst.`, 'zh-TW': (p, c, r) => `RSI ${r} — 白銀持穩於 $${p}（${c}%），跟隨黃金窄幅整理。等待宏觀催化劑。`, 'zh-CN': (p, c, r) => `RSI ${r} — 白银持稳于 $${p}（${c}%），跟随黄金窄幅整理。等待宏观催化剂。` },
-                    'US Tech 100': { en: (p, c, r) => `RSI ${r} — NASDAQ trades at ${p} (${c}%), awaiting earnings guidance. Sector rotation keeps index range-bound.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 於 ${p}（${c}%）交投，等待財報指引。板塊輪動令指數區間震盪。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 于 ${p}（${c}%）交投，等待财报指引。板块轮动令指数区间震荡。` },
+                    'NASDAQ': { en: (p, c, r) => `RSI ${r} — NASDAQ trades at ${p} (${c}%), awaiting earnings guidance. Sector rotation keeps index range-bound.`, 'zh-TW': (p, c, r) => `RSI ${r} — NASDAQ 於 ${p}（${c}%）交投，等待財報指引。板塊輪動令指數區間震盪。`, 'zh-CN': (p, c, r) => `RSI ${r} — NASDAQ 于 ${p}（${c}%）交投，等待财报指引。板块轮动令指数区间震荡。` },
                     'TAIEX': { en: (p, c, r) => `RSI ${r} — TAIEX trades at ${p} (${c}%), mixed signals. Domestic institutions vs foreign flows create indecision.`, 'zh-TW': (p, c, r) => `RSI ${r} — 台股於 ${p}（${c}%）交投，訊號分歧。內外資攻防導致方向不明。`, 'zh-CN': (p, c, r) => `RSI ${r} — 台股于 ${p}（${c}%）交投，信号分歧。内外资攻防导致方向不明。` }
                 }
             },
@@ -775,7 +796,7 @@
             forex:  { en: 'Forex', 'zh-TW': '外匯', 'zh-CN': '外汇', icon: '💱' },
             metals: { en: 'Precious Metals', 'zh-TW': '貴金屬', 'zh-CN': '贵金属', icon: '🥇' },
             crypto: { en: 'Crypto', 'zh-TW': '虛擬貨幣', 'zh-CN': '虚拟货币', icon: '₿' },
-            stocks: { en: 'Stock Market', 'zh-TW': '股市', 'zh-CN': '股市', icon: '📊' }
+            stocks: { en: 'Index', 'zh-TW': '指數', 'zh-CN': '指数', icon: '📊' }
         };
 
         function renderAnalysisCards(data, loading) {
@@ -986,11 +1007,11 @@
             { cat: 'ENERGY', title: { en: 'Crude Oil Jumps 3% on OPEC+ Output Cut Extension', 'zh-TW': '原油跳漲 3%，OPEC+ 延長減產協議', 'zh-CN': '原油跳涨 3%，OPEC+ 延长减产协议' }, desc: { en: 'Saudi Arabia and Russia agree to extend voluntary cuts through Q3. Brent breaks above $85 resistance.', 'zh-TW': '沙烏地阿拉伯與俄羅斯同意將自願減產延長至第三季。布蘭特原油突破 $85 阻力位。', 'zh-CN': '沙特阿拉伯与俄罗斯同意将自愿减产延长至第三季。布伦特原油突破 $85 阻力位。' }, impacts: [{ asset: 'Oil', sentiment: 'bullish' }, { asset: 'CAD', sentiment: 'bullish' }] },
             { cat: 'GOLD', title: { en: 'Gold Surges Past $2,050 on Safe-Haven Demand', 'zh-TW': '黃金突破 $2,050，避險需求升溫', 'zh-CN': '黄金突破 $2,050，避险需求升温' }, desc: { en: 'Geopolitical tensions and falling real yields push gold to 3-month highs. Central bank purchases remain strong.', 'zh-TW': '地緣政治緊張與實質收益率下滑，推動黃金至三個月新高。各國央行持續增持。', 'zh-CN': '地缘政治紧张与实质收益率下滑，推动黄金至三个月新高。各国央行持续增持。' }, impacts: [{ asset: 'Gold', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bearish' }] },
             { cat: 'CRYPTO_NEWS', title: { en: 'Bitcoin ETF Sees Record $1.2B Daily Inflows', 'zh-TW': 'BTC ETF 單日淨流入創紀錄 $12 億', 'zh-CN': 'BTC ETF 单日净流入创纪录 $12 亿' }, desc: { en: 'Spot Bitcoin ETFs attract massive institutional capital. BTC breaks $65K as halving anticipation builds momentum.', 'zh-TW': '現貨比特幣 ETF 吸引大量機構資金。BTC 突破 $65K，減半預期持續累積動能。', 'zh-CN': '现货比特币 ETF 吸引大量机构资金。BTC 突破 $65K，减半预期持续累积动能。' }, impacts: [{ asset: 'BTC', sentiment: 'bullish' }, { asset: 'ETH', sentiment: 'bullish' }] },
-            { cat: 'EQUITY', title: { en: 'Nasdaq Hits All-Time High Led by AI Stocks', 'zh-TW': 'AI 股領漲，Nasdaq 創歷史新高', 'zh-CN': 'AI 股领涨，Nasdaq 创历史新高' }, desc: { en: 'Tech megacaps drive the rally as NVIDIA reports blowout earnings. Market breadth narrows with small caps lagging.', 'zh-TW': '科技巨頭領漲，NVIDIA 財報大幅超預期。市場廣度收窄，中小型股落後。', 'zh-CN': '科技巨头领涨，NVIDIA 财报大幅超预期。市场广度收窄，中小型股落后。' }, impacts: [{ asset: 'US Tech 100', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bullish' }] },
+            { cat: 'EQUITY', title: { en: 'Nasdaq Hits All-Time High Led by AI Stocks', 'zh-TW': 'AI 股領漲，Nasdaq 創歷史新高', 'zh-CN': 'AI 股领涨，Nasdaq 创历史新高' }, desc: { en: 'Tech megacaps drive the rally as NVIDIA reports blowout earnings. Market breadth narrows with small caps lagging.', 'zh-TW': '科技巨頭領漲，NVIDIA 財報大幅超預期。市場廣度收窄，中小型股落後。', 'zh-CN': '科技巨头领涨，NVIDIA 财报大幅超预期。市场广度收窄，中小型股落后。' }, impacts: [{ asset: 'NASDAQ', sentiment: 'bullish' }, { asset: 'USD', sentiment: 'bullish' }] },
             { cat: 'BONDS', title: { en: '10-Year Treasury Yield Drops Below 4.2%', 'zh-TW': '美十年期公債殖利率跌破 4.2%', 'zh-CN': '美十年期国债收益率跌破 4.2%' }, desc: { en: 'Bond rally accelerates as weak jobs data reinforces rate cut narrative. 2s10s curve steepens to -15bps.', 'zh-TW': '就業數據疲弱強化降息論述，債市反彈加速。2/10 年期利差收窄至 -15bps。', 'zh-CN': '就业数据疲弱强化降息论述，债市反弹加速。2/10 年期利差收窄至 -15bps。' }, impacts: [{ asset: 'USD', sentiment: 'bearish' }, { asset: 'Gold', sentiment: 'bullish' }] },
             { cat: 'DATA_RELEASE', title: { en: 'US NFP Misses Forecast: 150K vs 200K Expected', 'zh-TW': '美非農不及預期：15 萬 vs 預期 20 萬', 'zh-CN': '美非农不及预期：15 万 vs 预期 20 万' }, desc: { en: 'Labor market shows signs of cooling. Unemployment rate ticks up to 3.9%. Dollar weakens across the board.', 'zh-TW': '勞動市場降溫跡象。失業率微升至 3.9%。美元全面走弱。', 'zh-CN': '劳动市场降温迹象。失业率微升至 3.9%。美元全面走弱。' }, impacts: [{ asset: 'USD', sentiment: 'bearish' }, { asset: 'EUR', sentiment: 'bullish' }] },
             { cat: 'ASIA_PACIFIC', title: { en: 'BOJ Ends Negative Rates, Yen Whipsaws', 'zh-TW': '日銀結束負利率政策，日圓劇烈震盪', 'zh-CN': '日银结束负利率政策，日元剧烈震荡' }, desc: { en: 'Bank of Japan raises rates for the first time in 17 years. USD/JPY swings 200 pips intraday amid mixed signals.', 'zh-TW': '日本央行 17 年來首次升息。USD/JPY 盤中波動 200 點，訊號分歧。', 'zh-CN': '日本央行 17 年来首次升息。USD/JPY 盘中波动 200 点，信号分歧。' }, impacts: [{ asset: 'JPY', sentiment: 'volatile' }, { asset: 'Nikkei', sentiment: 'bearish' }] },
-            { cat: 'ASIA_PACIFIC', title: { en: 'Taiwan TAIEX Surges on TSMC Revenue Beat', 'zh-TW': '台積電營收超標，台股加權指數大漲', 'zh-CN': '台积电营收超标，台股加权指数大涨' }, desc: { en: 'TSMC reports 35% YoY revenue growth driven by AI chip demand. TAIEX breaks 20,000 milestone.', 'zh-TW': '台積電受惠 AI 晶片需求，營收年增 35%。加權指數突破兩萬點大關。', 'zh-CN': '台积电受惠 AI 芯片需求，营收年增 35%。加权指数突破两万点大关。' }, impacts: [{ asset: 'TWD', sentiment: 'bullish' }, { asset: 'US Tech 100', sentiment: 'bullish' }] },
+            { cat: 'ASIA_PACIFIC', title: { en: 'Taiwan TAIEX Surges on TSMC Revenue Beat', 'zh-TW': '台積電營收超標，台股加權指數大漲', 'zh-CN': '台积电营收超标，台股加权指数大涨' }, desc: { en: 'TSMC reports 35% YoY revenue growth driven by AI chip demand. TAIEX breaks 20,000 milestone.', 'zh-TW': '台積電受惠 AI 晶片需求，營收年增 35%。加權指數突破兩萬點大關。', 'zh-CN': '台积电受惠 AI 芯片需求，营收年增 35%。加权指数突破两万点大关。' }, impacts: [{ asset: 'TWD', sentiment: 'bullish' }, { asset: 'NASDAQ', sentiment: 'bullish' }] },
             { cat: 'GEOPOLITICS', title: { en: 'Middle East Tensions Lift Oil & Gold, Pressure Equities', 'zh-TW': '中東局勢升溫，油金走高、股市承壓', 'zh-CN': '中东局势升温，油金走高、股市承压' }, desc: { en: 'Escalation in the region triggers risk-off flows. VIX jumps above 20; defense stocks outperform.', 'zh-TW': '地區衝突升級引發避險資金流動。VIX 突破 20，國防股跑贏大盤。', 'zh-CN': '地区冲突升级引发避险资金流动。VIX 突破 20，国防股跑赢大盘。' }, impacts: [{ asset: 'Oil', sentiment: 'bullish' }, { asset: 'Gold', sentiment: 'bullish' }] },
             { cat: 'MACRO', title: { en: 'China PMI Returns to Expansion at 50.8', 'zh-TW': '中國 PMI 重回擴張區間 50.8', 'zh-CN': '中国 PMI 重回扩张区间 50.8' }, desc: { en: 'Manufacturing PMI beats estimates, signaling recovery. Stimulus measures show early traction. AUD and copper rally.', 'zh-TW': '製造業 PMI 超預期，顯示復甦跡象。刺激措施初見成效。澳幣與銅價反彈。', 'zh-CN': '制造业 PMI 超预期，显示复苏迹象。刺激措施初见成效。澳币与铜价反弹。' }, impacts: [{ asset: 'AUD', sentiment: 'bullish' }, { asset: 'CNY', sentiment: 'bullish' }] },
             { cat: 'RATES', title: { en: 'ECB Cuts Rates by 25bps, First in 5 Years', 'zh-TW': 'ECB 降息 25 基點，五年來首次', 'zh-CN': 'ECB 降息 25 基点，五年来首次' }, desc: { en: 'European Central Bank begins easing cycle. Lagarde signals cautious approach with data-dependent future moves.', 'zh-TW': '歐洲央行啟動寬鬆週期。拉加德釋放謹慎信號，未來政策依賴數據。', 'zh-CN': '欧洲央行启动宽松周期。拉加德释放谨慎信号，未来政策依赖数据。' }, impacts: [{ asset: 'EUR', sentiment: 'bearish' }, { asset: 'EU Equities', sentiment: 'bullish' }] },
@@ -1114,7 +1135,7 @@
             if (/nfp.*miss|jobs.*weak|unemployment.*rise/i.test(t)) { impacts.push(bearish('USD')); impacts.push(bullish('Gold')); }
 
             if (impacts.length === 0) {
-                if (cat === 'EQUITY') impacts.push(bullish('US Tech 100'));
+                if (cat === 'EQUITY') impacts.push(bullish('NASDAQ'));
                 else if (cat === 'BONDS') impacts.push(vol('US Bonds'));
                 else impacts.push({ asset: 'Markets', sentiment: 'neutral' });
             }
@@ -1257,100 +1278,77 @@
         /* ═══════════════════════════════════════════════════════════════
            Economic Calendar — Dynamic Event System
            ═══════════════════════════════════════════════════════════════ */
+        // ─── Economic Calendar: Twelve Data Live Engine (Calendar Only) ───
+        const TWELVE_DATA_KEY = 'c45c5183870d4bc0824d320031219028';
         const CAL_CACHE_KEY = 'fx_spectrum_cal_events';
         const CAL_CACHE_TTL = 60 * 60 * 1000;
         let calCountdownTimer = null;
-        let calTickerAlertTimer = null;
         let calEvents = [];
 
         const CAL_ASSET_MAP = {
-            USD: ['XAU/USD', 'EUR/USD', 'GBP/USD', 'USD/JPY', 'BTC/USD', 'US Tech 100'],
-            EUR: ['EUR/USD', 'XAU/USD'],
-            GBP: ['GBP/USD', 'EUR/USD'],
-            JPY: ['USD/JPY', 'XAU/USD'],
-            AUD: ['AUD/USD', 'XAU/USD'],
-            CHF: ['USD/CHF', 'EUR/USD'],
-            CNY: ['AUD/USD', 'XAU/USD', 'BTC/USD'],
-            CAD: ['USD/CHF', 'XAU/USD'],
-            NZD: ['AUD/USD'],
-            TWD: ['US Tech 100'],
-            OIL: ['XAU/USD', 'USD/CHF'],
-            CRYPTO: ['BTC/USD', 'ETH/USD']
+            USD: ['XAU/USD', 'EUR/USD', 'GBP/USD', 'USD/JPY', 'BTC/USD', 'NASDAQ'],
+            EUR: ['EUR/USD', 'XAU/USD'], GBP: ['GBP/USD', 'EUR/USD'],
+            JPY: ['USD/JPY', 'XAU/USD'], AUD: ['AUD/USD', 'XAU/USD'],
+            CHF: ['USD/CHF', 'EUR/USD'], CNY: ['AUD/USD', 'XAU/USD', 'BTC/USD'],
+            CAD: ['USD/CHF', 'XAU/USD'], NZD: ['AUD/USD'],
+            TWD: ['NASDAQ'], KRW: ['NASDAQ']
         };
-
         const CAL_ASSET_COLORS = {
             'XAU/USD': 'bg-yellow-50 text-yellow-700', 'EUR/USD': 'bg-blue-50 text-blue-700',
             'GBP/USD': 'bg-indigo-50 text-indigo-700', 'USD/JPY': 'bg-rose-50 text-rose-700',
             'AUD/USD': 'bg-teal-50 text-teal-700', 'USD/CHF': 'bg-purple-50 text-purple-700',
             'BTC/USD': 'bg-orange-50 text-orange-700', 'ETH/USD': 'bg-violet-50 text-violet-700',
-            'US Tech 100': 'bg-green-50 text-green-700'
+            'NASDAQ': 'bg-green-50 text-green-700'
         };
 
-        function getTodayDateStr() {
-            const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        }
+        const CAL_EVENT_I18N = {
+            'Non-Farm Payrolls':        { 'zh-TW': '美國非農就業人數', 'zh-CN': '美国非农就业人数' },
+            'Nonfarm Payrolls':         { 'zh-TW': '美國非農就業人數', 'zh-CN': '美国非农就业人数' },
+            'Unemployment Rate':        { 'zh-TW': '失業率', 'zh-CN': '失业率' },
+            'CPI':                      { 'zh-TW': 'CPI 消費者物價指數', 'zh-CN': 'CPI 消费者物价指数' },
+            'Core CPI':                 { 'zh-TW': '核心 CPI', 'zh-CN': '核心 CPI' },
+            'GDP':                      { 'zh-TW': 'GDP 國內生產總值', 'zh-CN': 'GDP 国内生产总值' },
+            'Interest Rate Decision':   { 'zh-TW': '利率決議', 'zh-CN': '利率决议' },
+            'Fed Interest Rate Decision': { 'zh-TW': 'Fed 利率決議', 'zh-CN': 'Fed 利率决议' },
+            'ECB Interest Rate Decision': { 'zh-TW': 'ECB 利率決議', 'zh-CN': 'ECB 利率决议' },
+            'BOJ Interest Rate Decision': { 'zh-TW': '日銀利率決議', 'zh-CN': '日银利率决议' },
+            'RBA Interest Rate Decision': { 'zh-TW': '澳央行利率決議', 'zh-CN': '澳央行利率决议' },
+            'BOE Interest Rate Decision': { 'zh-TW': '英央行利率決議', 'zh-CN': '英央行利率决议' },
+            'Initial Jobless Claims':   { 'zh-TW': '初領失業金人數', 'zh-CN': '初领失业金人数' },
+            'Retail Sales':             { 'zh-TW': '零售銷售', 'zh-CN': '零售销售' },
+            'PMI':                      { 'zh-TW': 'PMI 採購經理人指數', 'zh-CN': 'PMI 采购经理人指数' },
+            'Manufacturing PMI':        { 'zh-TW': '製造業 PMI', 'zh-CN': '制造业 PMI' },
+            'Services PMI':             { 'zh-TW': '服務業 PMI', 'zh-CN': '服务业 PMI' },
+            'ISM Manufacturing PMI':    { 'zh-TW': 'ISM 製造業 PMI', 'zh-CN': 'ISM 制造业 PMI' },
+            'ISM Services PMI':         { 'zh-TW': 'ISM 服務業 PMI', 'zh-CN': 'ISM 服务业 PMI' },
+            'Trade Balance':            { 'zh-TW': '貿易帳', 'zh-CN': '贸易帐' },
+            'Consumer Confidence':      { 'zh-TW': '消費者信心指數', 'zh-CN': '消费者信心指数' },
+            'PPI':                      { 'zh-TW': 'PPI 生產者物價指數', 'zh-CN': 'PPI 生产者物价指数' },
+            'Crude Oil Inventories':    { 'zh-TW': '原油庫存', 'zh-CN': '原油库存' },
+            'ADP Employment Change':    { 'zh-TW': 'ADP 就業人數變化', 'zh-CN': 'ADP 就业人数变化' },
+            'Building Permits':         { 'zh-TW': '建築許可', 'zh-CN': '建筑许可' },
+            'Durable Goods Orders':     { 'zh-TW': '耐久財訂單', 'zh-CN': '耐久财订单' },
+            'Existing Home Sales':      { 'zh-TW': '成屋銷售', 'zh-CN': '成屋销售' },
+            'New Home Sales':           { 'zh-TW': '新屋銷售', 'zh-CN': '新屋销售' },
+            'Industrial Production':    { 'zh-TW': '工業生產', 'zh-CN': '工业生产' }
+        };
 
-        function todayAtHourEST(h, m) {
-            const now = new Date();
-            const y = now.getFullYear(), mo = now.getMonth(), day = now.getDate();
-            const est = new Date(y, mo, day, h, m || 0, 0);
-            const utcOffset = est.getTimezoneOffset();
-            const estOffset = 5 * 60;
-            return new Date(est.getTime() + (utcOffset - estOffset) * 60000);
-        }
-
-        function buildTodayEvents() {
-            const base = [
-                { time: '02:00', event: { en: 'China Caixin Manufacturing PMI', 'zh-TW': '中國財新製造業 PMI', 'zh-CN': '中国财新制造业 PMI' }, currency: 'CNY', impact: 2, forecast: '50.5', prev: '50.3', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'XAU/USD': 'bearish', 'AUD/USD': 'bullish' } },
-                { time: '05:00', event: { en: 'Japan Tankan Manufacturing Index', 'zh-TW': '日本短觀製造業指數', 'zh-CN': '日本短观制造业指数' }, currency: 'JPY', impact: 2, forecast: '13', prev: '12', assets: ['USD/JPY'], analysisBias: { 'USD/JPY': 'bearish' } },
-                { time: '07:00', event: { en: 'Germany CPI (MoM)', 'zh-TW': '德國 CPI（月增率）', 'zh-CN': '德国 CPI（月增率）' }, currency: 'EUR', impact: 2, forecast: '0.3%', prev: '0.2%', assets: ['EUR/USD','XAU/USD'], analysisBias: { 'EUR/USD': 'bullish' } },
-                { time: '07:45', event: { en: 'ECB Rate Decision', 'zh-TW': 'ECB 利率決議', 'zh-CN': 'ECB 利率决议' }, currency: 'EUR', impact: 3, forecast: '4.25%', prev: '4.50%', assets: ['EUR/USD','XAU/USD','GBP/USD'], analysisBias: { 'EUR/USD': 'bearish', 'XAU/USD': 'bullish' } },
-                { time: '08:15', event: { en: 'ADP Employment Change', 'zh-TW': 'ADP 就業人數變化', 'zh-CN': 'ADP 就业人数变化' }, currency: 'USD', impact: 2, forecast: '175K', prev: '192K', assets: ['XAU/USD','EUR/USD','BTC/USD'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish' } },
-                { time: '08:30', event: { en: 'US Non-Farm Payrolls', 'zh-TW': '美國非農就業人數', 'zh-CN': '美国非农就业人数' }, currency: 'USD', impact: 3, forecast: '200K', prev: '206K', assets: ['XAU/USD','EUR/USD','USD/JPY','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish', 'BTC/USD': 'bearish' } },
-                { time: '08:30', event: { en: 'US Unemployment Rate', 'zh-TW': '美國失業率', 'zh-CN': '美国失业率' }, currency: 'USD', impact: 3, forecast: '3.8%', prev: '3.7%', assets: ['XAU/USD','EUR/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bullish', 'EUR/USD': 'bullish' } },
-                { time: '08:30', event: { en: 'US CPI (YoY)', 'zh-TW': '美國 CPI（年增率）', 'zh-CN': '美国 CPI（年增率）' }, currency: 'USD', impact: 3, forecast: '3.1%', prev: '3.2%', assets: ['XAU/USD','EUR/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'BTC/USD': 'bearish' } },
-                { time: '08:30', event: { en: 'US Core CPI (MoM)', 'zh-TW': '美國核心 CPI（月增率）', 'zh-CN': '美国核心 CPI（月增率）' }, currency: 'USD', impact: 3, forecast: '0.2%', prev: '0.3%', assets: ['XAU/USD','EUR/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bearish' } },
-                { time: '08:30', event: { en: 'US Initial Jobless Claims', 'zh-TW': '美國初領失業金人數', 'zh-CN': '美国初领失业金人数' }, currency: 'USD', impact: 2, forecast: '215K', prev: '211K', assets: ['XAU/USD','EUR/USD'], analysisBias: { 'XAU/USD': 'bullish' } },
-                { time: '09:45', event: { en: 'US S&P Global Services PMI', 'zh-TW': '美國 S&P 全球服務業 PMI', 'zh-CN': '美国 S&P 全球服务业 PMI' }, currency: 'USD', impact: 2, forecast: '54.0', prev: '53.4', assets: ['US Tech 100','EUR/USD'], analysisBias: { 'EUR/USD': 'bearish' } },
-                { time: '10:00', event: { en: 'US ISM Services PMI', 'zh-TW': '美國 ISM 服務業 PMI', 'zh-CN': '美国 ISM 服务业 PMI' }, currency: 'USD', impact: 3, forecast: '52.5', prev: '51.4', assets: ['XAU/USD','EUR/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish' } },
-                { time: '10:30', event: { en: 'US EIA Crude Oil Inventories', 'zh-TW': '美國 EIA 原油庫存', 'zh-CN': '美国 EIA 原油库存' }, currency: 'USD', impact: 2, forecast: '-1.2M', prev: '-2.5M', assets: ['XAU/USD','USD/CHF'], analysisBias: {} },
-                { time: '11:00', event: { en: 'Taiwan CPI (YoY)', 'zh-TW': '台灣 CPI（年增率）', 'zh-CN': '台湾 CPI（年增率）' }, currency: 'TWD', impact: 1, forecast: '2.1%', prev: '2.0%', assets: ['US Tech 100'], analysisBias: {} },
-                { time: '14:00', event: { en: 'FOMC Rate Decision', 'zh-TW': 'FOMC 利率決議', 'zh-CN': 'FOMC 利率决议' }, currency: 'USD', impact: 3, forecast: '5.25%', prev: '5.25%', assets: ['XAU/USD','EUR/USD','USD/JPY','GBP/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish', 'BTC/USD': 'bearish' } },
-                { time: '14:00', event: { en: 'FOMC Economic Projections', 'zh-TW': 'FOMC 經濟預測', 'zh-CN': 'FOMC 经济预测' }, currency: 'USD', impact: 3, forecast: '—', prev: '—', assets: ['XAU/USD','EUR/USD','BTC/USD','US Tech 100'], analysisBias: { 'XAU/USD': 'bearish' } },
-                { time: '14:30', event: { en: 'Fed Chair Powell Press Conference', 'zh-TW': '聯準會主席鮑威爾記者會', 'zh-CN': '联准会主席鲍威尔记者会' }, currency: 'USD', impact: 3, forecast: '—', prev: '—', assets: ['XAU/USD','EUR/USD','USD/JPY','BTC/USD'], analysisBias: {} },
-                { time: '17:00', event: { en: 'US 10-Year Note Auction', 'zh-TW': '美國十年期公債標售', 'zh-CN': '美国十年期国债标售' }, currency: 'USD', impact: 2, forecast: '4.28%', prev: '4.32%', assets: ['XAU/USD','USD/JPY'], analysisBias: { 'XAU/USD': 'bullish' } },
-                { time: '19:30', event: { en: 'BOJ Policy Rate Decision', 'zh-TW': '日銀政策利率決議', 'zh-CN': '日银政策利率决议' }, currency: 'JPY', impact: 3, forecast: '0.10%', prev: '0.00%', assets: ['USD/JPY','XAU/USD','EUR/USD'], analysisBias: { 'USD/JPY': 'bearish' } },
-                { time: '19:50', event: { en: 'Japan GDP (QoQ)', 'zh-TW': '日本 GDP（季增率）', 'zh-CN': '日本 GDP（季增率）' }, currency: 'JPY', impact: 2, forecast: '0.5%', prev: '-0.1%', assets: ['USD/JPY'], analysisBias: { 'USD/JPY': 'bearish' } },
-                { time: '20:00', event: { en: 'China Trade Balance (USD)', 'zh-TW': '中國貿易帳（美元）', 'zh-CN': '中国贸易帐（美元）' }, currency: 'CNY', impact: 2, forecast: '$85.0B', prev: '$72.3B', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'AUD/USD': 'bullish' } },
-                { time: '21:30', event: { en: 'Australia Employment Change', 'zh-TW': '澳洲就業人數變化', 'zh-CN': '澳洲就业人数变化' }, currency: 'AUD', impact: 2, forecast: '25.0K', prev: '38.5K', assets: ['AUD/USD'], analysisBias: { 'AUD/USD': 'bullish' } },
-                { time: '22:00', event: { en: 'RBA Rate Statement', 'zh-TW': '澳洲央行利率聲明', 'zh-CN': '澳洲央行利率声明' }, currency: 'AUD', impact: 3, forecast: '4.35%', prev: '4.35%', assets: ['AUD/USD','XAU/USD'], analysisBias: { 'AUD/USD': 'bullish' } }
-            ];
-
-            const today = getTodayDateStr();
-            return base.map((ev, i) => {
-                const [h, m] = ev.time.split(':').map(Number);
-                const dt = todayAtHourEST(h, m);
-                const now = new Date();
-                const released = now > dt;
-                let actual = null;
-                if (released) {
-                    actual = simulateActual(ev.forecast);
+        function translateCalEvent(enName, lang) {
+            if (lang === 'en') return enName;
+            for (const [key, trans] of Object.entries(CAL_EVENT_I18N)) {
+                if (enName.toLowerCase().includes(key.toLowerCase())) {
+                    return trans[lang] || enName;
                 }
-                return { ...ev, id: `${today}-${i}`, datetime: dt, released, actual };
-            });
+            }
+            return enName;
         }
 
-        function simulateActual(forecast) {
-            const numeric = parseFloat(forecast.replace(/[%KMB$,]/g, ''));
-            if (isNaN(numeric)) return null;
-            const variance = numeric * (Math.random() * 0.08 - 0.04);
-            const result = numeric + variance;
-            if (forecast.includes('%')) return result.toFixed(1) + '%';
-            if (forecast.includes('K')) return Math.round(result) + 'K';
-            if (forecast.includes('M')) return result.toFixed(1) + 'M';
-            if (forecast.includes('B')) return '$' + result.toFixed(1) + 'B';
-            return result.toFixed(1);
+        function importanceToImpact(imp) {
+            if (!imp) return 1;
+            const s = imp.toLowerCase();
+            if (s === 'high') return 3;
+            if (s === 'medium') return 2;
+            return 1;
         }
 
         function getCachedCalendar() {
@@ -1369,18 +1367,89 @@
             } catch {}
         }
 
-        function fetchCalendarEvents() {
+        async function fetchCalendarFromAPI() {
+            const url = `https://api.twelvedata.com/economic_calendar?apikey=${TWELVE_DATA_KEY}&dp=5`;
+            console.log('[Calendar] Fetching from Twelve Data …');
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const json = await res.json();
+            const raw = json.events || json.result || [];
+            if (!Array.isArray(raw) || raw.length === 0) {
+                console.warn('[Calendar] API returned no events:', json);
+                return [];
+            }
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const now = new Date();
+
+            const filtered = raw.filter(e => {
+                const dateStr = (e.date || '').slice(0, 10);
+                const imp = (e.importance || '').toLowerCase();
+                return dateStr === todayStr && (imp === 'high' || imp === 'medium');
+            });
+
+            console.log(`[Calendar] ${raw.length} total → ${filtered.length} today (Medium+High)`);
+
+            return filtered.map((e, i) => {
+                const dt = new Date(e.date);
+                const hh = String(dt.getHours()).padStart(2, '0');
+                const mm = String(dt.getMinutes()).padStart(2, '0');
+                const impact = importanceToImpact(e.importance);
+                const currency = (e.currency || 'USD').toUpperCase();
+                const assets = CAL_ASSET_MAP[currency] || [];
+                const released = now > dt && (e.actual !== '' && e.actual != null);
+
+                return {
+                    id: `${todayStr}-api-${i}`,
+                    time: `${hh}:${mm}`,
+                    event: {
+                        en: e.event || e.title || 'Unknown Event',
+                        'zh-TW': translateCalEvent(e.event || e.title || '', 'zh-TW'),
+                        'zh-CN': translateCalEvent(e.event || e.title || '', 'zh-CN')
+                    },
+                    currency,
+                    impact,
+                    forecast: e.forecast || '—',
+                    prev: e.previous || '—',
+                    actual: (released && e.actual) ? String(e.actual) : null,
+                    assets,
+                    analysisBias: currency === 'USD' ? { 'XAU/USD': 'bearish', 'EUR/USD': 'bearish' } : {},
+                    datetime: dt,
+                    released
+                };
+            });
+        }
+
+        async function fetchCalendarEvents() {
             const cached = getCachedCalendar();
             if (cached) {
                 calEvents = cached.map(e => ({ ...e, datetime: new Date(e.datetime) }));
                 renderCalendarRows();
                 setCalSyncStatus('cached');
-                return;
+                console.log(`[Calendar] Loaded ${calEvents.length} cached events.`);
             }
-            calEvents = buildTodayEvents();
-            setCachedCalendar(calEvents);
-            renderCalendarRows();
-            setCalSyncStatus('live');
+
+            try {
+                setCalSyncStatus('loading');
+                const apiEvents = await fetchCalendarFromAPI();
+                if (apiEvents.length > 0) {
+                    calEvents = apiEvents;
+                    setCachedCalendar(calEvents);
+                    renderCalendarRows();
+                    setCalSyncStatus('live');
+                    console.log(`[Calendar] ✅ ${calEvents.length} live events rendered.`);
+                } else if (calEvents.length === 0) {
+                    setCalSyncStatus('cached');
+                    console.log('[Calendar] No events from API and no cache.');
+                }
+            } catch (err) {
+                console.error('[Calendar] API error:', err.message);
+                if (calEvents.length > 0) {
+                    setCalSyncStatus('cached');
+                } else {
+                    setCalSyncStatus('cached');
+                }
+            }
         }
 
         function getCountdownStr(dt) {
@@ -1431,14 +1500,14 @@
 
                 let valsCell = '';
                 if (ev.released && ev.actual) {
-                    const numActual = parseFloat(ev.actual.replace(/[%KMB$,]/g, ''));
-                    const numForecast = parseFloat(ev.forecast.replace(/[%KMB$,]/g, ''));
+                    const numActual = parseFloat(String(ev.actual).replace(/[%KMB$,]/g, ''));
+                    const numForecast = parseFloat(String(ev.forecast).replace(/[%KMB$,]/g, ''));
                     const beat = !isNaN(numActual) && !isNaN(numForecast) && numActual > numForecast;
                     const miss = !isNaN(numActual) && !isNaN(numForecast) && numActual < numForecast;
                     const badgeCls = beat ? 'bg-green-100 text-green-700' : miss ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600';
                     valsCell = `<span class="cal-actual-badge ${badgeCls}">${ev.actual}</span> <span class="text-slate-400 text-xs">/ ${ev.forecast}</span>`;
                 } else {
-                    valsCell = `<span class="text-slate-400 text-xs">— / ${ev.forecast}</span>`;
+                    valsCell = `<span class="text-slate-400 text-xs">— / ${ev.forecast || '—'}</span>`;
                 }
 
                 return `<div class="cal-row ${rowClass} grid grid-cols-6 gap-2 px-6 py-3 text-sm items-center" data-cal-id="${ev.id}">
@@ -1463,11 +1532,9 @@
                 const row = body.querySelector(`[data-cal-id="${ev.id}"]`);
                 if (!row) return;
 
-                const wasReleased = ev.released;
                 const now = new Date();
                 if (!ev.released && now > ev.datetime) {
                     ev.released = true;
-                    ev.actual = simulateActual(ev.forecast);
                     row.classList.add('flash-release');
                     setTimeout(() => row.classList.remove('flash-release'), 1500);
                     onCalendarEventRelease(ev);
@@ -1476,21 +1543,21 @@
                 if (ev.released) {
                     row.classList.remove('imminent');
                     row.classList.add('released');
+                    const timeDiv = row.querySelector('div:first-child');
+                    if (timeDiv && !timeDiv.querySelector('.text-green-500')) {
+                        const cdEl = timeDiv.querySelector('.cal-countdown');
+                        if (cdEl) cdEl.outerHTML = '<span class="text-green-500 text-[10px] font-bold">✓</span>';
+                    }
                 } else if (isImminent(ev.datetime)) {
                     row.classList.add('imminent');
                     if (ev.impact === 3) hasHighImpactImminent = true;
-                }
-
-                const countdownEl = row.querySelector('.cal-countdown');
-                if (!ev.released) {
+                    const countdownEl = row.querySelector('.cal-countdown');
                     const cd = getCountdownStr(ev.datetime);
-                    if (cd && isImminent(ev.datetime) && countdownEl) {
+                    if (cd && countdownEl) {
                         countdownEl.textContent = cd;
-                    } else if (cd && isImminent(ev.datetime) && !countdownEl) {
+                    } else if (cd && !countdownEl) {
                         renderCalendarRows();
                     }
-                } else if (countdownEl) {
-                    renderCalendarRows();
                 }
             });
 
@@ -1510,52 +1577,34 @@
         }
 
         function onCalendarEventRelease(ev) {
-            if (!ev.actual || !ev.forecast) return;
-            const numActual = parseFloat(ev.actual.replace(/[%KMB$,]/g, ''));
-            const numForecast = parseFloat(ev.forecast.replace(/[%KMB$,]/g, ''));
-            if (isNaN(numActual) || isNaN(numForecast)) return;
-
-            const beat = numActual > numForecast;
             const usdEvent = ev.currency === 'USD';
             const lang = localStorage.getItem('fx_spectrum_lang') || 'en';
 
             if (usdEvent && ev.impact >= 2) {
+                const topTicker = document.querySelector('.ticker');
+                const bottomTicker = document.querySelector('.ticker-reverse');
+                [topTicker, bottomTicker].forEach(t => {
+                    if (!t) return;
+                    t.classList.add('ticker-alert-color');
+                    setTimeout(() => t.classList.remove('ticker-alert-color'), 5000);
+                });
+
                 const biasEntries = Object.entries(ev.analysisBias || {});
-                biasEntries.forEach(([symbol, defaultBias]) => {
+                biasEntries.forEach(([symbol]) => {
                     const container = document.getElementById('analysis-cards');
                     if (!container) return;
                     const card = container.querySelector(`[data-analysis="${symbol}"]`);
-                    if (!card) return;
-
-                    let overrideChange;
-                    if (symbol === 'XAU/USD') {
-                        overrideChange = beat ? -1.2 : 1.5;
-                    } else if (symbol === 'BTC/USD') {
-                        overrideChange = beat ? -2.5 : 3.0;
-                    } else {
-                        overrideChange = beat ? -0.25 : 0.35;
+                    if (card) {
+                        card.classList.add('card-updating');
+                        setTimeout(() => card.classList.remove('card-updating'), 900);
                     }
-
-                    const item = getDataForSymbol(symbol);
-                    item.change = overrideChange;
-                    updateSingleCard(card, symbol, item);
-                    card.classList.add('card-updating');
-                    setTimeout(() => card.classList.remove('card-updating'), 900);
                 });
 
                 const evName = ev.event?.[lang] || ev.event?.en || '';
                 const syncLabel = document.getElementById('analysis-sync-label');
                 if (syncLabel) {
-                    const calTriggerText = {
-                        en: `Updated: ${evName}`,
-                        'zh-TW': `已更新：${evName}`,
-                        'zh-CN': `已更新：${evName}`
-                    };
-                    syncLabel.textContent = calTriggerText[lang] || calTriggerText.en;
-                    setTimeout(() => {
-                        const isLive = currentSyncSource === 'live';
-                        setAnalysisSyncStatus(isLive);
-                    }, 5000);
+                    syncLabel.textContent = lang === 'en' ? `Updated: ${evName}` : `已更新：${evName}`;
+                    setTimeout(() => setAnalysisSyncStatus(currentSyncSource === 'live'), 5000);
                 }
             }
 
@@ -1588,7 +1637,9 @@
                 localStorage.removeItem(CAL_CACHE_KEY);
                 fetchCalendarEvents();
             }, CAL_CACHE_TTL);
+            console.log('[System] Economic Calendar Engine is now Live & Automated.');
         }
+        // ─── End Economic Calendar ───
 
         function initFACarousel() {
             setFASyncStatus(false);
@@ -1636,19 +1687,28 @@
             document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
 
+        // ─── Index data now driven by script.js (Alpha Vantage) ───
+
         let _cardsInitialized = false;
 
         window.addEventListener('fxSpectrumDataReady', (e) => {
-            const data = e.detail;
-            const source = e.detail._source;
-            currentSyncSource = source === 'live' ? 'live' : source === 'cached' ? 'cached' : 'offline';
+            const incoming = e.detail;
+            const source = incoming._source;
+            const srcLabel = source === 'live' ? 'live' : source === 'cached' ? 'cached' : 'offline';
+
+            currentSyncSource = srcLabel;
+            window.fxSpectrumTickerData = incoming;
+
+            console.log(`[insights] fxSpectrumDataReady accepted (source=${srcLabel}, ${incoming.length} items)`);
             if (_cardsInitialized) {
-                initMarketCards(data, true);
+                const allData = getFullMarketData(incoming);
+                renderMarketCards(allData, false);
+                updateMarketCards(allData, true);
             } else {
-                initMarketCards(data, false);
+                initMarketCards(incoming, false);
                 _cardsInitialized = true;
             }
-            onDataForAnalysis(data, source);
+            onDataForAnalysis(incoming, srcLabel);
         });
 
         window.onload = () => {
@@ -1665,6 +1725,7 @@
             initFACarousel();
             initEconomicCalendar();
             changeLanguage(localStorage.getItem('fx_spectrum_lang') || 'en');
+            console.log('[System] Twelve Data removed. Alpha Vantage Engine restored for all assets.');
         };
     </script>
     <script src="script.js"></script>
