@@ -148,6 +148,7 @@
                     <li><a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a></li>
                     <li><a href="academy.html" data-i18n="nav_academy" class="hover:text-cyan-500 transition-colors">Academy</a></li>
                     <li><a href="pricing.html" data-i18n="nav_pricing" class="hover:text-cyan-500 transition-colors">Pricing</a></li>
+                    <li><a href="seminar.html" class="hover:text-cyan-500 transition-colors">Seminar</a></li>
                 </ul>
             </div>
             <div class="md:pt-32 md:col-start-6">
@@ -183,6 +184,9 @@
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang]?.[key]) el.innerText = translations[lang][key];
+            });
+            document.querySelectorAll('a[href="seminar.html"]').forEach(el => {
+                el.innerText = lang === 'zh-CN' ? '研讨会' : (lang === 'zh-TW' ? '研討會' : 'Seminars');
             });
             document.documentElement.lang = lang;
         }
