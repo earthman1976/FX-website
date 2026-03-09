@@ -45,11 +45,10 @@
             </a>
         </div>
         <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-500 uppercase tracking-widest">
-            <a href="index.html" class="nav-home-icon relative pb-1 transition-all hover:scale-110" title="Home">
+            <a href="index.html" class="nav-home-icon inline-flex items-center justify-center px-4 py-2 rounded-full bg-slate-900 text-cyan-400 hover:bg-slate-800 transition-all" title="Home" aria-label="Home">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                    <defs><linearGradient id="home-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#06B6D4"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs>
-                    <path stroke="url(#home-gradient)" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline stroke="url(#home-gradient)" points="9 22 9 12 15 12 15 22"></polyline>
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
             </a>
             <a href="insights.html" data-i18n="nav_insights" class="hover:text-cyan-500 transition-colors">Insights</a>
@@ -67,7 +66,7 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <a href="admin-dashboard.html" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">員工專區</a>
             <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
@@ -99,7 +98,7 @@
                 <span class="text-slate-300">|</span>
                 <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
             </div>
-            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+            <a href="admin-dashboard.html" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">員工專區</a>
         </div>
     </div>
 
@@ -253,8 +252,57 @@
             return Number.isInteger(sid) && sid >= 0 ? sid : 0;
         }
 
+        function applyManagedSeminarOverrides(sessions) {
+            const overrides = typeof window.getManagedSeminars === 'function' ? window.getManagedSeminars() : null;
+            if (!Array.isArray(overrides) || !overrides.length) return sessions;
+            const baseByIndex = Array.isArray(sessions) ? sessions : [];
+            const readLocaleText = (value, lang, fallback = '') => {
+                if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    const isZh = lang !== 'en';
+                    const zh = value.zh || value['zh-TW'] || value['zh-CN'] || '';
+                    const en = value.en || '';
+                    const picked = isZh ? (zh || en) : (en || zh);
+                    return String(picked || fallback || '');
+                }
+                return String(value || fallback || '');
+            };
+            const readLocaleAgenda = (value, lang, fallback = []) => {
+                const toList = (v) => Array.isArray(v)
+                    ? v
+                    : String(v || '').split(',').map(i => i.trim()).filter(Boolean);
+                if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    const isZh = lang !== 'en';
+                    const zh = toList(value.zh || value['zh-TW'] || value['zh-CN'] || []);
+                    const en = toList(value.en || []);
+                    const picked = isZh ? (zh.length ? zh : en) : (en.length ? en : zh);
+                    return picked.length ? picked : toList(fallback);
+                }
+                const list = toList(value);
+                return list.length ? list : toList(fallback);
+            };
+            return overrides.map((override, idx) => {
+                const base = baseByIndex[idx] || {};
+                if (!override || typeof override !== 'object') return base;
+                const currentLang = document.documentElement.lang || localStorage.getItem('fx_spectrum_lang') || 'en';
+                return {
+                    ...base,
+                    title: readLocaleText(override.title, currentLang, base.title),
+                    subtitle: readLocaleText(override.subtitle, currentLang, base.subtitle),
+                    date: override.date || base.date || '',
+                    location: readLocaleText(override.location, currentLang, base.location),
+                    duration: override.duration || base.duration || '',
+                    speaker: readLocaleText(override.speaker, currentLang, base.speaker),
+                    seats: override.seats || base.seats || '',
+                    register: override.register || base.register || '',
+                    fee: override.fee || base.fee || '',
+                    agenda: readLocaleAgenda(override.agenda, currentLang, base.agenda || [])
+                };
+            });
+        }
+
         function renderSeminar(lang) {
-            const sessions = seminarCatalog[lang] || seminarCatalog.en;
+            const baseSessions = seminarCatalog[lang] || seminarCatalog.en;
+            const sessions = applyManagedSeminarOverrides(baseSessions);
             const sid = Math.min(getSessionId(), sessions.length - 1);
             const s = sessions[sid];
             document.getElementById('seminar-title').innerText = s.title;
@@ -341,5 +389,6 @@
         };
     </script>
     <script src="script.js"></script>
+    <script src="user_auth.js"></script>
 </body>
 </html>

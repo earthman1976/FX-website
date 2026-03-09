@@ -48,24 +48,23 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 12px 28px;
-            min-width: 220px;
-            min-height: 48px;
-            border-radius: 9999px;
-            font-weight: 700;
-            color: #fff;
-            background: linear-gradient(135deg, #06B6D4, #A855F7);
-            transition: all 0.3s ease;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.15);
         }
         .platforms-verify-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+            transform: scale(1.08);
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.22);
         }
-        .platforms-verify-icon {
-            width: 18px;
-            height: 18px;
+        .platforms-verify-btn img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 6px;
         }
         .platforms-verify-actions {
             margin-top: 32px;
@@ -73,26 +72,58 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 16px;
+            gap: 22px;
             width: 100%;
+        }
+        .platforms-verify-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .platforms-verify-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: 0.02em;
         }
         .platforms-verify-back-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 220px;
-            min-height: 48px;
-            padding: 12px 28px;
+            width: 98px;
+            height: 58px;
+            padding: 0;
             border-radius: 9999px;
             font-weight: 700;
-            color: #fff;
-            background: linear-gradient(135deg, #06B6D4, #A855F7);
+            color: #22d3ee;
+            background: #0f172a;
             transition: all 0.3s ease;
             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
         }
         .platforms-verify-back-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.04);
             box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+        }
+        .platform-logo-link {
+            display: block;
+        }
+        .platform-logo-card {
+            position: relative;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.9rem;
+            padding: 1.25rem 1.1rem;
+            height: 7.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .platform-logo-link:hover .platform-logo-card {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+            border-color: #cbd5e1;
         }
         @media (max-width: 767px) {
             .platforms-verify-section {
@@ -133,8 +164,8 @@
             </a>
         </div>
         <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-500 uppercase tracking-widest">
-            <a href="index.html" class="nav-home-icon relative pb-1 transition-all hover:scale-110" title="Home">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+            <a href="index.html" class="nav-home-icon relative pb-1 transition-all hover:scale-110" title="Home" aria-label="Home">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
                     <defs><linearGradient id="home-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#06B6D4"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs>
                     <path stroke="url(#home-gradient)" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline stroke="url(#home-gradient)" points="9 22 9 12 15 12 15 22"></polyline>
@@ -157,7 +188,7 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button data-i18n="nav_login" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">Log In</button>
+            <a href="admin-dashboard.html" class="px-6 py-2 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all hidden md:block">員工專區</a>
             <button onclick="toggleMobileMenu()" class="hamburger-btn items-center justify-center w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
@@ -187,7 +218,7 @@
                 <span class="text-slate-300">|</span>
                 <button onclick="changeLanguage('zh-CN');toggleMobileMenu();" class="lang-btn text-xs font-bold hover:text-cyan-500">簡</button>
             </div>
-            <a href="#" data-i18n="nav_login" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">Log In</a>
+            <a href="admin-dashboard.html" class="block w-full py-3 text-center border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all">員工專區</a>
         </div>
     </div>
 
@@ -209,14 +240,21 @@
         <div id="verify-section" class="platforms-verify-section">
             <p data-i18n="pp_verify_desc" class="platforms-verify-desc">為了保障您的資金安全，您可以透過 WikiFX（外匯天眼）了解以上相關經紀商的監管評分、合規資訊與用戶評價。</p>
             <div class="platforms-verify-actions flex flex-row items-center justify-center gap-4 mt-8">
-                <a href="https://www.wikifx.com/en/" target="_blank" rel="noopener noreferrer" class="platforms-verify-btn">
-                    <span data-i18n="pp_verify_btn">前往 WikiFX 查詢平台分數</span>
-                    <svg class="platforms-verify-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5h6m0 0v6m0-6L10 14"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 9v10h10"></path>
-                    </svg>
-                </a>
-                <a href="index.html" data-i18n="pp_back" class="platforms-verify-back-btn">Back to Home</a>
+                <div class="platforms-verify-item">
+                    <a href="https://www.wikifx.com/en/" target="_blank" rel="noopener noreferrer" class="platforms-verify-btn" title="WikiFX" aria-label="WikiFX">
+                        <img src="img/wikifx.jpg" alt="WikiFX" onerror="this.style.display='none';">
+                    </a>
+                    <span data-i18n="pp_verify_btn" class="platforms-verify-label">Check Broker Scores on WikiFX</span>
+                </div>
+                <div class="platforms-verify-item">
+                    <a href="index.html" class="platforms-verify-back-btn" title="Home" aria-label="Home">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </a>
+                    <span data-i18n="pp_back" class="platforms-verify-label">Back to Home</span>
+                </div>
             </div>
         </div>
     </main>
@@ -272,9 +310,9 @@
 
     <script>
         const translations = {
-            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'footer_seminar': 'Seminars', 'pp_badge': 'Regulated Brokers', 'pp_title_1': 'Partner ', 'pp_title_2': 'Platforms', 'pp_desc': 'We exclusively collaborate with internationally regulated brokers to ensure fund security and a fair trading environment for all users.', 'pp_verify_desc': 'To better protect your funds, you can use WikiFX to review the regulatory scores, compliance details, and user feedback of the partner brokers above.', 'pp_verify_btn': 'Check Broker Scores on WikiFX', 'pp_back': 'Back to Home' },
-            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'footer_seminar': '研討會', 'pp_badge': '受監管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我們僅與受國際監管機構嚴格監督的知名券商合作，確保所有用戶的資金安全與公平的交易環境。', 'pp_verify_desc': '為了保障您的資金安全，您可以透過 WikiFX（外匯天眼）了解以上相關經紀商的監管評分、合規資訊與用戶評價。', 'pp_verify_btn': '前往 WikiFX 查詢平台分數', 'pp_back': '返回首頁' },
-            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'footer_seminar': '研讨会', 'pp_badge': '受监管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我们仅与受国际监管机构严格监督的知名券商合作，确保所有用户的资金安全与公平的交易环境。', 'pp_verify_desc': '为了保障您的资金安全，您可以通过 WikiFX（外汇天眼）了解以上相关经纪商的监管评分、合规信息与用户评价。', 'pp_verify_btn': '前往 WikiFX 查询平台分数', 'pp_back': '返回首页' }
+            'en': { 'nav_insights': 'Insights', 'nav_academy': 'Academy', 'nav_affiliate': 'Partners', 'nav_pricing': 'Pricing', 'nav_about': 'About Us', 'nav_login': 'Log In', 'mobile_home': 'Home', 'footer_desc': 'Professional forex tools and educational platform dedicated to empowering traders with advanced AI analytics and reliable Expert Advisors.', 'footer_links_title': 'Quick Links', 'footer_support_title': 'Support', 'footer_follow_us': 'Follow Us', 'footer_privacy': 'Privacy Policy', 'footer_warning': 'Risk Warning', 'footer_partners': 'Platforms', 'footer_sponsors': 'Sponsors', 'pp_badge': 'Regulated Brokers', 'pp_title_1': 'Partner ', 'pp_title_2': 'Platforms', 'pp_desc': 'We exclusively collaborate with internationally regulated brokers to ensure fund security and a fair trading environment for all users.', 'pp_verify_desc': 'To better protect your funds, you can use WikiFX to review the regulatory scores, compliance details, and user feedback of the partner brokers above.', 'pp_verify_btn': 'Check Broker Scores on WikiFX', 'pp_back': 'Back to Home' },
+            'zh-TW': { 'nav_insights': '市場分析', 'nav_academy': '教育學院', 'nav_affiliate': '合作計畫', 'nav_pricing': '方案價格', 'nav_about': '關於我們', 'nav_login': '登入系統', 'mobile_home': '首頁', 'footer_desc': '專業外匯工具與教育平台，致力於透過先進的 AI 分析與可靠的自動化交易系統。', 'footer_links_title': '快速連結', 'footer_support_title': '支援與條款', 'footer_follow_us': '關注我們', 'footer_privacy': '隱私條款', 'footer_warning': '風險警示', 'footer_partners': '合作平台', 'footer_sponsors': '贊助商', 'pp_badge': '受監管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我們僅與受國際監管機構嚴格監督的知名券商合作，確保所有用戶的資金安全與公平的交易環境。', 'pp_verify_desc': '為了保障您的資金安全，您可以透過 WikiFX（外匯天眼）了解以上相關經紀商的監管評分、合規資訊與用戶評價。', 'pp_verify_btn': '前往 WikiFX 查詢平台分數', 'pp_back': '返回首頁' },
+            'zh-CN': { 'nav_insights': '市场分析', 'nav_academy': '教育学院', 'nav_affiliate': '合作计划', 'nav_pricing': '方案价格', 'nav_about': '关于我们', 'nav_login': '登入系统', 'mobile_home': '首页', 'footer_desc': '专业外汇工具与教育平台，致力于通过先进的 AI 分析与可靠的自动化交易系统。', 'footer_links_title': '快速链接', 'footer_support_title': '支持与条款', 'footer_follow_us': '关注我们', 'footer_privacy': '隐私条款', 'footer_warning': '风险警示', 'footer_partners': '合作平台', 'footer_sponsors': '赞助商', 'pp_badge': '受监管券商', 'pp_title_1': '合作', 'pp_title_2': '平台', 'pp_desc': '我们仅与受国际监管机构严格监督的知名券商合作，确保所有用户的资金安全与公平的交易环境。', 'pp_verify_desc': '为了保障您的资金安全，您可以通过 WikiFX（外汇天眼）了解以上相关经纪商的监管评分、合规信息与用户评价。', 'pp_verify_btn': '前往 WikiFX 查询平台分数', 'pp_back': '返回首页' }
         };
 
         function changeLanguage(lang) {
@@ -313,8 +351,8 @@
             const grid = document.getElementById('partner-logos-grid');
             if (!grid) return;
             grid.innerHTML = partnerLogos.map(p => `
-                <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="block">
-                    <div class="bg-white border border-slate-100 rounded-xl p-6 flex items-center justify-center h-28 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
+                <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="platform-logo-link group" title="${p.name}" aria-label="${p.name}">
+                    <div class="platform-logo-card cursor-pointer">
                         <img src="img/${p.fileName}" alt="${p.name}" class="max-h-full max-w-full object-contain" loading="lazy"
                              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                         <div class="hidden items-center justify-center w-full h-full text-sm font-semibold text-slate-400 tracking-wide">${p.name}</div>
@@ -329,5 +367,6 @@
         };
     </script>
     <script src="script.js"></script>
+    <script src="user_auth.js"></script>
 </body>
 </html>

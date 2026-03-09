@@ -284,266 +284,120 @@
 })();
 
 (function () {
-    const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuB65CD8rzc_YrediUF6FQ3M1DqoPyAv4cBwH9uu_nWfcV-tDT61G94AYbY51qA1dO3A/exec';
-    const LABELS = {
-        en: {
-            nav: 'Sign Up',
-            title: 'Sign Up Membership',
-            desc: 'Complete the form and our team will assist your onboarding.',
-            name: 'Name',
-            email: 'Email',
-            password: 'Set Password',
-            phone: 'Phone',
-            platform: 'Preferred Trading Platform',
-            submit: 'Create Membership',
-            successTitle: 'Registration successful! Welcome to FX Spectrum',
-            successDesc: 'Your request has been submitted successfully.',
-            sending: 'Sending...'
-        },
-        'zh-TW': {
-            nav: '註冊會員',
-            title: '註冊會員',
-            desc: '請填寫以下資料，我們將協助您完成開通流程。',
-            name: '姓名',
-            email: '電子郵件',
-            password: '設定密碼',
-            phone: '手機號碼',
-            platform: '預計使用交易平台',
-            submit: '立即註冊',
-            successTitle: '註冊成功！歡迎加入 FX Spectrum',
-            successDesc: '我們已收到您的資料，將盡快與您聯繫。',
-            sending: '送出中...'
-        },
-        'zh-CN': {
-            nav: '注册会员',
-            title: '注册会员',
-            desc: '请填写以下资料，我们将协助您完成开通流程。',
-            name: '姓名',
-            email: '电子邮箱',
-            password: '设置密码',
-            phone: '手机号',
-            platform: '预计使用交易平台',
-            submit: '立即注册',
-            successTitle: '注册成功！欢迎加入 FX Spectrum',
-            successDesc: '我们已收到您的资料，将尽快与您联系。',
-            sending: '提交中...'
+    const SLIDE_KEY = 'fx_managed_slides';
+    const SLIDE_CONFIG_KEY = 'fx_spectrum_slides_config';
+    const SEMINAR_KEY = 'fx_spectrum_seminars';
+    const LEGACY_SEMINAR_KEY = 'fx_managed_seminars';
+
+    function readJson(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch {
+            return fallback;
         }
-    };
-
-    function currentLang() {
-        const lang = localStorage.getItem('fx_spectrum_lang') || document.documentElement.lang || 'en';
-        return LABELS[lang] ? lang : 'en';
     }
 
-    function injectSignupStyles() {
-        if (document.getElementById('fx-signup-style')) return;
-        const style = document.createElement('style');
-        style.id = 'fx-signup-style';
-        style.textContent = `
-            .nav-signup-btn {
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-                border: 1px solid rgba(6,182,212,0.5) !important;
-                color: #ffffff !important;
-                font-weight: 700 !important;
-                transition: all 0.25s ease !important;
-            }
-            .nav-signup-btn:hover {
-                transform: scale(1.05) !important;
-                box-shadow: 0 0 15px rgba(6,182,212,0.4) !important;
-                background: linear-gradient(135deg, #0b1324 0%, #1f2d44 100%) !important;
-            }
-            .fx-signup-overlay {
-                position: fixed; inset: 0; z-index: 130;
-                background: rgba(2,6,23,.72); backdrop-filter: blur(6px);
-                display: flex; align-items: center; justify-content: center;
-                padding: 16px;
-            }
-            .fx-signup-overlay.hidden { display: none; }
-            .fx-signup-card {
-                width: min(92vw, 620px); max-height: 92vh; overflow-y: auto;
-                border-radius: 24px; border: 1px solid rgba(148,163,184,.28);
-                background: rgba(15,23,42,.85); backdrop-filter: blur(16px);
-                box-shadow: 0 24px 60px rgba(0,0,0,.45); color: #e2e8f0;
-                padding: 28px;
-            }
-            .fx-signup-input {
-                width: 100%; background: rgba(15,23,42,.88);
-                border: 1px solid #334155; border-radius: 12px;
-                padding: 12px 14px; color: #f8fafc; font-size: 14px;
-                outline: none; transition: all .2s ease;
-            }
-            .fx-signup-input::placeholder { color: #64748b; }
-            .fx-signup-input:focus { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34,211,238,.16); }
-            .fx-signup-submit {
-                width: 100%; padding: 12px 16px; border-radius: 12px; border: none;
-                color: #fff; font-weight: 700; cursor: pointer;
-                background: linear-gradient(135deg, #06B6D4, #A855F7);
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    function ensureSignupModal() {
-        if (document.getElementById('signup-modal')) return;
-        const wrapper = document.createElement('div');
-        wrapper.id = 'signup-modal';
-        wrapper.className = 'fx-signup-overlay hidden';
-        wrapper.innerHTML = `
-            <div class="fx-signup-card" onclick="event.stopPropagation()">
-                <button type="button" onclick="closeSignUpModal()" style="position:absolute;right:28px;top:24px;width:30px;height:30px;border:none;background:transparent;color:#94a3b8;cursor:pointer;">✕</button>
-                <div id="signup-form-view">
-                    <h3 id="fx-signup-title" style="font-size:28px;font-weight:700;color:#fff;margin:0 0 8px;"></h3>
-                    <p id="fx-signup-desc" style="font-size:14px;color:#cbd5e1;margin:0 0 20px;"></p>
-                    <form id="signup-form" style="display:grid;gap:14px;">
-                        <div><label id="fx-label-name" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;margin-bottom:7px;"></label><input id="signup-name" required class="fx-signup-input" type="text"></div>
-                        <div><label id="fx-label-email" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;margin-bottom:7px;"></label><input id="signup-email" required class="fx-signup-input" type="email"></div>
-                        <div><label id="fx-label-password" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;margin-bottom:7px;"></label><input id="signup-password" required class="fx-signup-input" type="password"></div>
-                        <div><label id="fx-label-phone" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;margin-bottom:7px;"></label><input id="signup-phone" required class="fx-signup-input" type="tel"></div>
-                        <div><label id="fx-label-platform" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;margin-bottom:7px;"></label><input id="signup-platform" required class="fx-signup-input" type="text"></div>
-                        <button id="signup-submit-btn" class="fx-signup-submit" type="submit"></button>
-                    </form>
-                </div>
-                <div id="signup-success-view" class="hidden" style="text-align:center;padding:36px 0;">
-                    <div style="width:64px;height:64px;margin:0 auto 12px;border-radius:999px;background:rgba(16,185,129,.2);display:flex;align-items:center;justify-content:center;color:#34d399;font-size:32px;">✓</div>
-                    <h3 id="fx-signup-success-title" style="font-size:24px;font-weight:700;color:#fff;margin:0 0 8px;"></h3>
-                    <p id="fx-signup-success-desc" style="font-size:14px;color:#cbd5e1;margin:0;"></p>
-                </div>
-            </div>
-        `;
-        wrapper.addEventListener('click', () => closeSignUpModal());
-        document.body.appendChild(wrapper);
-    }
-
-    function applySignupText(lang) {
-        const t = LABELS[lang] || LABELS.en;
-        document.querySelectorAll('.nav-signup-btn').forEach(el => { el.textContent = t.nav; });
-        const map = [
-            ['fx-signup-title', t.title], ['fx-signup-desc', t.desc], ['fx-label-name', t.name],
-            ['fx-label-email', t.email], ['fx-label-password', t.password], ['fx-label-phone', t.phone],
-            ['fx-label-platform', t.platform], ['signup-submit-btn', t.submit],
-            ['fx-signup-success-title', t.successTitle], ['fx-signup-success-desc', t.successDesc]
-        ];
-        map.forEach(([id, txt]) => { const el = document.getElementById(id); if (el) el.textContent = txt; });
-        const i1 = document.getElementById('signup-name'); if (i1) i1.placeholder = t.name;
-        const i2 = document.getElementById('signup-email'); if (i2) i2.placeholder = 'example@mail.com';
-        const i3 = document.getElementById('signup-password'); if (i3) i3.placeholder = '********';
-        const i4 = document.getElementById('signup-phone'); if (i4) i4.placeholder = lang === 'zh-CN' ? '+86 138...' : '+886 912...';
-        const i5 = document.getElementById('signup-platform'); if (i5) i5.placeholder = 'MT4 / MT5 / cTrader';
-    }
-
-    function bindSignupForm() {
-        const form = document.getElementById('signup-form');
-        const submitBtn = document.getElementById('signup-submit-btn');
-        if (!form || !submitBtn || form.dataset.bound === '1') return;
-        form.dataset.bound = '1';
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const lang = currentLang();
-            const t = LABELS[lang] || LABELS.en;
-            const original = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = t.sending;
-            const payload = {
-                type: 'USER_REGISTRATION',
-                source: 'TOP_NAV_BUTTON',
-                timestamp: new Date().toLocaleString(),
-                name: document.getElementById('signup-name')?.value.trim() || '',
-                email: document.getElementById('signup-email')?.value.trim() || '',
-                password: document.getElementById('signup-password')?.value || '',
-                phone: document.getElementById('signup-phone')?.value.trim() || '',
-                platform: document.getElementById('signup-platform')?.value.trim() || ''
+    function getManagedSlidesConfig() {
+        const cfg = readJson(SLIDE_CONFIG_KEY, null);
+        if (cfg && Array.isArray(cfg.slides) && cfg.slides.length) {
+            return {
+                intervalSeconds: Math.max(1, Number(cfg.intervalSeconds) || 5),
+                slides: cfg.slides
+                    .map((s) => ({
+                        imageUrl: typeof s?.imageUrl === 'string' ? s.imageUrl.trim() : '',
+                        title: typeof s?.title === 'string' ? s.title : '',
+                        subtitle: typeof s?.subtitle === 'string' ? s.subtitle : '',
+                        buttonText: typeof s?.buttonText === 'string' ? s.buttonText : '',
+                        buttonLink: typeof s?.buttonLink === 'string' ? s.buttonLink : ''
+                    }))
+                    .filter((s) => s.imageUrl)
             };
-            try {
-                await fetch(SIGNUP_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const fv = document.getElementById('signup-form-view');
-                const sv = document.getElementById('signup-success-view');
-                if (fv) fv.classList.add('hidden');
-                if (sv) sv.classList.remove('hidden');
-                setTimeout(() => closeSignUpModal(), 1800);
-            } catch (err) {
-                alert(lang === 'zh-CN' ? '提交失败，请稍后重试。' : (lang === 'zh-TW' ? '提交失敗，請稍後再試。' : 'Submission failed. Please try again.'));
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = original;
-            }
-        };
+        }
+        const legacySlides = readJson(SLIDE_KEY, null);
+        if (Array.isArray(legacySlides) && legacySlides.length) {
+            return {
+                intervalSeconds: 5,
+                slides: legacySlides
+                    .filter((url) => typeof url === 'string' && url.trim())
+                    .map((url, idx) => ({
+                        imageUrl: url.trim(),
+                        title: `Slide ${idx + 1}`,
+                        subtitle: '',
+                        buttonText: '',
+                        buttonLink: ''
+                    }))
+            };
+        }
+        return null;
     }
 
-    function normalizeSignupTriggers() {
-        const candidates = Array.from(document.querySelectorAll('[data-i18n="nav_login"], [data-i18n="nav_signup"], .nav-signup-btn'));
-        candidates.forEach(el => {
-            el.classList.add('nav-signup-btn');
-            el.setAttribute('data-i18n', 'nav_signup');
-            if (el.tagName === 'A') {
-                el.setAttribute('href', '#');
-                el.onclick = (e) => { e.preventDefault(); openSignUpFromMobile(); };
-            } else {
-                el.onclick = () => openSignUpModal();
+    function applyManagedSlides() {
+        const config = getManagedSlidesConfig();
+        const slides = config?.slides?.map((s) => s.imageUrl) || [];
+        if (!slides.length) return;
+        const ids = ['managed-slide-1', 'managed-slide-2', 'managed-slide-3'];
+        ids.forEach((id, idx) => {
+            const el = document.getElementById(id);
+            const next = slides[idx];
+            if (el && typeof next === 'string' && next.trim()) {
+                el.src = next.trim();
             }
         });
     }
 
-    function openSignUpModal() {
-        ensureSignupModal();
-        const modal = document.getElementById('signup-modal');
-        const fv = document.getElementById('signup-form-view');
-        const sv = document.getElementById('signup-success-view');
-        const form = document.getElementById('signup-form');
-        if (!modal) return;
-        if (fv) fv.classList.remove('hidden');
-        if (sv) sv.classList.add('hidden');
-        if (form) form.reset();
-        applySignupText(currentLang());
-        bindSignupForm();
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+    function getManagedSeminars() {
+        const seminars = readJson(SEMINAR_KEY, null) || readJson(LEGACY_SEMINAR_KEY, null);
+        return Array.isArray(seminars) ? seminars : null;
     }
 
-    function closeSignUpModal() {
-        const modal = document.getElementById('signup-modal');
-        if (modal) modal.classList.add('hidden');
-        document.body.style.overflow = '';
+    // Expose seminar override getter for seminar.html rendering.
+    window.getManagedSlidesConfig = getManagedSlidesConfig;
+    window.getManagedSeminars = getManagedSeminars;
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyManagedSlides);
+    } else {
+        applyManagedSlides();
+    }
+})();
+
+(function () {
+    const SEMINAR_LABELS = {
+        en: 'Seminars',
+        'zh-TW': '研討會',
+        'zh-CN': '研讨会'
+    };
+
+    function getCurrentLang() {
+        return localStorage.getItem('fx_spectrum_lang') || document.documentElement.lang || 'en';
     }
 
-    function openSignUpFromMobile() {
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenu && mobileMenu.classList.contains('active') && typeof window.toggleMobileMenu === 'function') {
-            window.toggleMobileMenu();
-        }
-        openSignUpModal();
+    function applySeminarFooterText(lang) {
+        const text = SEMINAR_LABELS[lang] || SEMINAR_LABELS.en;
+        document.querySelectorAll('a[href="seminar.html"][data-i18n="footer_seminar"]').forEach((el) => {
+            el.textContent = text;
+        });
     }
 
     function hookLanguageChange() {
-        if (typeof window.changeLanguage !== 'function' || window.changeLanguage.__fxSignupWrapped) return;
+        if (typeof window.changeLanguage !== 'function' || window.changeLanguage.__footerSeminarHooked) return;
         const original = window.changeLanguage;
         const wrapped = function (lang) {
             original(lang);
-            applySignupText(lang);
+            applySeminarFooterText(lang);
         };
-        wrapped.__fxSignupWrapped = true;
+        wrapped.__footerSeminarHooked = true;
         window.changeLanguage = wrapped;
     }
 
-    function initSignupGlobal() {
-        injectSignupStyles();
-        normalizeSignupTriggers();
-        ensureSignupModal();
-        bindSignupForm();
-        applySignupText(currentLang());
-        hookLanguageChange();
-        window.openSignUpModal = openSignUpModal;
-        window.openSignUpFromMobile = openSignUpFromMobile;
-        window.closeSignUpModal = closeSignUpModal;
-    }
-
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSignupGlobal);
+        document.addEventListener('DOMContentLoaded', () => {
+            applySeminarFooterText(getCurrentLang());
+            hookLanguageChange();
+        });
     } else {
-        initSignupGlobal();
+        applySeminarFooterText(getCurrentLang());
+        hookLanguageChange();
     }
 })();

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FX Spectrum | 員工後台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800">
+  <div class="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr]">
+    <aside class="bg-slate-900 text-slate-100 p-6">
+      <h1 class="text-xl font-black tracking-wide mb-8">員工後台</h1>
+      <nav class="space-y-2 text-sm">
+        <button type="button" data-tab-target="slides" class="sidebar-tab-btn block w-full text-left px-3 py-2 rounded-lg bg-slate-800 text-white transition-colors">Slide 照片管理</button>
+        <button type="button" data-tab-target="seminars" class="sidebar-tab-btn block w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 transition-colors">Seminars 管理</button>
+      </nav>
+      <button onclick="handleReturnHome()" class="mt-8 w-full px-4 py-2 rounded-lg border border-slate-600 hover:bg-slate-800 text-sm font-semibold">🏠 返回首頁</button>
+      <button onclick="handleDashboardLogout()" class="mt-8 w-full px-4 py-2 rounded-lg border border-slate-700 hover:bg-slate-800 text-sm font-semibold">登出</button>
+    </aside>
+
+    <main id="dashboard-main" class="hidden p-6 md:p-10 space-y-8">
+      <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+        歡迎回來，<span id="staff-welcome" class="font-bold text-slate-800">-</span>
+        <span id="staff-role-badge" class="hidden ml-2 inline-flex items-center bg-cyan-600 text-white text-xs px-2 py-1 rounded">-</span>
+      </div>
+      <section id="slides" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <h2 class="text-xl font-bold">Slide 照片管理</h2>
+          <button id="add-slide" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-sm font-semibold hover:bg-cyan-600 transition-colors">＋ 新增 Slide</button>
+        </div>
+        <p class="text-sm text-slate-500 mb-5">可管理多張輪播圖與切換秒數，儲存後前台會優先讀取後台設定。</p>
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-slate-500 mb-2">輪播切換秒數 (秒)</label>
+          <input id="slide-interval-seconds" type="number" min="1" step="1" class="w-full md:w-56 rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="預設 5 秒" />
+        </div>
+        <div id="slide-form-list" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">Slide 1 URL</label>
+            <input id="slide-1" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" />
+          </div>
+        </div>
+        <button id="save-slides" class="mt-5 px-5 py-2 rounded-xl bg-slate-900 text-cyan-300 font-semibold hover:bg-slate-800 transition-colors">儲存 Slide</button>
+      </section>
+
+      <section id="seminars" class="hidden bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <h2 class="text-xl font-bold">Seminars 內容更新</h2>
+          <button id="add-seminar" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-sm font-semibold hover:bg-cyan-600 transition-colors">＋ 新增研討會場次</button>
+        </div>
+        <p class="text-sm text-slate-500 mb-5">可完整管理每一場 Seminar 的全部欄位資料。</p>
+        <div id="seminar-form-list" class="space-y-4"></div>
+        <button id="save-seminars" class="mt-5 px-5 py-2 rounded-xl bg-slate-900 text-cyan-300 font-semibold hover:bg-slate-800 transition-colors">儲存 Seminar</button>
+      </section>
+    </main>
+  </div>
+
+  <div id="staff-login-overlay" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+      <h2 class="text-2xl font-black text-slate-900 mb-2">員工登入驗證</h2>
+      <p class="text-sm text-slate-500 mb-5">請輸入帳號與密碼，驗證後可進入後台管理。</p>
+      <form id="dashboard-login-form" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">員工編號 (Staff ID)</label>
+          <input id="dashboard-login-staff-id" type="text" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">Password</label>
+          <input id="dashboard-login-password" type="password" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" required />
+        </div>
+        <p id="dashboard-login-error" class="hidden text-sm text-rose-600 font-semibold">帳號或密碼錯誤。</p>
+        <button id="dashboard-login-submit" type="submit" class="w-full rounded-xl bg-slate-900 text-cyan-300 font-semibold px-4 py-2.5 hover:bg-slate-800 transition-colors">登入後台</button>
+        <button type="button" onclick="handleCancelLogin()" class="w-full mt-2 py-2 text-sm text-slate-500 hover:text-slate-700 transition-colors">取消登入</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxXVonS2efn71YS909fXgbLtxm80jihUuO3aYIVzgWiRTgY9Pj59H5xnAG9OiG5H7JD/exec';
+    const STAFF_AUTH_KEY = 'fx_staff_authed';
+    const STAFF_NAME_KEY = 'fx_staff_name';
+    const STAFF_ROLE_KEY = 'fx_staff_role';
+    const SLIDE_KEY = 'fx_managed_slides';
+    const SLIDE_CONFIG_KEY = 'fx_spectrum_slides_config';
+    const SEMINAR_KEY = 'fx_spectrum_seminars';
+    const LEGACY_SEMINAR_KEY = 'fx_managed_seminars';
+
+    const DEFAULT_SLIDES = ['img/promote.jpg', 'img/man1.jpg', 'img/man2.jpg'];
+    const DEFAULT_SLIDE_CONFIG = {
+      intervalSeconds: 5,
+      slides: DEFAULT_SLIDES.map((url, idx) => ({
+        imageUrl: url,
+        title: `Slide ${idx + 1}`,
+        subtitle: '',
+        buttonText: '',
+        buttonLink: ''
+      }))
+    };
+    const FALLBACK_SEMINARS = [
+      {
+        title: 'AI Trend Reading Workshop',
+        subtitle: 'Macro trend identification and actionable entry logic',
+        date: '2026-04-18',
+        location: 'Taipei',
+        duration: '3.5 hours',
+        speaker: 'Lewis Lee',
+        seats: '120',
+        register: 'Open',
+        fee: 'US$199 / person',
+        agenda: ['Market regime mapping', 'AI signal filtering', 'Entry/exit execution model']
+      },
+      {
+        title: 'EA Strategy Optimization Session',
+        subtitle: 'Improve automation robustness under high volatility',
+        date: '2026-05-09',
+        location: 'Kuala Lumpur',
+        duration: '4 hours',
+        speaker: 'Ray Chien',
+        seats: '100',
+        register: 'Open',
+        fee: 'US$239 / person',
+        agenda: ['Risk-adjusted parameter tuning', 'Drawdown control framework', 'Live stress-test practice']
+      }
+    ];
+
+    let dashboardInitialized = false;
+    let currentStaffRole = '';
+
+    function readJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function normalizeSeminarItem(item = {}) {
+      const normalizeI18nText = (value) => {
+        if (value && typeof value === 'object') {
+          return {
+            zh: String(value.zh || value['zh-TW'] || value['zh-CN'] || value.en || ''),
+            en: String(value.en || value.zh || '')
+          };
+        }
+        const text = String(value || '');
+        return { zh: text, en: text };
+      };
+
+      const normalizeI18nAgenda = (value) => {
+        const toList = (v) => Array.isArray(v)
+          ? v.map((x) => String(x).trim()).filter(Boolean)
+          : String(v || '').split(',').map((x) => x.trim()).filter(Boolean);
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          const zh = toList(value.zh || value['zh-TW'] || value['zh-CN'] || value.en || []);
+          const en = toList(value.en || value.zh || []);
+          return { zh, en };
+        }
+        const list = toList(value);
+        return { zh: list, en: list };
+      };
+
+      const rawRegister = String(item.register || '').trim().toLowerCase();
+      const register = (rawRegister === 'open' || rawRegister === '開放報名' || rawRegister === '开放报名')
+        ? 'Open'
+        : 'Coming Soon';
+
+      const feeText = String(item.fee || '').trim();
+      const feeIsTwd = /^nt\$|^twd/i.test(feeText);
+      const feeCurrency = feeIsTwd ? 'TWD' : 'USD';
+      const feeAmountMatch = feeText.match(/(\d+(?:\.\d+)?)/);
+      const feeAmount = feeAmountMatch ? feeAmountMatch[1] : '0';
+
+      return {
+        title: normalizeI18nText(item.title),
+        subtitle: normalizeI18nText(item.subtitle),
+        date: String(item.date || ''),
+        location: normalizeI18nText(item.location),
+        duration: String(item.duration || ''),
+        speaker: normalizeI18nText(item.speaker),
+        seats: String(item.seats || ''),
+        register,
+        fee: feeText || 'US$ 0',
+        feeCurrency,
+        feeAmount,
+        agenda: normalizeI18nAgenda(item.agenda)
+      };
+    }
+
+    function readManagedSeminars() {
+      const latest = readJson(SEMINAR_KEY, null);
+      if (Array.isArray(latest) && latest.length) return latest.map(normalizeSeminarItem);
+      const legacy = readJson(LEGACY_SEMINAR_KEY, null);
+      if (Array.isArray(legacy) && legacy.length) return legacy.map(normalizeSeminarItem);
+      return null;
+    }
+
+    function initSlides() {
+      let slideState = [];
+      const list = document.getElementById('slide-form-list');
+      const addBtn = document.getElementById('add-slide');
+      const intervalInput = document.getElementById('slide-interval-seconds');
+
+      const normalizeSlide = (item = {}) => ({
+        imageUrl: String(item.imageUrl || ''),
+        title: String(item.title || ''),
+        subtitle: String(item.subtitle || ''),
+        buttonText: String(item.buttonText || ''),
+        buttonLink: String(item.buttonLink || '')
+      });
+
+      const readSlideConfig = () => {
+        const cfg = readJson(SLIDE_CONFIG_KEY, null);
+        if (cfg && Array.isArray(cfg.slides) && cfg.slides.length) {
+          return {
+            intervalSeconds: Number(cfg.intervalSeconds) > 0 ? Number(cfg.intervalSeconds) : 5,
+            slides: cfg.slides.map(normalizeSlide)
+          };
+        }
+        const legacySlides = readJson(SLIDE_KEY, DEFAULT_SLIDES);
+        return {
+          intervalSeconds: 5,
+          slides: legacySlides.map((url, idx) => normalizeSlide({
+            imageUrl: url,
+            title: `Slide ${idx + 1}`
+          }))
+        };
+      };
+
+      const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+      const renderSlideRows = () => {
+        list.innerHTML = slideState.map((item, idx) => `
+          <article class="rounded-2xl border p-4 ${idx % 2 === 0 ? 'border-slate-200 bg-slate-50' : 'border-cyan-200 bg-cyan-50/40'}">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <div class="text-sm font-bold text-slate-700">Slide ${idx + 1}</div>
+              <button type="button" data-delete-slide="${idx}" class="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition-colors">🗑️ 刪除</button>
+            </div>
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+              <input data-k="imageUrl" data-i="${idx}" value="${escapeHtml(item.imageUrl)}" class="slide-input md:col-span-2 xl:col-span-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="圖片網址 Image URL">
+              <input data-k="title" data-i="${idx}" value="${escapeHtml(item.title)}" class="slide-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="標題 Title">
+              <input data-k="subtitle" data-i="${idx}" value="${escapeHtml(item.subtitle)}" class="slide-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="副標題 Subtitle">
+              <input data-k="buttonText" data-i="${idx}" value="${escapeHtml(item.buttonText)}" class="slide-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="按鈕文字 Button Text">
+              <input data-k="buttonLink" data-i="${idx}" value="${escapeHtml(item.buttonLink)}" class="slide-input md:col-span-2 xl:col-span-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="按鈕連結 Button Link">
+            </div>
+          </article>
+        `).join('');
+      };
+
+      const cfg = readSlideConfig();
+      slideState = cfg.slides.length ? cfg.slides : DEFAULT_SLIDE_CONFIG.slides.map(normalizeSlide);
+      intervalInput.value = String(cfg.intervalSeconds || 5);
+      renderSlideRows();
+
+      addBtn.addEventListener('click', () => {
+        slideState.unshift(normalizeSlide());
+        renderSlideRows();
+      });
+
+      list.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-delete-slide]');
+        if (!btn) return;
+        const idx = Number(btn.getAttribute('data-delete-slide'));
+        if (!Number.isInteger(idx) || idx < 0 || idx >= slideState.length) return;
+        slideState.splice(idx, 1);
+        renderSlideRows();
+      });
+
+      document.getElementById('save-slides').addEventListener('click', () => {
+        const nextSlides = slideState.map((item, idx) => {
+          const get = (k) => document.querySelector(`.slide-input[data-k="${k}"][data-i="${idx}"]`)?.value.trim() || '';
+          return normalizeSlide({
+            ...item,
+            imageUrl: get('imageUrl'),
+            title: get('title'),
+            subtitle: get('subtitle'),
+            buttonText: get('buttonText'),
+            buttonLink: get('buttonLink')
+          });
+        }).filter((s) => s.imageUrl);
+        const intervalSeconds = Math.max(1, Number(intervalInput.value) || 5);
+        const configPayload = { intervalSeconds, slides: nextSlides };
+        localStorage.setItem(SLIDE_CONFIG_KEY, JSON.stringify(configPayload));
+        // Keep legacy image array for backward compatibility.
+        localStorage.setItem(SLIDE_KEY, JSON.stringify(nextSlides.map((s) => s.imageUrl)));
+        slideState = nextSlides;
+        intervalInput.value = String(intervalSeconds);
+        alert('Slide 更新完成。');
+      });
+    }
+
+    function showSection(sectionId) {
+      const isAdmin = isAdminRole(currentStaffRole || localStorage.getItem(STAFF_ROLE_KEY) || '');
+      const safeSectionId = (!isAdmin && sectionId === 'slides') ? 'seminars' : sectionId;
+      const sections = ['slides', 'seminars'];
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (!isAdmin && id === 'slides') {
+          el.classList.add('hidden');
+          return;
+        }
+        el.classList.toggle('hidden', id !== safeSectionId);
+      });
+
+      document.querySelectorAll('.sidebar-tab-btn').forEach((btn) => {
+        const target = btn.getAttribute('data-tab-target');
+        const isActive = target === safeSectionId;
+        btn.classList.toggle('bg-slate-800', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('text-slate-200', !isActive);
+      });
+    }
+
+    function bindSidebarTabs() {
+      document.querySelectorAll('.sidebar-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab-target');
+          if (!target) return;
+          showSection(target);
+        });
+      });
+    }
+
+    function normalizeRole(role) {
+      return String(role || '').trim().toLowerCase();
+    }
+
+    function isAdminRole(role) {
+      return normalizeRole(role) === 'admin';
+    }
+
+    function applyRolePermissions(role) {
+      currentStaffRole = String(role || '');
+      const isAdmin = isAdminRole(currentStaffRole);
+      const slideTabBtn = document.querySelector('.sidebar-tab-btn[data-tab-target="slides"]');
+      const slideSection = document.getElementById('slides');
+      if (slideTabBtn) {
+        slideTabBtn.classList.toggle('hidden', !isAdmin);
+      }
+      if (slideSection && !isAdmin) {
+        slideSection.classList.add('hidden');
+      }
+    }
+
+    function setAuthState(isAuthed, staffName = '', staffRole = '') {
+      if (isAuthed) {
+        localStorage.setItem(STAFF_AUTH_KEY, '1');
+        localStorage.setItem(STAFF_NAME_KEY, staffName || 'Staff');
+        localStorage.setItem(STAFF_ROLE_KEY, staffRole || '');
+      } else {
+        localStorage.removeItem(STAFF_AUTH_KEY);
+        localStorage.removeItem(STAFF_NAME_KEY);
+        localStorage.removeItem(STAFF_ROLE_KEY);
+      }
+    }
+
+    function showLoginOverlay(message = '') {
+      document.getElementById('staff-login-overlay')?.classList.remove('hidden');
+      document.getElementById('dashboard-main')?.classList.add('hidden');
+      const errorEl = document.getElementById('dashboard-login-error');
+      if (!errorEl) return;
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+      } else {
+        errorEl.classList.add('hidden');
+      }
+    }
+
+    function showDashboardContent(staffName, staffRole = '') {
+      document.getElementById('staff-login-overlay')?.classList.add('hidden');
+      document.getElementById('dashboard-main')?.classList.remove('hidden');
+      const welcome = document.getElementById('staff-welcome');
+      if (welcome) welcome.textContent = staffName || 'Staff';
+      const roleBadge = document.getElementById('staff-role-badge');
+      if (roleBadge) {
+        const roleText = String(staffRole || '').trim();
+        if (roleText) {
+          roleBadge.textContent = roleText;
+          roleBadge.classList.remove('hidden');
+        } else {
+          roleBadge.textContent = '';
+          roleBadge.classList.add('hidden');
+        }
+      }
+      applyRolePermissions(staffRole);
+      showSection(isAdminRole(staffRole) ? 'slides' : 'seminars');
+    }
+
+    async function ensureDashboardBootstrapped() {
+      if (dashboardInitialized) return;
+      dashboardInitialized = true;
+      await bootstrap();
+    }
+
+    async function handleDashboardLogin(event) {
+      event.preventDefault();
+      const staffIdInput = document.getElementById('dashboard-login-staff-id');
+      const passwordInput = document.getElementById('dashboard-login-password');
+      const staffId = staffIdInput?.value.trim() || '';
+      const password = passwordInput?.value || '';
+      const errorEl = document.getElementById('dashboard-login-error');
+      const submitBtn = document.getElementById('dashboard-login-submit');
+      if (!errorEl || !submitBtn) return;
+      errorEl.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '驗證中...';
+
+      if (!GAS_WEB_APP_URL) {
+        showLoginOverlay('尚未設定 GAS_WEB_APP_URL。');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '登入後台';
+        return;
+      }
+
+      try {
+        // Use a simple POST body to reduce GAS preflight/CORS issues.
+        const response = await fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'login', staffId, password })
+        });
+        const responseText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          result = { success: false, message: '登入服務回傳格式錯誤。' };
+        }
+
+        if (!response.ok && !result?.success) {
+          throw new Error(result?.message || `HTTP_${response.status}`);
+        }
+
+        if (result?.success) {
+          const staffName = result?.user?.name || result?.staffName || result?.name || 'Staff';
+          const staffRole = result?.user?.role || result?.staffRole || result?.role || '';
+          setAuthState(true, staffName, staffRole);
+          await ensureDashboardBootstrapped();
+          showDashboardContent(staffName, staffRole);
+          return;
+        }
+        if (staffIdInput) staffIdInput.value = '';
+        if (passwordInput) passwordInput.value = '';
+        showLoginOverlay(result?.message || '帳號或密碼錯誤。');
+      } catch (err) {
+        if (staffIdInput) staffIdInput.value = '';
+        if (passwordInput) passwordInput.value = '';
+        showLoginOverlay('登入失敗，請確認 GAS 權限與網址設定。');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '登入後台';
+      }
+    }
+
+    function bindLoginForm() {
+      const form = document.getElementById('dashboard-login-form');
+      if (!form || form.dataset.bound === '1') return;
+      form.dataset.bound = '1';
+      form.addEventListener('submit', handleDashboardLogin);
+    }
+
+    function handleDashboardLogout() {
+      setAuthState(false);
+      showLoginOverlay();
+      window.location.reload();
+    }
+
+    function handleCancelLogin() {
+      window.location.href = 'index.html';
+    }
+
+    function handleReturnHome() {
+      setAuthState(false);
+      window.location.href = 'index.html';
+    }
+
+    function initDashboardAuthGate() {
+      bindLoginForm();
+      const isAuthed = localStorage.getItem(STAFF_AUTH_KEY) === '1';
+      if (!isAuthed) {
+        showLoginOverlay();
+        return;
+      }
+      const staffName = localStorage.getItem(STAFF_NAME_KEY) || 'Staff';
+      const staffRole = localStorage.getItem(STAFF_ROLE_KEY) || '';
+      ensureDashboardBootstrapped()
+        .then(() => showDashboardContent(staffName, staffRole))
+        .catch(() => {
+          setAuthState(false);
+          showLoginOverlay('初始化失敗，請重新登入。');
+        });
+    }
+
+    async function loadSeminarsFromSeminarPage() {
+      try {
+        const res = await fetch('seminar.html', { cache: 'no-store' });
+        const html = await res.text();
+        const matched = html.match(/const seminarCatalog = ([\s\S]*?)\n\s*function getSessionId\(\)/);
+        if (!matched?.[1]) return FALLBACK_SEMINARS;
+        const catalog = Function(`return (${matched[1]});`)();
+        const enList = (catalog && catalog.en) || [];
+        const zhList = (catalog && (catalog['zh-TW'] || catalog['zh-CN'])) || [];
+        const maxLen = Math.max(enList.length, zhList.length);
+        if (!maxLen) return FALLBACK_SEMINARS;
+        const merged = Array.from({ length: maxLen }).map((_, idx) => {
+          const enItem = enList[idx] || {};
+          const zhItem = zhList[idx] || {};
+          return normalizeSeminarItem({
+            ...enItem,
+            ...zhItem,
+            title: { zh: zhItem.title || enItem.title || '', en: enItem.title || zhItem.title || '' },
+            subtitle: { zh: zhItem.subtitle || enItem.subtitle || '', en: enItem.subtitle || zhItem.subtitle || '' },
+            location: { zh: zhItem.location || enItem.location || '', en: enItem.location || zhItem.location || '' },
+            speaker: { zh: zhItem.speaker || enItem.speaker || '', en: enItem.speaker || zhItem.speaker || '' },
+            agenda: { zh: zhItem.agenda || enItem.agenda || [], en: enItem.agenda || zhItem.agenda || [] }
+          });
+        });
+        return merged;
+      } catch {
+        return FALLBACK_SEMINARS;
+      }
+    }
+
+    let seminarState = [];
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderSeminarRows() {
+      const list = document.getElementById('seminar-form-list');
+      const renderBiField = (key, idx, value, label) => `
+        <div class="md:col-span-2 xl:col-span-3 rounded-lg border border-slate-200 bg-white/70 p-3">
+          <div class="text-[11px] font-bold text-slate-500 mb-2">${label}</div>
+          <div class="grid md:grid-cols-2 gap-2">
+            <div>
+              <div class="text-[10px] font-semibold text-slate-400 mb-1">中文</div>
+              <input data-k="${key}_zh" data-i="${idx}" value="${escapeHtml(value?.zh || '')}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="${label} (中文)">
+            </div>
+            <div>
+              <div class="text-[10px] font-semibold text-slate-400 mb-1">English</div>
+              <input data-k="${key}_en" data-i="${idx}" value="${escapeHtml(value?.en || '')}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="${label} (English)">
+            </div>
+          </div>
+        </div>
+      `;
+      list.innerHTML = seminarState.map((s, idx) => `
+        <article class="rounded-2xl border p-4 ${idx % 2 === 0 ? 'border-cyan-200 bg-cyan-50/30' : 'border-violet-200 bg-violet-50/30'}">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="text-sm font-bold text-slate-700">Session ${idx + 1}</div>
+            <button type="button" data-delete-seminar="${idx}" class="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition-colors">🗑️ 刪除</button>
+          </div>
+          <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+            ${renderBiField('title', idx, s.title, '標題 Title')}
+            ${renderBiField('subtitle', idx, s.subtitle, '副標題 Subtitle')}
+            <input data-k="date" data-i="${idx}" type="date" value="${escapeHtml(s.date)}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="日期 Date">
+            ${renderBiField('location', idx, s.location, '地點 Location')}
+            <input data-k="duration" data-i="${idx}" value="${escapeHtml(s.duration)}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="時長 Duration">
+            ${renderBiField('speaker', idx, s.speaker, '主講人 Speaker')}
+            <input data-k="seats" data-i="${idx}" value="${escapeHtml(s.seats)}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="名額 Seats">
+            <select data-k="register" data-i="${idx}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500 bg-white">
+              <option value="Open" ${s.register === 'Open' ? 'selected' : ''}>開放報名 (Open)</option>
+              <option value="Coming Soon" ${s.register === 'Coming Soon' ? 'selected' : ''}>尚未開放 (Coming Soon)</option>
+            </select>
+            <div class="w-full rounded-lg border border-slate-300 px-2 py-2 bg-white flex items-center gap-2">
+              <select data-k="feeCurrency" data-i="${idx}" class="seminar-input w-28 rounded-md border border-slate-200 px-2 py-1.5 text-sm outline-none focus:border-cyan-500 bg-white">
+                <option value="USD" ${(s.feeCurrency || 'USD') === 'USD' ? 'selected' : ''}>US$</option>
+                <option value="TWD" ${s.feeCurrency === 'TWD' ? 'selected' : ''}>NT$</option>
+              </select>
+              <input data-k="feeAmount" data-i="${idx}" type="number" min="0" step="0.01" value="${escapeHtml(s.feeAmount || '0')}" class="seminar-input flex-1 rounded-md border border-slate-200 px-2 py-1.5 text-sm outline-none focus:border-cyan-500" placeholder="0">
+            </div>
+            <div class="md:col-span-2 xl:col-span-3 rounded-lg border border-slate-200 bg-white/70 p-3">
+              <div class="text-[11px] font-bold text-slate-500 mb-2">議程 Agenda（逗號分隔）</div>
+              <div class="grid md:grid-cols-2 gap-2">
+                <div>
+                  <div class="text-[10px] font-semibold text-slate-400 mb-1">中文</div>
+                  <input data-k="agenda_zh" data-i="${idx}" value="${escapeHtml((s.agenda?.zh || []).join(', '))}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="議程（中文，逗號分隔）">
+                </div>
+                <div>
+                  <div class="text-[10px] font-semibold text-slate-400 mb-1">English</div>
+                  <input data-k="agenda_en" data-i="${idx}" value="${escapeHtml((s.agenda?.en || []).join(', '))}" class="seminar-input w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-500" placeholder="Agenda (English, comma separated)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function initSeminars() {
+      renderSeminarRows();
+      const list = document.getElementById('seminar-form-list');
+      const addBtn = document.getElementById('add-seminar');
+
+      addBtn.addEventListener('click', () => {
+        seminarState.unshift(normalizeSeminarItem());
+        renderSeminarRows();
+      });
+
+      list.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-delete-seminar]');
+        if (!btn) return;
+        const idx = Number(btn.getAttribute('data-delete-seminar'));
+        if (!Number.isInteger(idx) || idx < 0 || idx >= seminarState.length) return;
+        seminarState.splice(idx, 1);
+        renderSeminarRows();
+      });
+
+      document.getElementById('save-seminars').addEventListener('click', () => {
+        const next = seminarState.map((item, idx) => {
+          const get = (k) => document.querySelector(`.seminar-input[data-k="${k}"][data-i="${idx}"]`)?.value.trim() || '';
+          const buildBiText = (key) => {
+            const zh = get(`${key}_zh`);
+            const en = get(`${key}_en`);
+            return { zh: zh || en, en: en || zh };
+          };
+          const agendaZh = get('agenda_zh').split(',').map((x) => x.trim()).filter(Boolean);
+          const agendaEn = get('agenda_en').split(',').map((x) => x.trim()).filter(Boolean);
+          const agenda = {
+            zh: agendaZh.length ? agendaZh : agendaEn,
+            en: agendaEn.length ? agendaEn : agendaZh
+          };
+          const feeCurrency = get('feeCurrency') || 'USD';
+          const feeAmount = get('feeAmount') || '0';
+          const fee = `${feeCurrency === 'TWD' ? 'NT$' : 'US$'} ${feeAmount}`;
+          return normalizeSeminarItem({
+            ...item,
+            title: buildBiText('title'),
+            subtitle: buildBiText('subtitle'),
+            date: get('date'),
+            location: buildBiText('location'),
+            duration: get('duration'),
+            speaker: buildBiText('speaker'),
+            seats: get('seats'),
+            register: get('register'),
+            fee,
+            feeCurrency,
+            feeAmount,
+            agenda
+          });
+        });
+        localStorage.setItem(SEMINAR_KEY, JSON.stringify(next));
+        localStorage.removeItem(LEGACY_SEMINAR_KEY);
+        seminarState = next;
+        alert('Seminar 更新完成。');
+      });
+    }
+
+    async function bootstrap() {
+      const existing = readManagedSeminars();
+      seminarState = (existing && existing.length)
+        ? existing
+        : (await loadSeminarsFromSeminarPage()).map(normalizeSeminarItem);
+      localStorage.setItem(SEMINAR_KEY, JSON.stringify(seminarState));
+      initSlides();
+      initSeminars();
+      bindSidebarTabs();
+      const role = localStorage.getItem(STAFF_ROLE_KEY) || '';
+      applyRolePermissions(role);
+      showSection(isAdminRole(role) ? 'slides' : 'seminars');
+    }
+
+    document.addEventListener('DOMContentLoaded', initDashboardAuthGate);
+    window.addEventListener('pageshow', () => {
+      if (localStorage.getItem(STAFF_AUTH_KEY) !== '1') {
+        showLoginOverlay();
+      }
+    });
+  </script>
+</body>
+</html>
